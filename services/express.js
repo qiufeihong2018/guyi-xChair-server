@@ -34,6 +34,7 @@ exports.start = function() {
 
   // passport config
   var User = require('../collections/user');
+
   app.use(passport.initialize());
   app.use(passport.session());
   passport.use(new LocalStrategy(User.authenticate()));
@@ -41,6 +42,7 @@ exports.start = function() {
   passport.deserializeUser(User.deserializeUser());
 
   app.use('/api/v1/auth', require('../routers/userAuthentication'));
+  app.use('/api/v1/oprate', require('../routers/oprate'));
 
   // start server
   app.set('port', config.expressHttpPort); // Set http port

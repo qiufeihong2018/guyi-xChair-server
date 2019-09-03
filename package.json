@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "fix": "eslint --fix .",
-    "apidoc": "/usr/local/share/node-v10.15.3-linux-x64/bin/apidoc -i routers/",
+    "apidoc": "apidoc -i routers/",
     "mochawesome": "./node_modules/.bin/mocha --reporter mochawesome",
     "dev": "node index.js"
   },

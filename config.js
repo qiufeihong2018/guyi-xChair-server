@@ -3,7 +3,7 @@
 var config = {
   development: {
     // mongodb
-    database: 'mongodb://localhost/xalert',
+    database: 'mongodb://localhost/industrial',
     // elasticsearch
     elasticsearch: 'http://localhost:9200',
     expressHttpPort: 5001,
@@ -11,14 +11,14 @@ var config = {
   },
   local: {
     // mongodb
-    database: 'mongodb://127.0.0.1/xalert',
+    database: 'mongodb://127.0.0.1/industrial',
     // elastic
     elasticsearch: 'localhost:9211',
     expressHttpPort: 5001
   },
   production: {
     // mongodb
-    database: 'mongodb://127.0.0.1/xalert',
+    database: 'mongodb://127.0.0.1/industrial',
     // elasticsearch
     elasticsearch: 'localhost:9211',
     expressHttpPort: 5001
