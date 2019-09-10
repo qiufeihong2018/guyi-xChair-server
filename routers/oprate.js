@@ -91,6 +91,7 @@ function getLONGBO(doc) {
 
 router.post('/oprate', function(req, res, next) {
   const doc = req.body;
+  console.log(doc);
   const obj = getLONGBO(doc);
   if (obj) {
     Oprate.create(getLONGBO(doc), function(err, res) {
