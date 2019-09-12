@@ -3,9 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Oprate = new Schema({
-  equipmentId: {
-    type: Number
-  },
   details: {
     equipmentNumber: {
       type: String
