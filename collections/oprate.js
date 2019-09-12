@@ -3,38 +3,40 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Oprate = new Schema({
-  LONGBO: {
-    equipmentNumber: {
+  name: {
+    type: String
+  },
+  equipmentNumber: {
+    type: String
+  },
+  acquisition: [{
+    acquisitionChannel: {
       type: String
     },
-    acquisition: [{
-      acquisitionChannel: {
-        type: String
-      },
-      value: {
-        type: String
-      }
-    }],
-    instrument: {
-      instrumentNumber: {
-        type: String
-      },
-      value: {
-        type: Array
-      }
-    },
-    pipeline: {
-      type: Schema.Types.ObjectId,
-      ref: 'Pipeline'
-    },
-    timestamp: {
-      type: Date,
-      default: Date.now()
+    value: {
+      type: String
     }
+  }],
+  instrument: {
+    instrumentNumber: {
+      type: String
+    },
+    value: {
+      type: Array
+    }
+  },
+  pipeline: {
+    type: Schema.Types.ObjectId,
+    ref: 'Pipeline',
+    required: true
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now()
   }
 }, {
   timestamps: {
-    createdAt: 'created_at'
+    createdAt: 'createdAt'
   }
 });
 

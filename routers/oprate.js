@@ -5,7 +5,6 @@ const Oprate = require('../collections/oprate');
 const Time = require('../collections/time');
 
 const log = require('../services/logger').createLogger('userAuthentication');
-const AUTH_ERR = require('../constant/errMessage').AUTH;
 
 /**
  * @api {post} /v1/auth/register Oprate Register
@@ -36,51 +35,50 @@ const AUTH_ERR = require('../constant/errMessage').AUTH;
  */
 function getLONGBO(doc) {
   const obj = {
-    LONGBO: {
-      equipmentNumber: '',
-      acquisition: [],
-      instrument: {
-        instrumentNumber: '',
-        value: []
-      }
+    name: 'LONGBO',
+    equipmentNumber: '',
+    acquisition: [],
+    instrument: {
+      instrumentNumber: '',
+      value: []
     }
   };
   if (doc.LONGBO.slice(0, 4) === 'AA02') {
-    obj.LONGBO.equipmentNumber = doc.LONGBO.slice(0, 4);
+    obj.equipmentNumber = doc.LONGBO.slice(0, 4);
     for (let i = 4; i <= 10;) {
-      obj.LONGBO.acquisition.push({
+      obj.acquisition.push({
         acquisitionChannel: doc.LONGBO.slice(i, i + 4),
         value: doc.LONGBO.slice(i + 4, i + 6)
       });
       i += 6;
     }
-    obj.LONGBO.instrument.instrumentNumber = doc.LONGBO.slice(16, 20);
+    obj.instrument.instrumentNumber = doc.LONGBO.slice(16, 20);
     for (let i = 20; i < (doc.LONGBO.length - 20);) {
-      obj.LONGBO.instrument.value.push(doc.LONGBO.slice(i, i + 8));
+      obj.instrument.value.push(doc.LONGBO.slice(i, i + 8));
       i += 8;
     }
   } else if (doc.LONGBO.slice(0, 4) === 'AA03') {
-    obj.LONGBO.equipmentNumber = doc.LONGBO.slice(0, 4);
+    obj.equipmentNumber = doc.LONGBO.slice(0, 4);
     for (let i = 4; i <= 10;) {
-      obj.LONGBO.acquisition.push({
+      obj.acquisition.push({
         acquisitionChannel: doc.LONGBO.slice(i, i + 4),
         value: doc.LONGBO.slice(i + 4, i + 6)
       });
       i += 6;
     }
-    delete obj.LONGBO.instrument;
+    delete obj.instrument;
   } else if (doc.LONGBO.slice(0, 4) === 'AA04') {
-    obj.LONGBO.equipmentNumber = doc.LONGBO.slice(0, 4);
+    obj.equipmentNumber = doc.LONGBO.slice(0, 4);
     for (let i = 4; i <= 10;) {
-      obj.LONGBO.acquisition.push({
+      obj.acquisition.push({
         acquisitionChannel: doc.LONGBO.slice(i, i + 4),
         value: doc.LONGBO.slice(i + 4, i + 6)
       });
       i += 6;
     }
-    obj.LONGBO.instrument.instrumentNumber = doc.LONGBO.slice(16, 20);
+    obj.instrument.instrumentNumber = doc.LONGBO.slice(16, 20);
     for (let i = 20; i < (doc.LONGBO.length - 20);) {
-      obj.LONGBO.instrument.value.push(doc.LONGBO.slice(i, i + 8));
+      obj.instrument.value.push(doc.LONGBO.slice(i, i + 8));
       i += 8;
     }
   } else {
@@ -91,7 +89,6 @@ function getLONGBO(doc) {
 
 router.post('/oprate', function(req, res, next) {
   const doc = req.body;
-  console.log(doc);
   const obj = getLONGBO(doc);
   if (obj) {
     Oprate.create(getLONGBO(doc), function(err, res) {
