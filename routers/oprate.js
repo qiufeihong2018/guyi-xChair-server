@@ -107,18 +107,43 @@ router.post('/oprate', function(req, res, next) {
  * @apiName OprateGet
  * @apiGroup oprate
  *
- * @apiParam {String} username  New user's name.
- * @apiParam {String} password  New user's password.
- *
- * @apiSuccess {String} username  The username of the register user.
- * @apiSuccess {string} message  The registering success info.
+ * @apiSuccess {Object} LONGBO  The details of instrument.
+ * @apiSuccess {string} instrument  Equipment name.
+ * @apiSuccess {string} value  Device value.
+ * @apiSuccess {string} timestamp  Time to add data.
+ * @apiSuccess {string} equipmentNumber Acquisition device number.
+ * @apiSuccess {string} acquisition  Digital acquisition channel.
+ * @apiSuccess {string} acquisitionChannel Digital acquisition channel model.
+ * @apiSuccess {string} value  Digital acquisition channel model value.
+ * @apiSuccess {string} created_at  Time to get doc.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "username": "gushen",
- *       "message": "Oprate registered successful"
- *     }
+ *        "LONGBO": {
+ *            "instrument": {
+ *                "value": []
+ *            },
+ *            "timestamp": "2019-09-12T03:00:19.011Z",
+ *            "equipmentNumber": "AA03",
+ *            "acquisition": [
+ *                {
+ *                    "_id": "5d79b4e16f680f1d2b808b80",
+ *                    "acquisitionChannel": "DD01",
+ *                    "value": "00"
+ *                },
+ *                {
+ *                    "_id": "5d79b4e16f680f1d2b808b7f",
+ *                    "acquisitionChannel": "DD02",
+ *                    "value": "01"
+ *                }
+ *            ]
+ *        },
+ *        "_id": "5d79b4e16f680f1d2b808b7e",
+ *        "created_at": "2019-09-12T03:00:49.088Z",
+ *        "updatedAt": "2019-09-12T03:00:49.088Z",
+ *        "__v": 0
+ *    },
  *
  * @apiError REGISTER_FAILURE The register failure.
  *
@@ -163,9 +188,9 @@ router.get('/oprate', function(req, res, next) {
  *      "message": "Oprate register failure!"
  *    }
  */
-function getTime() {
+function getTime(id) {
   Oprate.find({
-    'LONGBO.equipmentNumber': 'AA04'
+    'LONGBO.equipmentNumber': id
   }).then((doc) => {
     for (let i = 0; i < doc.length - 1; i++) {
       let time = 0;
@@ -180,14 +205,15 @@ function getTime() {
   });
 }
 
-router.get('/AA04Time', async function(req, res, next) {
+router.get('/time/:id', async function(req, res, next) {
+  const id = req.params.id;
   let gCount = 0;
   let lCount = 0;
   const gTime = [];
   const lTime = [];
 
 
-  await getTime();
+  await getTime(id);
   Time.find({}).then((arr) => {
     for (let i = 0; i < arr.length; i++) {
       if (arr[i].time >= 45000 * 1.8) {
