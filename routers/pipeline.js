@@ -53,11 +53,11 @@ router.post('/', function(req, res, next) {
  * @apiName PipelineGet
  * @apiGroup oprate
  *
- * @apiSuccess {Number} lineId  The name of company.
- * @apiSuccess {string} lineName  Equipment name.
- * @apiSuccess {string} factoryName  Device value.
- * @apiSuccess {string} companyName  Time to add data.
- * @apiSuccess {array} equipmentList Acquisition device number.
+ * @apiSuccess {Number} lineId  The name of company(公司id).
+ * @apiSuccess {string} lineName  Equipment name（设备名称）.
+ * @apiSuccess {string} factoryName  Device value（设备值）.
+ * @apiSuccess {string} companyName  Time to add data（添加数据的时间）.
+ * @apiSuccess {array} equipmentList Acquisition device number（采集设备编号）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK

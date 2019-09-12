@@ -13,6 +13,104 @@
             "type": "string",
             "optional": false,
             "field": "name",
+            "description": "<p>The name of company(公司名称).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "object",
+            "optional": false,
+            "field": "instrument",
+            "description": "<p>Equipment name（设备名称）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "value",
+            "description": "<p>Device value（设备值）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "equipmentNumber",
+            "description": "<p>Acquisition device number（采集设备编号）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "acquisition",
+            "description": "<p>Digital acquisition channel（数据采集通道）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "acquisitionChannel",
+            "description": "<p>Digital acquisition channel model（数据采集通道模式）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"instrument\": {\n         \"value\": [],\n         \"instrumentNumber\": \"CD01\"\n     },\n     \"timestamp\": \"2019-09-12T05:19:27.857Z\",\n     \"_id\": \"5d79d56ce9ec9524c552dea0\",\n     \"name\": \"LONGBO\",\n     \"equipmentNumber\": \"AA04\",\n     \"acquisition\": [\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea2\",\n             \"acquisitionChannel\": \"DD01\",\n             \"value\": \"01\"\n         },\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea1\",\n             \"acquisitionChannel\": \"DD02\",\n             \"value\": \"01\"\n         }\n     ],\n     \"createdAt\": \"2019-09-12T05:19:40.884Z\",\n     \"updatedAt\": \"2019-09-12T05:19:40.884Z\",\n     \"__v\": 0\n },",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Oprate register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/oprate.js",
+    "groupTitle": "oprate"
+  },
+  {
+    "type": "delete",
+    "url": "/v1/auth/register",
+    "title": "Oprate delete",
+    "name": "OprateGet",
+    "group": "oprate",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
             "description": "<p>The name of company.</p>"
           },
           {
@@ -111,35 +209,35 @@
             "type": "Number",
             "optional": false,
             "field": "lineId",
-            "description": "<p>The name of company.</p>"
+            "description": "<p>The name of company(公司id).</p>"
           },
           {
             "group": "Success 200",
             "type": "string",
             "optional": false,
             "field": "lineName",
-            "description": "<p>Equipment name.</p>"
+            "description": "<p>Equipment name（设备名称）.</p>"
           },
           {
             "group": "Success 200",
             "type": "string",
             "optional": false,
             "field": "factoryName",
-            "description": "<p>Device value.</p>"
+            "description": "<p>Device value（设备值）.</p>"
           },
           {
             "group": "Success 200",
             "type": "string",
             "optional": false,
             "field": "companyName",
-            "description": "<p>Time to add data.</p>"
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
           },
           {
             "group": "Success 200",
             "type": "array",
             "optional": false,
             "field": "equipmentList",
-            "description": "<p>Acquisition device number.</p>"
+            "description": "<p>Acquisition device number（采集设备编号）.</p>"
           }
         ]
       },
@@ -187,38 +285,48 @@
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "username",
+            "field": "name",
             "description": "<p>New user's name.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "password",
+            "field": "equipmentNumber",
+            "description": "<p>New user's password.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "acquisition",
+            "description": "<p>New user's name.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "instrument",
+            "description": "<p>New user's password.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "instrumentNumber",
+            "description": "<p>New user's password.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "value",
             "description": "<p>New user's password.</p>"
           }
         ]
       }
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "username",
-            "description": "<p>The username of the register user.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "message",
-            "description": "<p>The registering success info.</p>"
-          }
-        ]
-      },
       "examples": [
         {
           "title": "Success-Response:",
@@ -323,7 +431,7 @@
       ]
     },
     "version": "0.0.0",
-    "filename": "routers/oprate.js",
+    "filename": "routers/time.js",
     "groupTitle": "userAuthentication"
   },
   {
