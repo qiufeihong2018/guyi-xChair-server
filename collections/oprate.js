@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Oprate = new Schema({
-  LONGBO: {
+  equipmentId: {
+    type: Number
+  },
+  details: {
     equipmentNumber: {
       type: String
     },
@@ -22,6 +25,10 @@ const Oprate = new Schema({
       value: {
         type: Array
       }
+    },
+    pipeline: {
+      type: Schema.Types.ObjectId,
+      ref: 'Pipeline'
     },
     timestamp: {
       type: Date,

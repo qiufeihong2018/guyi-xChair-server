@@ -103,9 +103,9 @@ router.post('/oprate', function(req, res, next) {
 });
 
 /**
- * @api {post} /v1/auth/register Oprate Register
- * @apiName OprateRegister
- * @apiGroup userAuthentication
+ * @api {get} /v1/auth/register Oprate get
+ * @apiName OprateGet
+ * @apiGroup oprate
  *
  * @apiParam {String} username  New user's name.
  * @apiParam {String} password  New user's password.
