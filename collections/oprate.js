@@ -27,8 +27,7 @@ const Oprate = new Schema({
   },
   pipeline: {
     type: Schema.Types.ObjectId,
-    ref: 'Pipeline',
-    required: true
+    ref: 'Pipeline'
   },
   timestamp: {
     type: Date,
