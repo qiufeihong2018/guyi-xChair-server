@@ -10,28 +10,28 @@
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "Object",
+            "type": "string",
             "optional": false,
-            "field": "LONGBO",
-            "description": "<p>The details of instrument.</p>"
+            "field": "name",
+            "description": "<p>The name of company.</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "object",
             "optional": false,
             "field": "instrument",
             "description": "<p>Equipment name.</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "array",
             "optional": false,
             "field": "value",
             "description": "<p>Device value.</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "date",
             "optional": false,
             "field": "timestamp",
             "description": "<p>Time to add data.</p>"
@@ -45,7 +45,7 @@
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "array",
             "optional": false,
             "field": "acquisition",
             "description": "<p>Digital acquisition channel.</p>"
@@ -59,9 +59,9 @@
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "date",
             "optional": false,
-            "field": "created_at",
+            "field": "createdAt",
             "description": "<p>Time to get doc.</p>"
           }
         ]
@@ -69,7 +69,7 @@
       "examples": [
         {
           "title": "Success-Response:",
-          "content": " HTTP/1.1 200 OK\n {\n    \"LONGBO\": {\n        \"instrument\": {\n            \"value\": []\n        },\n        \"timestamp\": \"2019-09-12T03:00:19.011Z\",\n        \"equipmentNumber\": \"AA03\",\n        \"acquisition\": [\n            {\n                \"_id\": \"5d79b4e16f680f1d2b808b80\",\n                \"acquisitionChannel\": \"DD01\",\n                \"value\": \"00\"\n            },\n            {\n                \"_id\": \"5d79b4e16f680f1d2b808b7f\",\n                \"acquisitionChannel\": \"DD02\",\n                \"value\": \"01\"\n            }\n        ]\n    },\n    \"_id\": \"5d79b4e16f680f1d2b808b7e\",\n    \"created_at\": \"2019-09-12T03:00:49.088Z\",\n    \"updatedAt\": \"2019-09-12T03:00:49.088Z\",\n    \"__v\": 0\n},",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"instrument\": {\n         \"value\": [],\n         \"instrumentNumber\": \"CD01\"\n     },\n     \"timestamp\": \"2019-09-12T05:19:27.857Z\",\n     \"_id\": \"5d79d56ce9ec9524c552dea0\",\n     \"name\": \"LONGBO\",\n     \"equipmentNumber\": \"AA04\",\n     \"acquisition\": [\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea2\",\n             \"acquisitionChannel\": \"DD01\",\n             \"value\": \"01\"\n         },\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea1\",\n             \"acquisitionChannel\": \"DD02\",\n             \"value\": \"01\"\n         }\n     ],\n     \"createdAt\": \"2019-09-12T05:19:40.884Z\",\n     \"updatedAt\": \"2019-09-12T05:19:40.884Z\",\n     \"__v\": 0\n },",
           "type": "json"
         }
       ]
@@ -95,6 +95,83 @@
     },
     "version": "0.0.0",
     "filename": "routers/oprate.js",
+    "groupTitle": "oprate"
+  },
+  {
+    "type": "get",
+    "url": "/v1/auth/register",
+    "title": "Pipeline get",
+    "name": "PipelineGet",
+    "group": "oprate",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "lineId",
+            "description": "<p>The name of company.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "lineName",
+            "description": "<p>Equipment name.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "factoryName",
+            "description": "<p>Device value.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "companyName",
+            "description": "<p>Time to add data.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "equipmentList",
+            "description": "<p>Acquisition device number.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"instrument\": {\n         \"value\": [],\n         \"instrumentNumber\": \"CD01\"\n     },\n     \"timestamp\": \"2019-09-12T05:19:27.857Z\",\n     \"_id\": \"5d79d56ce9ec9524c552dea0\",\n     \"name\": \"LONGBO\",\n     \"equipmentNumber\": \"AA04\",\n     \"acquisition\": [\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea2\",\n             \"acquisitionChannel\": \"DD01\",\n             \"value\": \"01\"\n         },\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea1\",\n             \"acquisitionChannel\": \"DD02\",\n             \"value\": \"01\"\n         }\n     ],\n     \"createdAt\": \"2019-09-12T05:19:40.884Z\",\n     \"updatedAt\": \"2019-09-12T05:19:40.884Z\",\n     \"__v\": 0\n },",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
     "groupTitle": "oprate"
   },
   {
@@ -247,6 +324,82 @@
     },
     "version": "0.0.0",
     "filename": "routers/oprate.js",
+    "groupTitle": "userAuthentication"
+  },
+  {
+    "type": "post",
+    "url": "/v1/auth/register",
+    "title": "Pipeline Register",
+    "name": "PipelineRegister",
+    "group": "userAuthentication",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>New user's name.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>New user's password.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>The username of the register user.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>The registering success info.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"gushen\",\n  \"message\": \"Pipeline registered successful\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
     "groupTitle": "userAuthentication"
   },
   {

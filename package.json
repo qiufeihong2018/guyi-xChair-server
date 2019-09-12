@@ -10,6 +10,7 @@
     "apidoc": "apidoc -i routers/",
     "mochawesome": "./node_modules/.bin/mocha --reporter mochawesome",
     "dev": "node index.js",
+    "live": "live-server ./ --port=5100",
     "server": "pm2 start index.js --name='xChair-server'"
   },
   "keywords": [
@@ -25,6 +26,7 @@
     "body-parser": "^1.19.0",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
+    "live-server": "^1.2.1",
     "mongoose": "^5.5.6",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

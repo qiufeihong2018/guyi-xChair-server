@@ -43,6 +43,7 @@ exports.start = function() {
 
   app.use('/api/v1/auth', require('../routers/userAuthentication'));
   app.use('/api/v1/oprate', require('../routers/oprate'));
+  app.use('/api/v1/pipeline', require('../routers/pipeline'));
 
   // start server
   app.set('port', config.expressHttpPort); // Set http port

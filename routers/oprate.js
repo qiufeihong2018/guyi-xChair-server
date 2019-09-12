@@ -105,41 +105,41 @@ router.post('/oprate', function(req, res, next) {
  * @apiName OprateGet
  * @apiGroup oprate
  *
- * @apiSuccess {Object} LONGBO  The details of instrument.
- * @apiSuccess {string} instrument  Equipment name.
- * @apiSuccess {string} value  Device value.
- * @apiSuccess {string} timestamp  Time to add data.
+ * @apiSuccess {string} name  The name of company.
+ * @apiSuccess {object} instrument  Equipment name.
+ * @apiSuccess {array} value  Device value.
+ * @apiSuccess {date} timestamp  Time to add data.
  * @apiSuccess {string} equipmentNumber Acquisition device number.
- * @apiSuccess {string} acquisition  Digital acquisition channel.
+ * @apiSuccess {array} acquisition  Digital acquisition channel.
  * @apiSuccess {string} acquisitionChannel Digital acquisition channel model.
  * @apiSuccess {string} value  Digital acquisition channel model value.
- * @apiSuccess {string} created_at  Time to get doc.
+ * @apiSuccess {date} createdAt  Time to get doc.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
- *     {
- *        "LONGBO": {
- *            "instrument": {
- *                "value": []
- *            },
- *            "timestamp": "2019-09-12T03:00:19.011Z",
- *            "equipmentNumber": "AA03",
- *            "acquisition": [
- *                {
- *                    "_id": "5d79b4e16f680f1d2b808b80",
- *                    "acquisitionChannel": "DD01",
- *                    "value": "00"
- *                },
- *                {
- *                    "_id": "5d79b4e16f680f1d2b808b7f",
- *                    "acquisitionChannel": "DD02",
- *                    "value": "01"
- *                }
- *            ]
+ *   {
+ *        "instrument": {
+ *            "value": [],
+ *            "instrumentNumber": "CD01"
  *        },
- *        "_id": "5d79b4e16f680f1d2b808b7e",
- *        "created_at": "2019-09-12T03:00:49.088Z",
- *        "updatedAt": "2019-09-12T03:00:49.088Z",
+ *        "timestamp": "2019-09-12T05:19:27.857Z",
+ *        "_id": "5d79d56ce9ec9524c552dea0",
+ *        "name": "LONGBO",
+ *        "equipmentNumber": "AA04",
+ *        "acquisition": [
+ *            {
+ *                "_id": "5d79d56ce9ec9524c552dea2",
+ *                "acquisitionChannel": "DD01",
+ *                "value": "01"
+ *            },
+ *            {
+ *                "_id": "5d79d56ce9ec9524c552dea1",
+ *                "acquisitionChannel": "DD02",
+ *                "value": "01"
+ *            }
+ *        ],
+ *        "createdAt": "2019-09-12T05:19:40.884Z",
+ *        "updatedAt": "2019-09-12T05:19:40.884Z",
  *        "__v": 0
  *    },
  *
