@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const log = require('./logger').createLogger('mongo');
 const config = require('../config')();
+mongoose.set('useFindAndModify', false);
 
 let reconnectTimes = 0;// Mongodb reconnect times
 let reConnectInterval = 0.1;// The interval seconecd time between two reconnection;

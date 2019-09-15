@@ -2,13 +2,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Time = new Schema({
-  time: {
-    type: Number
+const Company = new Schema({
+  companyName: {
+    type: String
   },
-  event: {
-    type: Object
-  },
+  pipelineList: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Pipeline'
+  }],
   timestamp: {
     type: Date,
     default: Date.now()
@@ -19,4 +20,4 @@ const Time = new Schema({
   }
 });
 
-module.exports = mongoose.model('Time', Time);
+module.exports = mongoose.model('Company', Company);

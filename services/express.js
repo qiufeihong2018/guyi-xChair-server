@@ -12,6 +12,14 @@ const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
 
+app.all('*', function(req, res, next) {
+
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  next();
+});
+
 exports.start = function() {
   mongo.connect();
 
@@ -42,9 +50,10 @@ exports.start = function() {
   passport.deserializeUser(User.deserializeUser());
 
   app.use('/api/v1/auth', require('../routers/userAuthentication'));
-  app.use('/api/v1/oprate', require('../routers/oprate'));
+  app.use('/api/v1/company', require('../routers/company'));
   app.use('/api/v1/pipeline', require('../routers/pipeline'));
-  app.use('/api/v1/time', require('../routers/time'));
+  app.use('/api/v1/probe', require('../routers/probe'));
+  app.use('/api/v1/monitor', require('../routers/monitor'));
 
 
   // start server

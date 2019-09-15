@@ -3,20 +3,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Pipeline = new Schema({
-  lineId: {
-    type: Number,
-    required: true
-  },
-  lineName: {
+  pipelineName: {
     type: String
   },
-  factoryName: {
-    type: String
-  },
-  companyName: {
-    type: String
-  },
-  equipmentList: [{
+  // companyId: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Company'
+  // },
+  oprateList: [{
     type: Schema.Types.ObjectId,
     ref: 'Oprate'
   }],
