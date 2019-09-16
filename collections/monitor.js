@@ -27,7 +27,7 @@ const Monitor = new Schema({
   value: {}
 }, {
   timestamps: {
-    createdAt: 'createdAt'
+    createdAt: 'created_at'
   }
 });
 

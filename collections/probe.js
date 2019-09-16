@@ -19,7 +19,7 @@ const Probe = new Schema({
   }
 }, {
   timestamps: {
-    createdAt: 'createdAt'
+    createdAt: 'created_at'
   }
 });
 

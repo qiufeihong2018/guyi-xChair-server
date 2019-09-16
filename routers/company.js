@@ -1,19 +1,26 @@
 'use strict';
 
 const router = require('express').Router();
-const Company = require('../collections/company');
+const CompanyModel = require('../collections/company');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
+router.get('/all', async(req, res, next) => {
+  const doc = await CompanyModel.find({})
+  res.status(200).json(doc) 
+});
+
+
 router.post('/', function(req, res, next) {
   const doc = req.body;
-  console.log(doc);
-  Company.create(doc, function(err, res) {
+  CompanyModel.create(doc, function(err, res) {
     if (err) {
       log.error(err);
     }
   });
+  res.status(200).json({});
 });
+
 
 /**
  * @api {get} /v1/company Company get
@@ -47,10 +54,11 @@ router.post('/', function(req, res, next) {
  *      "message": "Company register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
-  Company.find({}).then((doc) => {
-    res.status(200).json(doc);
-  });
+router.get('/:id', async(req, res, next) => {
+  const { id } = req.params
+  const doc = await CompanyModel.findById(id)
+  res.status(200).json(doc)
 });
+
 
 module.exports = router;
