@@ -164,7 +164,7 @@ exports.getData = (doc) => {
     if (companyName) {
       return new Promise(function(resolve, reject) {
         Company.find({
-          companyName: companyName
+          aliasName: companyName
         }).exec((err, data) => {
           if (err) {
             console.log(err);
