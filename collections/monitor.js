@@ -24,11 +24,7 @@ const Monitor = new Schema({
   dataType: {
     type: String
   },
-  value: {},
-  timestamp: {
-    type: Date,
-    default: Date.now()
-  }
+  value: {}
 }, {
   timestamps: {
     createdAt: 'createdAt'

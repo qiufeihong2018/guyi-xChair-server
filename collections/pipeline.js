@@ -12,10 +12,6 @@ const Pipeline = new Schema({
   },
   probeList: {
     type: Array
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now()
   }
 }, {
   timestamps: {

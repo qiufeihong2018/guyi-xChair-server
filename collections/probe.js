@@ -16,10 +16,6 @@ const Probe = new Schema({
   },
   monitorList: {
     type: Array
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now()
   }
 }, {
   timestamps: {

@@ -66,8 +66,7 @@ router.post('/', function(req, res, next) {
  * @apiSuccess {number} reactivePower 无功功率.
  * @apiSuccess {number} apparentPower 视在功率.
  * @apiSuccess {number} powerFactor 功率因数.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -80,7 +79,6 @@ router.post('/', function(req, res, next) {
  *                "productionQuantity": "000E65E8"
  *            }
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed20118564770825d06df",
  *        "probeNo": "AA02",
  *        "dataType": "counter",
@@ -96,7 +94,6 @@ router.post('/', function(req, res, next) {
  *                "negativeEnergy": 1677787136199683.2
  *            }
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed20618564770825d06e0",
  *        "probeNo": "AA04",
  *        "dataType": "power",
@@ -109,7 +106,6 @@ router.post('/', function(req, res, next) {
  *        "value": [
  *            "90"
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed27618564770825d06e1",
  *        "probeNo": "AA04",
  *        "dataType": "product",
@@ -156,8 +152,7 @@ router.get('/', function(req, res, next) {
  * @apiSuccess {number} reactivePower 无功功率.
  * @apiSuccess {number} apparentPower 视在功率.
  * @apiSuccess {number} powerFactor 功率因数.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -170,7 +165,6 @@ router.get('/', function(req, res, next) {
  *                "productionQuantity": "000E65E8"
  *            }
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed20118564770825d06df",
  *        "probeNo": "AA02",
  *        "dataType": "counter",
@@ -191,11 +185,29 @@ router.get('/', function(req, res, next) {
 router.post('/search', function(req, res, next) {
   const start = req.body.start;
   const end = req.body.end;
+  const companyId = req.body.companyId;
+  const pipelineId = req.body.pipelineId;
+  const probeId = req.body.probeId;
+
   Monitor.find({
-    'timestamp': {
-      '$gte': start,
-      '$lte': end
-    }
+    $and: [{
+      createdAt: {
+        $gte: start,
+        $lte: end
+      }
+    }, {
+      companyId: {
+        $regex: companyId
+      }
+    }, {
+      pipelineId: {
+        $regex: pipelineId
+      }
+    }, {
+      probeId: {
+        $regex: probeId
+      }
+    }]
   }).then((doc) => {
     res.status(200).json(doc);
   });
@@ -221,8 +233,7 @@ router.post('/search', function(req, res, next) {
  * @apiSuccess {number} reactivePower 无功功率.
  * @apiSuccess {number} apparentPower 视在功率.
  * @apiSuccess {number} powerFactor 功率因数.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -235,7 +246,6 @@ router.post('/search', function(req, res, next) {
  *                "productionQuantity": "000E65E8"
  *            }
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed20118564770825d06df",
  *        "probeNo": "AA02",
  *        "dataType": "counter",
@@ -251,7 +261,6 @@ router.post('/search', function(req, res, next) {
  *                "negativeEnergy": 1677787136199683.2
  *            }
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed20618564770825d06e0",
  *        "probeNo": "AA04",
  *        "dataType": "power",
@@ -264,7 +273,6 @@ router.post('/search', function(req, res, next) {
  *        "value": [
  *            "90"
  *        ],
- *        "timestamp": "2019-09-16T00:00:13.693Z",
  *        "_id": "5d7ed27618564770825d06e1",
  *        "probeNo": "AA04",
  *        "dataType": "product",

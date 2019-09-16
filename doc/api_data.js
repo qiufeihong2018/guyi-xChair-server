@@ -33,22 +33,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"pipelineList\": [],\n       \"timestamp\": \"2019-09-15T16:15:15.318Z\",\n       \"_id\": \"5d7e63c1ba35562fe1084626\",\n       \"companyName\": \"中源家居股份有限公司\",\n       \"created_at\": \"2019-09-15T16:16:01.907Z\",\n       \"updatedAt\": \"2019-09-15T16:16:01.907Z\",\n       \"__v\": 0\n   },\n ]",
+          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"pipelineList\": [],\n       \"_id\": \"5d7e63c1ba35562fe1084626\",\n       \"companyName\": \"中源家居股份有限公司\",\n       \"created_at\": \"2019-09-15T16:16:01.907Z\",\n       \"updatedAt\": \"2019-09-15T16:16:01.907Z\",\n       \"__v\": 0\n   },\n ]",
           "type": "json"
         }
       ]
@@ -193,22 +186,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
           "type": "json"
         }
       ]
@@ -340,22 +326,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
           "type": "json"
         }
       ]
@@ -565,22 +544,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n }",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n }",
           "type": "json"
         }
       ]
@@ -655,22 +627,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [ \"5d7e6459201b65318803e3a2\"],\n       \"probeList\": [ \"5d7e6459201b65318803e3a2\",\n           \"5d7e6459201b65318803e3a2\"],\n       \"timestamp\": \"2019-09-15T17:54:46.571Z\",\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15T18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [ \"5d7e6459201b65318803e3a2\"],\n       \"probeList\": [ \"5d7e6459201b65318803e3a2\",\n           \"5d7e6459201b65318803e3a2\"],\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15T18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
           "type": "json"
         }
       ]
@@ -783,22 +748,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [],\n       \"probeList\": [],\n       \"timestamp\": \"2019-09-15T17:54:46.571Z\",\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15TpipelineName18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [],\n       \"probeList\": [],\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15TpipelineName18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
           "type": "json"
         }
       ]
@@ -938,15 +896,8 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
@@ -1028,22 +979,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-15T16:37:01.051Z\",\n       \"_id\": \"5d7e68ae00f0693b353895ab\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n       \"updatedAt\": \"2019-09-15T16:37:02.515Z\",\n       \"__v\": 0\n   }\n]",
+          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"_id\": \"5d7e68ae00f0693b353895ab\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n       \"updatedAt\": \"2019-09-15T16:37:02.515Z\",\n       \"__v\": 0\n   }\n]",
           "type": "json"
         }
       ]
@@ -1170,22 +1114,15 @@ define({ "api": [
             "group": "Success 200",
             "type": "date",
             "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
             "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+            "description": "<p>Time to get doc（添加数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n {\n       \"pipelineId\": \"5d7eda1aa88b42050147b6ce\",\n       \"companyId\": \"5d7e6459201b65318803e3a2\",\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-16T01:00:34.199Z\",\n       \"_id\": \"5d7ee0a84152b1118bee06b6\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-16T01:08:56.613Z\",\n       \"updatedAt\": \"2019-09-16T01:08:56.613Z\",\n       \"__v\": 0\n   }\n]",
+          "content": "    HTTP/1.1 200 OK\n[\n {\n       \"pipelineId\": \"5d7eda1aa88b42050147b6ce\",\n       \"companyId\": \"5d7e6459201b65318803e3a2\",\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"_id\": \"5d7ee0a84152b1118bee06b6\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-16T01:08:56.613Z\",\n       \"updatedAt\": \"2019-09-16T01:08:56.613Z\",\n       \"__v\": 0\n   }\n]",
           "type": "json"
         }
       ]

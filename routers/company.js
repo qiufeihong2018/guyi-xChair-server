@@ -23,15 +23,13 @@ router.post('/', function(req, res, next) {
  * @apiSuccess {string} pipelineList  The Id list of pipeline(流水线的id列表).
  * @apiSuccess {object} companyName  The name of company(公司名称).
  * @apiSuccess {array} _id  The id of company（公司id值）.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *[
  *    {
  *        "pipelineList": [],
- *        "timestamp": "2019-09-15T16:15:15.318Z",
  *        "_id": "5d7e63c1ba35562fe1084626",
  *        "companyName": "中源家居股份有限公司",
  *        "created_at": "2019-09-15T16:16:01.907Z",

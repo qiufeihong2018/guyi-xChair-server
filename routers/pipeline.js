@@ -90,8 +90,7 @@ router.delete('/:id', function(req, res, next) {
  * @apiParam {string} pipelineName  The id of pipeline(流水线的名称).
  * @apiParam {string} companyId  The id of pipeline(公司id).
  * @apiParam {array} probeList  The id list of probe（采集器的id列表）.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -142,8 +141,7 @@ router.put('/', function(req, res, next) {
  * @apiSuccess {String} pipelineName  The name of pipeline(流水线名称).
  * @apiSuccess {String} companyId  The id of company(公司id值).
  * @apiSuccess {Array} probeList  The id of pipeline(采集器的id值列表).
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -152,7 +150,6 @@ router.put('/', function(req, res, next) {
  *        "companyId": [ "5d7e6459201b65318803e3a2"],
  *        "probeList": [ "5d7e6459201b65318803e3a2",
  *            "5d7e6459201b65318803e3a2"],
- *        "timestamp": "2019-09-15T17:54:46.571Z",
  *        "_id": "5d7e7cc03af4bf6838e0addc",
  *        "pipelineName": "pipeline",
  *        "created_at": "2019-09-15T18:02:40.759Z",
@@ -188,8 +185,7 @@ router.get('/:companyId', function(req, res, next) {
  * @apiSuccess {String} pipelineName  The name of pipeline(流水线名称).
  * @apiSuccess {String} companyId  The id of company(公司id值).
  * @apiSuccess {Array} probeList  The id of pipeline(采集器的id值列表).
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -197,7 +193,6 @@ router.get('/:companyId', function(req, res, next) {
  *     {
  *        "companyId": [],
  *        "probeList": [],
- *        "timestamp": "2019-09-15T17:54:46.571Z",
  *        "_id": "5d7e7cc03af4bf6838e0addc",
  *        "pipelineName": "pipeline",
  *        "created_at": "2019-09-15T18:02:40.759Z",

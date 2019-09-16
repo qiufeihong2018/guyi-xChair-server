@@ -143,8 +143,7 @@ router.put('/', function(req, res, next) {
  * @apiSuccess {array} monitorList  The name of probe(采集器名称).
  * @apiSuccess {string} _id  The id of probe（采集器的id值）.
  * @apiSuccess {string} probeNo  The number of probe（采集器的型号）.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -155,7 +154,6 @@ router.put('/', function(req, res, next) {
  *        "monitorList": [
  *            "DD01"
  *        ],
- *        "timestamp": "2019-09-16T01:00:34.199Z",
  *        "_id": "5d7ee0a84152b1118bee06b6",
  *        "probeNo": "AA02",
  *        "createdAt": "2019-09-16T01:08:56.613Z",
@@ -190,8 +188,7 @@ router.get('/', function(req, res, next) {
  * @apiSuccess {string} pipelineList  The Id list of pipeline(流水线的id列表).
  * @apiSuccess {object} probeName  The name of probe(采集器名称).
  * @apiSuccess {array} _id  The id of probe（公司id值）.
- * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -200,7 +197,6 @@ router.get('/', function(req, res, next) {
  *        "monitorList": [
  *            "DD01"
  *        ],
- *        "timestamp": "2019-09-15T16:37:01.051Z",
  *        "_id": "5d7e68ae00f0693b353895ab",
  *        "probeNo": "AA02",
  *        "createdAt": "2019-09-15T16:37:02.515Z",

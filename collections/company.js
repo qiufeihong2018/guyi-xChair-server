@@ -9,11 +9,7 @@ const Company = new Schema({
   pipelineList: [{
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
-  }],
-  timestamp: {
-    type: Date,
-    default: Date.now()
-  }
+  }]
 }, {
   timestamps: {
     createdAt: 'created_at'
