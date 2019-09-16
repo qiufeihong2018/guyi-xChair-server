@@ -10,10 +10,9 @@ const Pipeline = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company'
   },
-  probeList: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Probe'
-  }],
+  probeList: {
+    type: Array
+  },
   timestamp: {
     type: Date,
     default: Date.now()

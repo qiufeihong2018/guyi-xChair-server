@@ -49,8 +49,10 @@ Uinit32位，看看前面是否带符号（小数点）
 test:'AA04CD0101014E2201014E22'
 */
 function getEnergy(data) {
+  // 转化为字符串
+  data = data + '';
   // eslint-disable-next-line max-len
-  let energy = (65536 * (256 * data.slice(0, 2) + data.slice(2, 4)) + (256 * (data.slice(4, 5) * 16 + parseInt(data.slice(5, 6), 16)) + (data.slice(6, 7) * 16 + data.slice(7, 8)))) / 100;
+  let energy = (65536 * (256 * parseInt(data.slice(0, 2), 16) + parseInt(data.slice(2, 4), 16)) + (256 * (parseInt(data.slice(4, 5), 16) * 16 + parseInt(data.slice(5, 6), 16)) + (parseInt(data.slice(6, 7), 16) * 16 + parseInt(data.slice(7, 8), 16)))) / 100;
   return energy;
 }
 
@@ -75,9 +77,9 @@ function parseCounterDigit(data) {
     defectiveNumber: '',
     productionQuantity: ''
   };
-  obj.repeatedCounting = data.slice(0, 8);
-  obj.defectiveNumber = data.slice(8, 16);
-  obj.productionQuantity = data.slice(16, 24);
+  obj.repeatedCounting = parseInt(data.slice(0, 8), 16);
+  obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
+  obj.productionQuantity = parseInt(data.slice(16, 24), 16);
   return obj;
 }
 
@@ -89,8 +91,8 @@ function parsePowerDigit(data) {
     positiveEnergy: '',
     negativeEnergy: ''
   };
-  obj.positiveEnergy = getEnergy(data.slice(0, 8));
-  obj.negativeEnergy = getEnergy(data.slice(8, 16));
+  obj.positiveEnergy = getEnergy(parseInt(data.slice(0, 8), 16));
+  obj.negativeEnergy = getEnergy(parseInt(data.slice(8, 16), 16));
   return obj;
 }
 
@@ -98,9 +100,29 @@ function parsePowerDigit(data) {
 如CE01：485通信仪表1（电表：电压、电流）；
 注：CE标签的数据为2个字节，需要进行计算才能得到实际值。
 计算公式需具体情况而定
+test：AA03CE0108B5035F025C07100772013C
 */
 function parseElectricityDigit(data) {
+  let obj = {
+    voltage: '',
+    electric: '',
+    activePower: '',
+    reactivePower: '',
+    apparentPower: '',
+    powerFactor: ''
+  };
 
+  obj.voltage = (256 * parseInt(data.slice(0, 2), 16) + parseInt(data.slice(2, 4), 16)) / 10;
+  obj.electric = (256 * parseInt(data.slice(4, 6), 16) + parseInt(data.slice(6, 8), 16)) / 100 * 40;
+  obj.activePower = (256 * parseInt(data.slice(8, 10), 16) + parseInt(data.slice(10, 12), 16)) * 40;
+  // eslint-disable-next-line max-len
+  obj.reactivePower = (256 * parseInt(data.slice(12, 14), 16) + parseInt(data.slice(14, 16), 16)) * 40;
+  // eslint-disable-next-line max-len
+  obj.apparentPower = (256 * parseInt(data.slice(16, 18), 16) + parseInt(data.slice(18, 20), 16)) * 40;
+  // eslint-disable-next-line max-len
+  obj.powerFactor = (256 * parseInt(data.slice(20, 22), 16) + parseInt(data.slice(22, 24), 16)) / 1000;
+
+  return obj;
 }
 
 /*
@@ -123,6 +145,7 @@ function parseProductDigit(data) {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data) {
+
   const promise = {
     [TYPE.DD]: parseSwitchDigit(data),
     [TYPE.CC]: parseCounterDigit(data),
