@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 'use strict';
-// const Company = require('../collections/company');
+const Company = require('../collections/company');
 // 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
 /**
  * 分为五类(目前electricity暂时不用)
@@ -159,33 +159,38 @@ function parseDigitalData(dataType, data) {
 
 // 获取解析数据的主函数
 exports.getData = (doc) => {
-  let obj = {
-    companyId: '',
-    probeNo: '',
-    dataType: '',
-    value: '',
-    monitorNo: ''
-  };
-
   for (let key in doc) {
     var companyName = key;
+    if (companyName) {
+      return new Promise(function(resolve, reject) {
+        Company.find({
+          companyName: companyName
+        }).exec((err, data) => {
+          if (err) {
+            console.log(err);
+          }
+          let obj = {
+            companyId: '',
+            probeNo: '',
+            dataType: '',
+            value: '',
+            monitorNo: ''
+          };
+          let monitor = doc[companyName];
+          obj.companyId = data[0]._id;
+          obj.monitorNo = monitor.slice(4, 8);
+
+          obj.probeNo = monitor.slice(0, 4);
+
+          obj.dataType = typeMap.get(monitor.slice(4, 6));
+
+          obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8));
+          resolve(obj);
+        });
+      });
+
+    }
+
   }
 
-  let monitor = doc[companyName];
-
-  // Company.find({
-  //   companyName: companyName
-  // }).exec((err, doc) => {
-  //   obj.companyId = doc.companyId;
-  // });
-
-  // obj.companyId = doc.companyId;
-  obj.monitorNo = monitor.slice(4, 8);
-
-  obj.probeNo = monitor.slice(0, 4);
-
-  obj.dataType = typeMap.get(monitor.slice(4, 6));
-
-  obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8));
-  return obj;
 };

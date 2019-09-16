@@ -453,13 +453,6 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "pipelineId",
-            "description": "<p>The Id list of pipeline(流水线的id).</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
             "field": "probeId",
             "description": "<p>The id of probe.</p>"
           },
@@ -1300,6 +1293,485 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routers/probe.js",
     "groupTitle": "probe"
+  },
+  {
+    "type": "get",
+    "url": "/v1/product/:companyId",
+    "title": "Product companyIdGet",
+    "name": "CompanyIdGet",
+    "group": "product",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of product(公司的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The id of product(流水线的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productNo",
+            "description": "<p>The number of product（产品型号代号(生产线上采集器设置的)(纯数字)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productType",
+            "description": "<p>The type of product（产品类型(沙发椅，办公椅，酒吧椅)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productModel",
+            "description": "<p>The model of product（产品注册代码(记录在册)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productCraft",
+            "description": "<p>The craft of product（产品工艺）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "suttleWeight",
+            "description": "<p>The weight of product（产品净重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "totalWeight",
+            "description": "<p>The totalweight of product（产品总重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>The createtime of product（创建时间）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [ \"5d7e6459201b65318803e3a2\"],\n       \"probeList\": [ \"5d7e6459201b65318803e3a2\",\n           \"5d7e6459201b65318803e3a2\"],\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"productName\": \"product\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15T18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Product register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/product.js",
+    "groupTitle": "product"
+  },
+  {
+    "type": "delete",
+    "url": "/v1/product/:id",
+    "title": "Product delete",
+    "name": "ProductDelete",
+    "group": "product",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>The id of product(产品的id).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Delete success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Product register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/product.js",
+    "groupTitle": "product"
+  },
+  {
+    "type": "get",
+    "url": "/v1/product",
+    "title": "Product get",
+    "name": "ProductGet",
+    "group": "product",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The id of product(流水线的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of product(公司id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productNo",
+            "description": "<p>The number of product（产品型号代号(生产线上采集器设置的)(纯数字)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productType",
+            "description": "<p>The type of product（产品类型(沙发椅，办公椅，酒吧椅)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productModel",
+            "description": "<p>The model of product（产品注册代码(记录在册)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productCraft",
+            "description": "<p>The craft of product（产品工艺）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "suttleWeight",
+            "description": "<p>The weight of product（产品净重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "totalWeight",
+            "description": "<p>The totalweight of product（产品总重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>The createtime of product（创建时间）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [],\n       \"probeList\": [],\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"productName\": \"product\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15TproductName18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Product register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/product.js",
+    "groupTitle": "product"
+  },
+  {
+    "type": "post",
+    "url": "/v1/product",
+    "title": "Product post",
+    "name": "ProductPost",
+    "group": "product",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The id of product(流水线的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of product(公司id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productNo",
+            "description": "<p>The number of product（产品型号代号(生产线上采集器设置的)(纯数字)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productType",
+            "description": "<p>The type of product（产品类型(沙发椅，办公椅，酒吧椅)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productModel",
+            "description": "<p>The model of product（产品注册代码(记录在册)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productCraft",
+            "description": "<p>The craft of product（产品工艺）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "suttleWeight",
+            "description": "<p>The weight of product（产品净重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "totalWeight",
+            "description": "<p>The totalweight of product（产品总重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>The createtime of product（创建时间）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Add success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Product register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/product.js",
+    "groupTitle": "product"
+  },
+  {
+    "type": "put",
+    "url": "/v1/product",
+    "title": "Product put",
+    "name": "ProductPut",
+    "group": "product",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The id of product(流水线的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of product(公司id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productNo",
+            "description": "<p>The number of product（产品型号代号(生产线上采集器设置的)(纯数字)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productType",
+            "description": "<p>The type of product（产品类型(沙发椅，办公椅，酒吧椅)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productModel",
+            "description": "<p>The model of product（产品注册代码(记录在册)）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "productCraft",
+            "description": "<p>The craft of product（产品工艺）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "suttleWeight",
+            "description": "<p>The weight of product（产品净重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "totalWeight",
+            "description": "<p>The totalweight of product（产品总重）.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>The createtime of product（创建时间）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Update success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Product register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/product.js",
+    "groupTitle": "product"
   },
   {
     "type": "get",

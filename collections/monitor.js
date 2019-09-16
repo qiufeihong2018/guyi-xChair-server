@@ -7,17 +7,17 @@ const Monitor = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
   },
-  // companyId: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Company'
-  // },
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company'
+  },
+  probeId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Probe'
+  },
   monitorNo: {
     type: String
   },
-  probeId: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Probe'
-  }],
   probeNo: {
     type: String
   },

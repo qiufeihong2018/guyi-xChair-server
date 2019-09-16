@@ -30,22 +30,24 @@ const getData = require('../services/type').getData;
  *    }
  */
 
-router.post('/', function(req, res, next) {
+router.post('/', function(req, res) {
   const doc = req.body;
   console.log(doc);
-  const obj = getData(doc);
-  console.log(obj);
-  if (obj) {
-    Monitor.create(obj, function(err, data) {
-      if (err) {
-        log.error(err);
-      }
-      res.status(200).json({
-        status: 200,
-        data: 'Post success！'
+  getData(doc).then((data) => {
+    console.log(data);
+    if (data) {
+      Monitor.create(data, function(err) {
+        if (err) {
+          log.error(err);
+        }
+        res.status(200).json({
+          status: 200,
+          data: 'Post success！'
+        });
       });
-    });
-  }
+    }
+  });
+
 });
 
 /**
@@ -123,7 +125,7 @@ router.post('/', function(req, res, next) {
  *      "message": "Monitor register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   Monitor.find({}).then((doc) => {
     res.status(200).json(doc);
   });
@@ -135,8 +137,6 @@ router.get('/', function(req, res, next) {
  * @apiGroup monitor
  *
  * @apiParam {String} companyId  The id of company(公司的id).
- * @apiSuccess {String} pipelineId  The Id list of pipeline(流水线的id).
- * @apiSuccess {String} probeId  The id of probe.
  * @apiParam {String} start  The startTime of monitor.
  * @apiParam {String} end  The endTime of monitor.
  *
@@ -182,12 +182,10 @@ router.get('/', function(req, res, next) {
  *      "message": "Monitor register failure!"
  *    }
  */
-router.post('/search', function(req, res, next) {
+router.post('/search', function(req, res) {
   const start = req.body.start;
   const end = req.body.end;
   const companyId = req.body.companyId;
-  const pipelineId = req.body.pipelineId;
-  const probeId = req.body.probeId;
 
   Monitor.find({
     $and: [{
@@ -196,17 +194,7 @@ router.post('/search', function(req, res, next) {
         $lte: end
       }
     }, {
-      companyId: {
-        $regex: companyId
-      }
-    }, {
-      pipelineId: {
-        $regex: pipelineId
-      }
-    }, {
-      probeId: {
-        $regex: probeId
-      }
+      companyId: companyId
     }]
   }).then((doc) => {
     res.status(200).json(doc);
@@ -290,7 +278,7 @@ router.post('/search', function(req, res, next) {
  *      "message": "Monitor register failure!"
  *    }
  */
-router.get('/:companyId', function(req, res, next) {
+router.get('/:companyId', function(req, res) {
   const companyId = req.params.companyId;
   if (companyId) {
     Monitor.find({
