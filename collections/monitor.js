@@ -7,23 +7,24 @@ const Monitor = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
   },
-  companyId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Company'
+  // companyId: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Company'
+  // },
+  monitorNo: {
+    type: String
   },
-  probeId: {
+  probeId: [{
     type: Schema.Types.ObjectId,
     ref: 'Probe'
-  },
+  }],
   probeNo: {
     type: String
   },
   dataType: {
     type: String
   },
-  value: {
-    type: Array
-  },
+  value: {},
   timestamp: {
     type: Date,
     default: Date.now()

@@ -78,7 +78,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/v1/auth/register",
+    "url": "/v1/monitor",
     "title": "Monitor get",
     "name": "MonitorGet",
     "group": "monitor",
@@ -87,24 +87,52 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "array",
             "optional": false,
-            "field": "name",
-            "description": "<p>The name of company(公司名称).</p>"
+            "field": "probeId",
+            "description": "<p>The id of probe.</p>"
           },
           {
             "group": "Success 200",
-            "type": "object",
+            "type": "array",
             "optional": false,
-            "field": "instrument",
-            "description": "<p>Equipment name（设备名称）.</p>"
+            "field": "repeatedCounting",
+            "description": "<p>入口数量（重复计次品次数）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "defectiveNumber",
+            "description": "<p>次品次数.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "productionQuantity",
+            "description": "<p>出品数量（真实的产量）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "positiveEnergy",
+            "description": "<p>「正向电能」.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "negativeEnergy",
+            "description": "<p>「反向电能」.</p>"
           },
           {
             "group": "Success 200",
             "type": "array",
             "optional": false,
             "field": "value",
-            "description": "<p>Device value（设备值）.</p>"
+            "description": "<p>产品型号代号.</p>"
           },
           {
             "group": "Success 200",
@@ -112,27 +140,6 @@ define({ "api": [
             "optional": false,
             "field": "timestamp",
             "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "monitorNo",
-            "description": "<p>Acquisition device number（采集设备编号）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "array",
-            "optional": false,
-            "field": "acquisition",
-            "description": "<p>Digital acquisition channel（数据采集通道）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "acquisitionChannel",
-            "description": "<p>Digital acquisition channel model（数据采集通道模式）.</p>"
           },
           {
             "group": "Success 200",
@@ -146,7 +153,58 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n{\n     \"instrument\": {\n         \"value\": [],\n         \"instrumentNumber\": \"CD01\"\n     },\n     \"timestamp\": \"2019-09-12T05:19:27.857Z\",\n     \"_id\": \"5d79d56ce9ec9524c552dea0\",\n     \"name\": \"LONGBO\",\n     \"monitorNo\": \"AA04\",\n     \"acquisition\": [\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea2\",\n             \"acquisitionChannel\": \"DD01\",\n             \"value\": \"01\"\n         },\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea1\",\n             \"acquisitionChannel\": \"DD02\",\n             \"value\": \"01\"\n         }\n     ],\n     \"createdAt\": \"2019-09-12T05:19:40.884Z\",\n     \"updatedAt\": \"2019-09-12T05:19:40.884Z\",\n     \"__v\": 0\n },",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Monitor register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/monitor.js",
+    "groupTitle": "monitor"
+  },
+  {
+    "type": "post",
+    "url": "/v1/monitor",
+    "title": "Monitor Post",
+    "name": "MonitorPost",
+    "group": "monitor",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "monitor",
+            "description": "<p>The info of monitor.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"status\": 200,\n   \"data\": \"Post success！\"\n}",
           "type": "json"
         }
       ]
@@ -176,54 +234,67 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/v1/auth/register",
-    "title": "Pipeline get",
-    "name": "PipelineGet",
-    "group": "oprate",
+    "url": "/v1/pipeline/:companyId",
+    "title": "Pipeline companyIdGet",
+    "name": "CompanyIdGet",
+    "group": "pipeline",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "object",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of pipeline(公司id).</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "Number",
+            "type": "String",
             "optional": false,
-            "field": "lineId",
-            "description": "<p>The name of company(公司id).</p>"
+            "field": "pipelineName",
+            "description": "<p>The name of pipeline(流水线名称).</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "String",
             "optional": false,
-            "field": "lineName",
-            "description": "<p>Equipment name（设备名称）.</p>"
+            "field": "companyId",
+            "description": "<p>The id of company(公司id值).</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "Array",
             "optional": false,
-            "field": "factoryName",
-            "description": "<p>Device value（设备值）.</p>"
+            "field": "probeList",
+            "description": "<p>The id of pipeline(采集器的id值列表).</p>"
           },
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "date",
             "optional": false,
-            "field": "companyName",
+            "field": "timestamp",
             "description": "<p>Time to add data（添加数据的时间）.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "date",
             "optional": false,
-            "field": "equipmentList",
-            "description": "<p>Acquisition device number（采集设备编号）.</p>"
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n{\n     \"instrument\": {\n         \"value\": [],\n         \"instrumentNumber\": \"CD01\"\n     },\n     \"timestamp\": \"2019-09-12T05:19:27.857Z\",\n     \"_id\": \"5d79d56ce9ec9524c552dea0\",\n     \"name\": \"LONGBO\",\n     \"equipmentNumber\": \"AA04\",\n     \"acquisition\": [\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea2\",\n             \"acquisitionChannel\": \"DD01\",\n             \"value\": \"01\"\n         },\n         {\n             \"_id\": \"5d79d56ce9ec9524c552dea1\",\n             \"acquisitionChannel\": \"DD02\",\n             \"value\": \"01\"\n         }\n     ],\n     \"createdAt\": \"2019-09-12T05:19:40.884Z\",\n     \"updatedAt\": \"2019-09-12T05:19:40.884Z\",\n     \"__v\": 0\n },",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [ \"5d7e6459201b65318803e3a2\"],\n       \"probeList\": [ \"5d7e6459201b65318803e3a2\",\n           \"5d7e6459201b65318803e3a2\"],\n       \"timestamp\": \"2019-09-15T17:54:46.571Z\",\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15T18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
           "type": "json"
         }
       ]
@@ -249,7 +320,290 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "routers/pipeline.js",
-    "groupTitle": "oprate"
+    "groupTitle": "pipeline"
+  },
+  {
+    "type": "delete",
+    "url": "/v1/pipeline/:id",
+    "title": "Pipeline delete",
+    "name": "PipelineDelete",
+    "group": "pipeline",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>The id of pipeline(流水线的id).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Delete success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
+    "groupTitle": "pipeline"
+  },
+  {
+    "type": "get",
+    "url": "/v1/pipeline",
+    "title": "Pipeline get",
+    "name": "PipelineGet",
+    "group": "pipeline",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "pipelineName",
+            "description": "<p>The name of pipeline(流水线名称).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company(公司id值).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "optional": false,
+            "field": "probeList",
+            "description": "<p>The id of pipeline(采集器的id值列表).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n    {\n       \"companyId\": [],\n       \"probeList\": [],\n       \"timestamp\": \"2019-09-15T17:54:46.571Z\",\n       \"_id\": \"5d7e7cc03af4bf6838e0addc\",\n       \"pipelineName\": \"pipeline\",\n       \"created_at\": \"2019-09-15T18:02:40.759Z\",\n       \"updatedAt\": \"2019-09-15TpipelineName18:02:40.759Z\",\n       \"__v\": 0\n   },\n ]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
+    "groupTitle": "pipeline"
+  },
+  {
+    "type": "post",
+    "url": "/v1/pipeline",
+    "title": "Pipeline post",
+    "name": "PipelinePost",
+    "group": "pipeline",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineName",
+            "description": "<p>The name of pipeline(流水线的名字).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of pipeline(公司id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "probeList",
+            "description": "<p>The list of probe（流水线的id列表）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Add success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
+    "groupTitle": "pipeline"
+  },
+  {
+    "type": "put",
+    "url": "/v1/pipeline",
+    "title": "Pipeline put",
+    "name": "PipelinePut",
+    "group": "pipeline",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>The id of pipeline(流水线的id)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineName",
+            "description": "<p>The id of pipeline(流水线的名称).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of pipeline(公司id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "array",
+            "optional": false,
+            "field": "probeList",
+            "description": "<p>The id list of probe（采集器的id列表）.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Update success\",\n   \"status\": 200\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipeline.js",
+    "groupTitle": "pipeline"
   },
   {
     "type": "delete",
@@ -274,7 +628,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n{\n   \"monitorList\": [\n       \"DD01\"\n   ],\n   \"timestamp\": \"2019-09-15T16:37:01.051Z\",\n   \"_id\": \"5d7e68ae00f0693b353895ab\",\n   \"probeNo\": \"AA01\",\n   \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n   \"updatedAt\": \"2019-09-15T16:48:35.738Z\",\n   \"__v\": 0\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Delete success\",\n   \"status\": 200\n}",
           "type": "json"
         }
       ]
@@ -315,6 +669,110 @@ define({ "api": [
             "group": "Success 200",
             "type": "string",
             "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The Id list of pipeline(流水线的id列表).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company（公司id值）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "monitorList",
+            "description": "<p>The name of probe(采集器名称).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>The id of probe（采集器的id值）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "probeNo",
+            "description": "<p>The number of probe（采集器的型号）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n {\n       \"pipelineId\": \"5d7eda1aa88b42050147b6ce\",\n       \"companyId\": \"5d7e6459201b65318803e3a2\",\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-16T01:00:34.199Z\",\n       \"_id\": \"5d7ee0a84152b1118bee06b6\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-16T01:08:56.613Z\",\n       \"updatedAt\": \"2019-09-16T01:08:56.613Z\",\n       \"__v\": 0\n   }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Probe register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/probe.js",
+    "groupTitle": "probe"
+  },
+  {
+    "type": "get",
+    "url": "/v1/probe",
+    "title": "Probe get",
+    "name": "ProbeGet",
+    "group": "probe",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company(流水线的id列表).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
             "field": "pipelineList",
             "description": "<p>The Id list of pipeline(流水线的id列表).</p>"
           },
@@ -323,7 +781,7 @@ define({ "api": [
             "type": "object",
             "optional": false,
             "field": "probeName",
-            "description": "<p>The name of probe(公司名称).</p>"
+            "description": "<p>The name of probe(采集器名称).</p>"
           },
           {
             "group": "Success 200",
@@ -397,21 +855,21 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "object",
+            "type": "string",
             "optional": false,
             "field": "companyId",
             "description": "<p>The id of probe(公司id).</p>"
           },
           {
             "group": "Parameter",
-            "type": "array",
+            "type": "string",
             "optional": false,
             "field": "probeNo",
             "description": "<p>The number of probe（采集器的型号）.</p>"
           },
           {
             "group": "Parameter",
-            "type": "date",
+            "type": "array",
             "optional": false,
             "field": "monitorList",
             "description": "<p>The name of monitor（添加数据的时间）.</p>"
@@ -423,7 +881,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"pipelineList\": [],\n       \"timestamp\": \"2019-09-15T16:15:15.318Z\",\n       \"_id\": \"5d7e63c1ba35562fe1084626\",\n       \"probeName\": \"中源家居股份有限公司\",\n       \"created_at\": \"2019-09-15T16:16:01.907Z\",\n       \"updatedAt\": \"2019-09-15T16:16:01.907Z\",\n       \"__v\": 0\n   },\n ]",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Add success\",\n   \"status\": 200\n}",
           "type": "json"
         }
       ]
@@ -452,10 +910,10 @@ define({ "api": [
     "groupTitle": "probe"
   },
   {
-    "type": "post",
+    "type": "put",
     "url": "/v1/probe",
-    "title": "Probe post",
-    "name": "ProbePost",
+    "title": "Probe put",
+    "name": "ProbePut",
     "group": "probe",
     "parameter": {
       "fields": {
@@ -502,7 +960,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n{\n   \"monitorList\": [\n       \"DD01\"\n   ],\n   \"timestamp\": \"2019-09-15T16:37:01.051Z\",\n   \"_id\": \"5d7e68ae00f0693b353895ab\",\n   \"probeNo\": \"AA01\",\n   \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n   \"updatedAt\": \"2019-09-15T16:48:35.738Z\",\n   \"__v\": 0\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"data\": \"Update success\",\n   \"status\": 200\n}",
           "type": "json"
         }
       ]
@@ -529,168 +987,6 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routers/probe.js",
     "groupTitle": "probe"
-  },
-  {
-    "type": "post",
-    "url": "/v1/auth/register",
-    "title": "Monitor Register",
-    "name": "MonitorRegister",
-    "group": "userAuthentication",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "name",
-            "description": "<p>New user's name.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "monitorNo",
-            "description": "<p>New user's password.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "acquisition",
-            "description": "<p>New user's name.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "instrument",
-            "description": "<p>New user's password.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "instrumentNumber",
-            "description": "<p>New user's password.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "value",
-            "description": "<p>New user's password.</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"gushen\",\n  \"message\": \"Monitor registered successful\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "optional": false,
-            "field": "REGISTER_FAILURE",
-            "description": "<p>The register failure.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Monitor register failure!\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "routers/monitor.js",
-    "groupTitle": "userAuthentication"
-  },
-  {
-    "type": "post",
-    "url": "/v1/auth/register",
-    "title": "Pipeline Register",
-    "name": "PipelineRegister",
-    "group": "userAuthentication",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "username",
-            "description": "<p>New user's name.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "password",
-            "description": "<p>New user's password.</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "username",
-            "description": "<p>The username of the register user.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "message",
-            "description": "<p>The registering success info.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"gushen\",\n  \"message\": \"Pipeline registered successful\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "optional": false,
-            "field": "REGISTER_FAILURE",
-            "description": "<p>The register failure.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Pipeline register failure!\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "routers/pipeline.js",
-    "groupTitle": "userAuthentication"
   },
   {
     "type": "get",

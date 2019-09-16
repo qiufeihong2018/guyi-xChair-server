@@ -6,13 +6,13 @@ const Pipeline = new Schema({
   pipelineName: {
     type: String
   },
-  // companyId: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Company'
-  // },
-  oprateList: [{
+  companyId: {
     type: Schema.Types.ObjectId,
-    ref: 'Oprate'
+    ref: 'Company'
+  },
+  probeList: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Probe'
   }],
   timestamp: {
     type: Date,

@@ -3,27 +3,22 @@
 const router = require('express').Router();
 const Monitor = require('../collections/monitor');
 
-const log = require('../services/logger').createLogger('userAuthentication');
+const log = require('../services/logger').createLogger('monitor');
 const getData = require('../services/type').getData;
 
 /**
- * @api {post} /v1/auth/register Monitor Register
- * @apiName MonitorRegister
- * @apiGroup userAuthentication
+ * @api {post} /v1/monitor Monitor Post
+ * @apiName MonitorPost
+ * @apiGroup monitor
  *
- * @apiParam {String} name  New user's name.
- * @apiParam {String} monitorNo  New user's password.
- * @apiParam {String} acquisition  New user's name.
- * @apiParam {String} instrument  New user's password.
- * @apiParam {String} instrumentNumber  New user's password.
- * @apiParam {String} value  New user's password.
+ * @apiParam {String} monitor  The info of monitor.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
- *     {
- *       "username": "gushen",
- *       "message": "Monitor registered successful"
- *     }
+ *{
+ *    "status": 200,
+ *    "data": "Post success！"
+ *}
  *
  * @apiError REGISTER_FAILURE The register failure.
  *
@@ -35,61 +30,87 @@ const getData = require('../services/type').getData;
  *    }
  */
 
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
   const doc = req.body;
   console.log(doc);
   const obj = getData(doc);
+  console.log(obj);
   if (obj) {
-    Monitor.create(obj, function(err, res) {
+    Monitor.create(obj, function (err, data) {
       if (err) {
         log.error(err);
       }
+      res.status(200).json({
+        status: 200,
+        data: 'Post success！'
+      });
     });
   }
 });
 
 /**
- * @api {get} /v1/auth/register Monitor get
+ * @api {get} /v1/monitor Monitor get
  * @apiName MonitorGet
  * @apiGroup monitor
  *
- * @apiSuccess {string} name  The name of company(公司名称).
- * @apiSuccess {object} instrument  Equipment name（设备名称）.
- * @apiSuccess {array} value  Device value（设备值）.
+ * @apiSuccess {array} probeId  The id of probe.
+ * @apiSuccess {array} repeatedCounting  入口数量（重复计次品次数）.
+ * @apiSuccess {array} defectiveNumber  次品次数.
+ * @apiSuccess {array} productionQuantity  出品数量（真实的产量）.
+ * @apiSuccess {array} positiveEnergy  「正向电能」.
+ * @apiSuccess {array} negativeEnergy  「反向电能」.
+ * @apiSuccess {array} value 产品型号代号.
  * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
- * @apiSuccess {string} monitorNo Acquisition device number（采集设备编号）.
- * @apiSuccess {array} acquisition  Digital acquisition channel（数据采集通道）.
- * @apiSuccess {string} acquisitionChannel Digital acquisition channel model（数据采集通道模式）.
- * @apiSuccess {string} value  Digital acquisition channel model value（数据采集通道模式的值）.
  * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *   {
- *        "instrument": {
- *            "value": [],
- *            "instrumentNumber": "CD01"
- *        },
- *        "timestamp": "2019-09-12T05:19:27.857Z",
- *        "_id": "5d79d56ce9ec9524c552dea0",
- *        "name": "LONGBO",
- *        "monitorNo": "AA04",
- *        "acquisition": [
+ *        "probeId": [],
+ *        "value": [
  *            {
- *                "_id": "5d79d56ce9ec9524c552dea2",
- *                "acquisitionChannel": "DD01",
- *                "value": "01"
- *            },
- *            {
- *                "_id": "5d79d56ce9ec9524c552dea1",
- *                "acquisitionChannel": "DD02",
- *                "value": "01"
+ *                "repeatedCounting": "00006B06",
+ *                "defectiveNumber": "0001AD97",
+ *                "productionQuantity": "000E65E8"
  *            }
  *        ],
- *        "createdAt": "2019-09-12T05:19:40.884Z",
- *        "updatedAt": "2019-09-12T05:19:40.884Z",
+ *        "timestamp": "2019-09-16T00:00:13.693Z",
+ *        "_id": "5d7ed20118564770825d06df",
+ *        "probeNo": "AA02",
+ *        "dataType": "counter",
+ *        "createdAt": "2019-09-16T00:06:25.170Z",
+ *        "updatedAt": "2019-09-16T00:06:25.170Z",
  *        "__v": 0
  *    },
+ *    {
+ *        "probeId": [],
+ *        "value": [
+ *            {
+ *                "positiveEnergy": 1677787136199683.2,
+ *                "negativeEnergy": 1677787136199683.2
+ *            }
+ *        ],
+ *        "timestamp": "2019-09-16T00:00:13.693Z",
+ *        "_id": "5d7ed20618564770825d06e0",
+ *        "probeNo": "AA04",
+ *        "dataType": "power",
+ *        "createdAt": "2019-09-16T00:06:30.985Z",
+ *        "updatedAt": "2019-09-16T00:06:30.985Z",
+ *        "__v": 0
+ *    },
+ *    {
+ *        "probeId": [],
+ *        "value": [
+ *            "90"
+ *        ],
+ *        "timestamp": "2019-09-16T00:00:13.693Z",
+ *        "_id": "5d7ed27618564770825d06e1",
+ *        "probeNo": "AA04",
+ *        "dataType": "product",
+ *        "createdAt": "2019-09-16T00:08:22.690Z",
+ *        "updatedAt": "2019-09-16T00:08:22.690Z",
+ *        "__v": 0
+ *    }
  *
  * @apiError REGISTER_FAILURE The register failure.
  *
@@ -100,10 +121,11 @@ router.post('/', function(req, res, next) {
  *      "message": "Monitor register failure!"
  *    }
  */
-router.get('/all', function(req, res, next) {
+router.get('/:start/:end', function (req, res, next) {
+  let start = req.params.start;
+  let end = req.params.end;
   Monitor.find({}).then((doc) => {
     res.status(200).json(doc);
   });
 });
-
 module.exports = router;

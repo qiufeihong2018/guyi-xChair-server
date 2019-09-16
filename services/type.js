@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 'use strict';
-const Company = require('../collections/company');
+// const Company = require('../collections/company');
 // 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
 /**
  * 分为五类(目前electricity暂时不用)
@@ -46,6 +46,7 @@ let CFMap = new Map([
 这两个，其中一个代表真正的电能
 
 Uinit32位，看看前面是否带符号（小数点）
+test:'AA04CD0101014E2201014E22'
 */
 function getEnergy(data) {
   // eslint-disable-next-line max-len
@@ -65,7 +66,7 @@ function parseSwitchDigit(data) {
 解析counter(计数器)数字信号   CC**
 第一个8位入口数量（重复计次品次数），
 第二个8位次品次数，
-第三个8位出品数量（真实的产量））
+第三个8位出品数量（真实的产量）
 test:'AA02CC0100006B060001AD97000E65E8'
 */
 function parseCounterDigit(data) {
@@ -102,14 +103,17 @@ function parseElectricityDigit(data) {
 
 }
 
-// 解析product(产品编号)数字信号 CF
+/*
+解析product(产品编号)数字信号 CF
+test:'AA04CF0146F04645F0455AF05A' 90确定
+*/
 function parseProductDigit(data) {
 
   let str = '';
 
   if (data.slice(-6) === STRING.OK) {
 
-    for (let i = 0; i < data.length; i += 6) {
+    for (let i = 0; i < data.length - 6; i += 6) {
       str += CFMap.get(data.slice(i, i + 6));
     }
   }
@@ -136,7 +140,8 @@ exports.getData = (doc) => {
     companyId: '',
     probeNo: '',
     dataType: '',
-    value: ''
+    value: '',
+    monitorNo: ''
   };
 
   for (let key in doc) {
@@ -145,11 +150,14 @@ exports.getData = (doc) => {
 
   let monitor = doc[companyName];
 
-  Company.find({
-    companyName: companyName
-  }).exec((err, doc) => {
-    obj.companyId = doc.companyId;
-  });
+  // Company.find({
+  //   companyName: companyName
+  // }).exec((err, doc) => {
+  //   obj.companyId = doc.companyId;
+  // });
+
+  // obj.companyId = doc.companyId;
+  obj.monitorNo = monitor.slice(4, 8);
 
   obj.probeNo = monitor.slice(0, 4);
 

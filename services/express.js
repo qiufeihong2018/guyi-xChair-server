@@ -1,3 +1,4 @@
+/* eslint-disable space-before-function-paren */
 'use strict';
 
 const express = require('express');
@@ -12,15 +13,16 @@ const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
 
-app.all('*', function(req, res, next) {
+exports.start = function () {
 
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-  next();
-});
+  app.all('*', function (req, res, next) {
 
-exports.start = function() {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    next();
+  });
+
   mongo.connect();
 
   // Session configuration
