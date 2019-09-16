@@ -137,7 +137,7 @@ router.put('/', function(req, res, next) {
  * @apiName CompanyIdGet
  * @apiGroup pipeline
  *
- * @apiParam {object} companyId  The id of pipeline(公司id).
+ * @apiParam {string} companyId  The id of pipeline(公司的id).
  *
  * @apiSuccess {String} pipelineName  The name of pipeline(流水线名称).
  * @apiSuccess {String} companyId  The id of company(公司id值).
@@ -178,12 +178,7 @@ router.get('/:companyId', function(req, res, next) {
     }).then((doc) => {
       res.status(200).json(doc);
     });
-  } else {
-    Pipeline.find({}).then((doc) => {
-      res.status(200).json(doc);
-    });
   }
-
 });
 /**
  * @api {get} /v1/pipeline Pipeline get
@@ -225,4 +220,5 @@ router.get('/', function(req, res, next) {
     res.status(200).json(doc);
   });
 });
+
 module.exports = router;

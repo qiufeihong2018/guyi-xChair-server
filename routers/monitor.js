@@ -53,13 +53,19 @@ router.post('/', function(req, res, next) {
  * @apiName MonitorGet
  * @apiGroup monitor
  *
- * @apiSuccess {array} probeId  The id of probe.
- * @apiSuccess {array} repeatedCounting  入口数量（重复计次品次数）.
- * @apiSuccess {array} defectiveNumber  次品次数.
- * @apiSuccess {array} productionQuantity  出品数量（真实的产量）.
- * @apiSuccess {array} positiveEnergy  「正向电能」.
- * @apiSuccess {array} negativeEnergy  「反向电能」.
- * @apiSuccess {array} value 产品型号代号.
+ * @apiSuccess {string} probeId  The id of probe.
+ * @apiSuccess {number} repeatedCounting  入口数量（重复计次品次数）.
+ * @apiSuccess {number} defectiveNumber  次品次数.
+ * @apiSuccess {number} productionQuantity  出品数量（真实的产量）.
+ * @apiSuccess {number} positiveEnergy  「正向电能」.
+ * @apiSuccess {number} negativeEnergy  「反向电能」.
+ * @apiSuccess {number} value 产品型号代号.
+ * @apiSuccess {number} voltage 电压.
+ * @apiSuccess {number} electric 电流.
+ * @apiSuccess {number} activePower 有功功率.
+ * @apiSuccess {number} reactivePower 无功功率.
+ * @apiSuccess {number} apparentPower 视在功率.
+ * @apiSuccess {number} powerFactor 功率因数.
  * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
  * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
  *
@@ -128,20 +134,93 @@ router.get('/', function(req, res, next) {
 });
 
 /**
- * @api {get} /v1/monitor Monitor get
- * @apiName MonitorGet
+ * @api {post} /v1/monitor/search Monitor search
+ * @apiName MonitorSearch
  * @apiGroup monitor
  *
+ * @apiParam {String} companyId  The id of company(公司的id).
+ * @apiSuccess {String} pipelineId  The Id list of pipeline(流水线的id).
+ * @apiSuccess {String} probeId  The id of probe.
  * @apiParam {String} start  The startTime of monitor.
  * @apiParam {String} end  The endTime of monitor.
  *
- * @apiSuccess {array} probeId  The id of probe.
- * @apiSuccess {array} repeatedCounting  入口数量（重复计次品次数）.
- * @apiSuccess {array} defectiveNumber  次品次数.
- * @apiSuccess {array} productionQuantity  出品数量（真实的产量）.
- * @apiSuccess {array} positiveEnergy  「正向电能」.
- * @apiSuccess {array} negativeEnergy  「反向电能」.
- * @apiSuccess {array} value 产品型号代号.
+ * @apiSuccess {String} probeId  The id of probe.
+ * @apiSuccess {number} repeatedCounting  入口数量（重复计次品次数）.
+ * @apiSuccess {number} defectiveNumber  次品次数.
+ * @apiSuccess {number} productionQuantity  出品数量（真实的产量）.
+ * @apiSuccess {number} positiveEnergy  「正向电能」.
+ * @apiSuccess {number} negativeEnergy  「反向电能」.
+ * @apiSuccess {number} voltage 电压.
+ * @apiSuccess {number} electric 电流.
+ * @apiSuccess {number} activePower 有功功率.
+ * @apiSuccess {number} reactivePower 无功功率.
+ * @apiSuccess {number} apparentPower 视在功率.
+ * @apiSuccess {number} powerFactor 功率因数.
+ * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
+ * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *   {
+ *        "probeId": [],
+ *        "value": [
+ *            {
+ *                "repeatedCounting": "00006B06",
+ *                "defectiveNumber": "0001AD97",
+ *                "productionQuantity": "000E65E8"
+ *            }
+ *        ],
+ *        "timestamp": "2019-09-16T00:00:13.693Z",
+ *        "_id": "5d7ed20118564770825d06df",
+ *        "probeNo": "AA02",
+ *        "dataType": "counter",
+ *        "createdAt": "2019-09-16T00:06:25.170Z",
+ *        "updatedAt": "2019-09-16T00:06:25.170Z",
+ *        "__v": 0
+ *    }
+ *
+ * @apiError REGISTER_FAILURE The register failure.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *    {
+ *      "err": "REGISTER_FAILURE",
+ *      "message": "Monitor register failure!"
+ *    }
+ */
+router.post('/search', function(req, res, next) {
+  const start = req.body.start;
+  const end = req.body.end;
+  Monitor.find({
+    'timestamp': {
+      '$gte': start,
+      '$lte': end
+    }
+  }).then((doc) => {
+    res.status(200).json(doc);
+  });
+});
+
+/**
+ * @api {get} /v1/monitor:company Monitor companyIdGet
+ * @apiName CompanyIdGet
+ * @apiGroup monitor
+ *
+ * @apiParam {string} companyId  The id of company(公司的id).
+ *
+ * @apiSuccess {string} probeId  The id of probe.
+ * @apiSuccess {number} repeatedCounting  入口数量（重复计次品次数）.
+ * @apiSuccess {number} defectiveNumber  次品次数.
+ * @apiSuccess {number} productionQuantity  出品数量（真实的产量）.
+ * @apiSuccess {number} positiveEnergy  「正向电能」.
+ * @apiSuccess {number} negativeEnergy  「反向电能」.
+ * @apiSuccess {number} value 产品型号代号.
+ * @apiSuccess {number} voltage 电压.
+ * @apiSuccess {number} electric 电流.
+ * @apiSuccess {number} activePower 有功功率.
+ * @apiSuccess {number} reactivePower 无功功率.
+ * @apiSuccess {number} apparentPower 视在功率.
+ * @apiSuccess {number} powerFactor 功率因数.
  * @apiSuccess {date} timestamp  Time to add data（添加数据的时间）.
  * @apiSuccess {date} createdAt  Time to get doc（从集合中获取数据的时间）.
  *
@@ -203,13 +282,15 @@ router.get('/', function(req, res, next) {
  *      "message": "Monitor register failure!"
  *    }
  */
-router.get('/:start/:end', function(req, res, next) {
-  let start = req.params.start;
-  let end = req.params.end;
-  
-  Monitor.find({timestamp}).then((doc) => {
-    res.status(200).json(doc);
-  });
+router.get('/:companyId', function(req, res, next) {
+  const companyId = req.params.companyId;
+  if (companyId) {
+    Monitor.find({
+      companyId: companyId
+    }).then((doc) => {
+      res.status(200).json(doc);
+    });
+  }
 });
 
 module.exports = router;

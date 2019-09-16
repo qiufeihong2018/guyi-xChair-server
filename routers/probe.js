@@ -138,7 +138,7 @@ router.put('/', function(req, res, next) {
  * @apiName ProbeGet
  * @apiGroup probe
  *
- * @apiSuccess {string} pipelineId  The Id list of pipeline(流水线的id列表).
+ * @apiSuccess {string} pipelineId  The Id list of pipeline(流水线的id).
  * @apiSuccess {string} companyId  The id of company（公司id值）.
  * @apiSuccess {array} monitorList  The name of probe(采集器名称).
  * @apiSuccess {string} _id  The id of probe（采集器的id值）.
@@ -181,11 +181,11 @@ router.get('/', function(req, res, next) {
 
 
 /**
- * @api {get} /v1/probe Probe get
- * @apiName ProbeGet
+ * @api {get} /v1/probe/:companyId Probe companyIdGet
+ * @apiName CompanyIdGet
  * @apiGroup probe
  *
- * @apiParam {string} companyId  The id of company(流水线的id列表).
+ * @apiParam {string} companyId  The id of company(公司的id).
  *
  * @apiSuccess {string} pipelineList  The Id list of pipeline(流水线的id列表).
  * @apiSuccess {object} probeName  The name of probe(采集器名称).
@@ -220,11 +220,13 @@ router.get('/', function(req, res, next) {
  */
 router.get('/:companyId', function(req, res, next) {
   const companyId = req.params.companyId;
-  Probe.find({
-    companyId: companyId
-  }).then((doc) => {
-    res.status(200).json(doc);
-  });
+  if (companyId) {
+    Probe.find({
+      companyId: companyId
+    }).then((doc) => {
+      res.status(200).json(doc);
+    });
+  }
 });
 
 module.exports = router;

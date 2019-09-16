@@ -114,11 +114,11 @@ function parseElectricityDigit(data) {
 
   obj.voltage = (256 * parseInt(data.slice(0, 2), 16) + parseInt(data.slice(2, 4), 16)) / 10;
   obj.electric = (256 * parseInt(data.slice(4, 6), 16) + parseInt(data.slice(6, 8), 16)) / 100;
-  obj.activePower = (256 * parseInt(data.slice(8, 10), 16) + parseInt(data.slice(10, 12), 16));
+  obj.activePower = 256 * parseInt(data.slice(8, 10), 16) + parseInt(data.slice(10, 12), 16);
   // eslint-disable-next-line max-len
-  obj.reactivePower = (256 * parseInt(data.slice(12, 14), 16) + parseInt(data.slice(14, 16), 16));
+  obj.reactivePower = 256 * parseInt(data.slice(12, 14), 16) + parseInt(data.slice(14, 16), 16);
   // eslint-disable-next-line max-len
-  obj.apparentPower = (256 * parseInt(data.slice(16, 18), 16) + parseInt(data.slice(18, 20), 16));
+  obj.apparentPower = 256 * parseInt(data.slice(16, 18), 16) + parseInt(data.slice(18, 20), 16);
   // eslint-disable-next-line max-len
   obj.powerFactor = (256 * parseInt(data.slice(20, 22), 16) + parseInt(data.slice(22, 24), 16)) / 1000;
 

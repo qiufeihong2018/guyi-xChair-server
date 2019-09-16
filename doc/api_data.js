@@ -78,6 +78,166 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/v1/monitor:company",
+    "title": "Monitor companyIdGet",
+    "name": "CompanyIdGet",
+    "group": "monitor",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company(公司的id).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "probeId",
+            "description": "<p>The id of probe.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "repeatedCounting",
+            "description": "<p>入口数量（重复计次品次数）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "defectiveNumber",
+            "description": "<p>次品次数.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "productionQuantity",
+            "description": "<p>出品数量（真实的产量）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "positiveEnergy",
+            "description": "<p>「正向电能」.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "negativeEnergy",
+            "description": "<p>「反向电能」.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "value",
+            "description": "<p>产品型号代号.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "voltage",
+            "description": "<p>电压.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "electric",
+            "description": "<p>电流.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "activePower",
+            "description": "<p>有功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "reactivePower",
+            "description": "<p>无功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "apparentPower",
+            "description": "<p>视在功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "powerFactor",
+            "description": "<p>功率因数.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"positiveEnergy\": 1677787136199683.2,\n             \"negativeEnergy\": 1677787136199683.2\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20618564770825d06e0\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"power\",\n     \"createdAt\": \"2019-09-16T00:06:30.985Z\",\n     \"updatedAt\": \"2019-09-16T00:06:30.985Z\",\n     \"__v\": 0\n },\n {\n     \"probeId\": [],\n     \"value\": [\n         \"90\"\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed27618564770825d06e1\",\n     \"probeNo\": \"AA04\",\n     \"dataType\": \"product\",\n     \"createdAt\": \"2019-09-16T00:08:22.690Z\",\n     \"updatedAt\": \"2019-09-16T00:08:22.690Z\",\n     \"__v\": 0\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Monitor register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/monitor.js",
+    "groupTitle": "monitor"
+  },
+  {
+    "type": "get",
     "url": "/v1/monitor",
     "title": "Monitor get",
     "name": "MonitorGet",
@@ -87,52 +247,94 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "string",
             "optional": false,
             "field": "probeId",
             "description": "<p>The id of probe.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "repeatedCounting",
             "description": "<p>入口数量（重复计次品次数）.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "defectiveNumber",
             "description": "<p>次品次数.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "productionQuantity",
             "description": "<p>出品数量（真实的产量）.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "positiveEnergy",
             "description": "<p>「正向电能」.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "negativeEnergy",
             "description": "<p>「反向电能」.</p>"
           },
           {
             "group": "Success 200",
-            "type": "array",
+            "type": "number",
             "optional": false,
             "field": "value",
             "description": "<p>产品型号代号.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "voltage",
+            "description": "<p>电压.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "electric",
+            "description": "<p>电流.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "activePower",
+            "description": "<p>有功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "reactivePower",
+            "description": "<p>无功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "apparentPower",
+            "description": "<p>视在功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "powerFactor",
+            "description": "<p>功率因数.</p>"
           },
           {
             "group": "Success 200",
@@ -233,6 +435,180 @@ define({ "api": [
     "groupTitle": "monitor"
   },
   {
+    "type": "post",
+    "url": "/v1/monitor/search",
+    "title": "Monitor search",
+    "name": "MonitorSearch",
+    "group": "monitor",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company(公司的id).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start",
+            "description": "<p>The startTime of monitor.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end",
+            "description": "<p>The endTime of monitor.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "pipelineId",
+            "description": "<p>The Id list of pipeline(流水线的id).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "probeId",
+            "description": "<p>The id of probe.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "repeatedCounting",
+            "description": "<p>入口数量（重复计次品次数）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "defectiveNumber",
+            "description": "<p>次品次数.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "productionQuantity",
+            "description": "<p>出品数量（真实的产量）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "positiveEnergy",
+            "description": "<p>「正向电能」.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "negativeEnergy",
+            "description": "<p>「反向电能」.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "voltage",
+            "description": "<p>电压.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "electric",
+            "description": "<p>电流.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "activePower",
+            "description": "<p>有功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "reactivePower",
+            "description": "<p>无功功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "apparentPower",
+            "description": "<p>视在功率.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "powerFactor",
+            "description": "<p>功率因数.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "  HTTP/1.1 200 OK\n{\n     \"probeId\": [],\n     \"value\": [\n         {\n             \"repeatedCounting\": \"00006B06\",\n             \"defectiveNumber\": \"0001AD97\",\n             \"productionQuantity\": \"000E65E8\"\n         }\n     ],\n     \"timestamp\": \"2019-09-16T00:00:13.693Z\",\n     \"_id\": \"5d7ed20118564770825d06df\",\n     \"probeNo\": \"AA02\",\n     \"dataType\": \"counter\",\n     \"createdAt\": \"2019-09-16T00:06:25.170Z\",\n     \"updatedAt\": \"2019-09-16T00:06:25.170Z\",\n     \"__v\": 0\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Monitor register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/monitor.js",
+    "groupTitle": "monitor"
+  },
+  {
     "type": "get",
     "url": "/v1/pipeline/:companyId",
     "title": "Pipeline companyIdGet",
@@ -243,10 +619,10 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "object",
+            "type": "string",
             "optional": false,
             "field": "companyId",
-            "description": "<p>The id of pipeline(公司id).</p>"
+            "description": "<p>The id of pipeline(公司的id).</p>"
           }
         ]
       }
@@ -606,6 +982,96 @@ define({ "api": [
     "groupTitle": "pipeline"
   },
   {
+    "type": "get",
+    "url": "/v1/probe/:companyId",
+    "title": "Probe companyIdGet",
+    "name": "CompanyIdGet",
+    "group": "probe",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "companyId",
+            "description": "<p>The id of company(公司的id).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "pipelineList",
+            "description": "<p>The Id list of pipeline(流水线的id列表).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "object",
+            "optional": false,
+            "field": "probeName",
+            "description": "<p>The name of probe(采集器名称).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "array",
+            "optional": false,
+            "field": "_id",
+            "description": "<p>The id of probe（公司id值）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "timestamp",
+            "description": "<p>Time to add data（添加数据的时间）.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "createdAt",
+            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-15T16:37:01.051Z\",\n       \"_id\": \"5d7e68ae00f0693b353895ab\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n       \"updatedAt\": \"2019-09-15T16:37:02.515Z\",\n       \"__v\": 0\n   }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Probe register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/probe.js",
+    "groupTitle": "probe"
+  },
+  {
     "type": "delete",
     "url": "/v1/probe",
     "title": "Probe delete",
@@ -670,7 +1136,7 @@ define({ "api": [
             "type": "string",
             "optional": false,
             "field": "pipelineId",
-            "description": "<p>The Id list of pipeline(流水线的id列表).</p>"
+            "description": "<p>The Id list of pipeline(流水线的id).</p>"
           },
           {
             "group": "Success 200",
@@ -720,96 +1186,6 @@ define({ "api": [
         {
           "title": "Success-Response:",
           "content": "    HTTP/1.1 200 OK\n[\n {\n       \"pipelineId\": \"5d7eda1aa88b42050147b6ce\",\n       \"companyId\": \"5d7e6459201b65318803e3a2\",\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-16T01:00:34.199Z\",\n       \"_id\": \"5d7ee0a84152b1118bee06b6\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-16T01:08:56.613Z\",\n       \"updatedAt\": \"2019-09-16T01:08:56.613Z\",\n       \"__v\": 0\n   }\n]",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "optional": false,
-            "field": "REGISTER_FAILURE",
-            "description": "<p>The register failure.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"Probe register failure!\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "routers/probe.js",
-    "groupTitle": "probe"
-  },
-  {
-    "type": "get",
-    "url": "/v1/probe",
-    "title": "Probe get",
-    "name": "ProbeGet",
-    "group": "probe",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "companyId",
-            "description": "<p>The id of company(流水线的id列表).</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "pipelineList",
-            "description": "<p>The Id list of pipeline(流水线的id列表).</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "object",
-            "optional": false,
-            "field": "probeName",
-            "description": "<p>The name of probe(采集器名称).</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "array",
-            "optional": false,
-            "field": "_id",
-            "description": "<p>The id of probe（公司id值）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
-            "field": "timestamp",
-            "description": "<p>Time to add data（添加数据的时间）.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "date",
-            "optional": false,
-            "field": "createdAt",
-            "description": "<p>Time to get doc（从集合中获取数据的时间）.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"monitorList\": [\n           \"DD01\"\n       ],\n       \"timestamp\": \"2019-09-15T16:37:01.051Z\",\n       \"_id\": \"5d7e68ae00f0693b353895ab\",\n       \"probeNo\": \"AA02\",\n       \"createdAt\": \"2019-09-15T16:37:02.515Z\",\n       \"updatedAt\": \"2019-09-15T16:37:02.515Z\",\n       \"__v\": 0\n   }\n]",
           "type": "json"
         }
       ]
