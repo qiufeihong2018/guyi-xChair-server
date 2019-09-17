@@ -132,21 +132,17 @@ function parseCounterDigit(data) {
     let difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
     let difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
     let difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
-    console.log(difRepeated);
-    console.log(difDefective);
-    console.log(difProduction);
-    console.log(obj);
-    console.log(prevVal);
-    // if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
-    //   Monitor.findByIdAndRemove({
-    //     _id: prevVal._id
-    //   }).exec((err, data) => {
-    //     if (err) {
-    //       console.log(err);
-    //     }
-    //     log.info(`${prevVal._id} is deleted`);
-    //   });
-    // }
+
+    if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
+      Monitor.findByIdAndRemove({
+        _id: prevVal._id
+      }).exec((err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        log.info(`${prevVal._id} is deleted`);
+      });
+    }
   });
   return obj;
 
@@ -214,18 +210,24 @@ function parseProductDigit(data) {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data) {
-  console.log(dataType);
-  console.log(data);
-
-  const promise = {
-    [TYPE.DD]: parseSwitchDigit(data),
-    [TYPE.CC]: parseCounterDigit(data),
-    [TYPE.CD]: parsePowerDigit(data),
-    [TYPE.CE]: parseElectricityDigit(data),
-    [TYPE.CF]: parseProductDigit(data),
-  };
-
-  return promise[dataType];
+  let res = '';
+  switch (dataType) {
+    case 'DD':
+      res = parseSwitchDigit(data);
+      break;
+    case 'CC':
+      res = parseCounterDigit(data);
+      break;
+    case 'CD':
+      res = parsePowerDigit(data);
+      break;
+    case 'CE':
+      res = parseElectricityDigit(data);
+      break;
+    default:
+      res = parseProductDigit(data);
+  }
+  return res;
 }
 
 // 获取解析数据的主函数
