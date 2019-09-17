@@ -27,6 +27,7 @@ let typeMap = new Map([
   [TYPE.CE, VALUE.CE],
   [TYPE.CF, VALUE.CF]
 ]);
+
 let CFMap = new Map([
   [STRING.CF1, NUMBER.CF1],
   [STRING.CF2, NUMBER.CF2],
@@ -105,6 +106,8 @@ function parseCounterDigit(data) {
 
     difVal = obj.repeatedCounting - prevVal.value.repeatedCounting;
     difTime = obj.createdAt - prevVal.createdAt;
+    console.log(difVal);
+    console.log(difTime);
 
     if (Math.abs(difVal) > 0) {
       plState.state = 'on';
@@ -121,7 +124,7 @@ function parseCounterDigit(data) {
     plState.difTime = plState.endTime - plState.startTime;
 
 
-    PipelineState.create(plState, function(err) {
+    PipelineState.create(plState, function (err) {
       if (err) {
         console.log(err);
       }
@@ -235,7 +238,7 @@ exports.getData = (doc) => {
   for (let key in doc) {
     var companyName = key;
     if (companyName) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         Company.find({
           aliasName: companyName
         }).exec((err, data) => {
