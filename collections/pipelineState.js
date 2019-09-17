@@ -12,9 +12,11 @@ const PipelineState = new Schema({
     type: String
   },
   startTime: {
+    // 某个状态的开始区间
     type: Date
   },
   endTime: {
+    // 某个状态的结束区间
     type: Date
   },
   difTime: {
