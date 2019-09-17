@@ -10,17 +10,19 @@
     "apidoc": "apidoc -i routers/",
     "mochawesome": "./node_modules/.bin/mocha --reporter mochawesome",
     "dev": "node index.js",
-    "live": "live-server ./ --port=5100",
-    "server": "pm2 start index.js --name='xChair-server'"
+    "live": "live-server ./doc --port=5100",
+    "server": "pm2 start index.js --name='xChair-server'",
+    "stop": "pm2 delete xChair-server",
+    "restart": "npm run stop && npm run server"
   },
   "keywords": [
     "express"
   ],
   "repository": {
     "type": "git",
-    "url": "http://192.168.3.2/dhb/express-rest.git"
+    "url": "https://github.com/Allen7D/xChair-server.git"
   },
-  "author": "DHBing",
+  "author": "Ceres",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
