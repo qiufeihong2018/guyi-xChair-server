@@ -12,6 +12,9 @@ const CompanySchema = new Schema({
   aliasName: {
     type: String
   },
+  chineseName: {
+    type: String
+  },
   pipelineList: [{
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
