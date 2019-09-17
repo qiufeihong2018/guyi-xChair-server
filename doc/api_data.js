@@ -927,6 +927,69 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/v1/pipelineState",
+    "title": "PipelineState get",
+    "name": "PipelineStateGet",
+    "group": "pipelineState",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "state",
+            "description": "<p>The state of PipelineState(流水线状态).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "startTime",
+            "description": "<p>The startTime of PipelineState(流水线状态开始时间).</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "date",
+            "optional": false,
+            "field": "endTime",
+            "description": "<p>The endTime of PipelineState(流水线状态结束时间).</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"_id\": \"5d80b45533495b71f34654a3\",\n       \"state\": \"pending\",\n       \"startTime\": \"2019-09-17T10:23:40.011Z\",\n       \"endTime\": \"2019-09-17T10:24:21.378Z\",\n       \"createdAt\": \"2019-09-17T10:24:21.388Z\",\n       \"updatedAt\": \"2019-09-17T10:24:21.388Z\",\n       \"__v\": 0\n   },\n ]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "REGISTER_FAILURE",
+            "description": "<p>The register failure.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": " HTTP/1.1 500 Internal Server Error\n{\n  \"err\": \"REGISTER_FAILURE\",\n  \"message\": \"PipelineState register failure!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/pipelineState.js",
+    "groupTitle": "pipelineState"
+  },
+  {
+    "type": "get",
     "url": "/v1/probe/:companyId",
     "title": "Probe companyIdGet",
     "name": "CompanyIdGet",

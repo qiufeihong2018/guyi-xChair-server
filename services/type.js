@@ -92,7 +92,8 @@ function parseCounterDigit(data) {
   let plState = {
     state: '',
     startTime: '',
-    endTime: ''
+    endTime: '',
+    difTime: ''
   };
   // 运行状态业务
   Monitor.find({
@@ -109,16 +110,18 @@ function parseCounterDigit(data) {
       plState.state = 'on';
     }
     if (Math.abs(difVal) === 0) {
-      if (Math.abs(difTime) > 300) {
+      if (Math.abs(difTime) > 300000) {
         plState.state = 'off';
+      } else {
+        plState.state = 'pending';
       }
-      plState.state = 'pending';
     }
-    console.log(difTime)
     plState.startTime = prevVal.createdAt;
     plState.endTime = obj.createdAt;
+    plState.difTime = plState.endTime - plState.startTime;
 
-    PipelineState.create(plState, function (err) {
+
+    PipelineState.create(plState, function(err) {
       if (err) {
         console.log(err);
       }
@@ -139,9 +142,7 @@ function parseCounterDigit(data) {
         log.info(`${prevVal._id} is deleted`);
       });
     }
-
   });
-
   return obj;
 
 }
@@ -225,7 +226,7 @@ exports.getData = (doc) => {
   for (let key in doc) {
     var companyName = key;
     if (companyName) {
-      return new Promise(function (resolve, reject) {
+      return new Promise(function(resolve, reject) {
         Company.find({
           aliasName: companyName
         }).exec((err, data) => {

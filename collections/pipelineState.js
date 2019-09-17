@@ -8,7 +8,7 @@ const PipelineState = new Schema({
     ref: 'Pipeline'
   },
   state: {
-  //  off(关机), on(运行), pending(待机)
+    //  off(关机), on(运行), pending(待机)
     type: String
   },
   startTime: {
@@ -16,6 +16,9 @@ const PipelineState = new Schema({
   },
   endTime: {
     type: Date
+  },
+  difTime: {
+    type: Number
   }
 }, {
   timestamps: {
