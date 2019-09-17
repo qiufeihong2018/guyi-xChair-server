@@ -33,6 +33,8 @@ const getData = require('../services/type').getData;
 router.post('/', function(req, res) {
   const doc = req.body;
   getData(doc).then((data) => {
+    console.log(data);
+    log.info('Data analysis success');
     if (data) {
       Monitor.create(data, function(err) {
         if (err) {
