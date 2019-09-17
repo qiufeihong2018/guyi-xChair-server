@@ -5,20 +5,32 @@ const CompanyModel = require('../collections/company');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
-router.get('/all', async(req, res, next) => {
-  const doc = await CompanyModel.find({})
-  res.status(200).json(doc) 
+router.get('/all', async (req, res, next) => {
+  const doc = await CompanyModel.find({});
+  res.status(200).json(doc);
 });
 
 
 router.post('/', function(req, res, next) {
-  const doc = req.body;
-  CompanyModel.create(doc, function(err, res) {
-    if (err) {
-      log.error(err);
+  const data = req.body;
+  CompanyModel.find({
+    aliasName: data.aliasName
+  }).exec((err, doc) => {
+    if (doc) {
+      res.status(500).json({
+        data: 'Data is exist'
+      });
+    } else {
+      CompanyModel.create(data, function(err, res) {
+        if (err) {
+          log.error(err);
+        }
+      });
+      res.status(200).json({
+        data: 'Add company'
+      });
     }
   });
-  res.status(200).json({});
 });
 
 
@@ -54,10 +66,12 @@ router.post('/', function(req, res, next) {
  *      "message": "Company register failure!"
  *    }
  */
-router.get('/:id', async(req, res, next) => {
-  const { id } = req.params
-  const doc = await CompanyModel.findById(id)
-  res.status(200).json(doc)
+router.get('/:id', async (req, res, next) => {
+  const {
+    id
+  } = req.params;
+  const doc = await CompanyModel.findById(id);
+  res.status(200).json(doc);
 });
 
 
