@@ -182,11 +182,18 @@ router.get('/', function(req, res) {
  *      "message": "Monitor register failure!"
  *    }
  */
+
+function localDate(v) {
+  const d = new Date(v || Date.now());
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString();
+}
 router.post('/search', function(req, res) {
-  const start = req.body.start;
-  const end = req.body.end;
+
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
   const companyId = req.body.companyId;
-  console.log(req.body);
+
   Monitor.find({
     $and: [{
       'createdAt': {

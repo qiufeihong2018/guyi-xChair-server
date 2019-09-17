@@ -1,6 +1,6 @@
-{ "name": "express-rest",
+{ "name": "xChair-server",
   "version": "0.1.0",
-  "description": "express basic example",
-  "title": "express rest demo",
-  "url" : "http://localhost:5001/api"
+  "description": "xChair-server api",
+  "title": "xChair-server",
+  "url" : "http://121.40.107.95:5001/api"
 }

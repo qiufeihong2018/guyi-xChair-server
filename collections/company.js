@@ -21,7 +21,8 @@ const CompanySchema = new Schema({
   }]
 }, {
   timestamps: {
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   }
 });
 

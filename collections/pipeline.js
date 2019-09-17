@@ -15,7 +15,8 @@ const Pipeline = new Schema({
   }
 }, {
   timestamps: {
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   }
 });
 
