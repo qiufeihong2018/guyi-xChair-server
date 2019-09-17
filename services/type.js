@@ -77,6 +77,7 @@ function parseSwitchDigit(data) {
 test:'AA02CC0100006B060001AD97000E65E8'
 */
 function parseCounterDigit(data) {
+  console.log(data);
   let obj = {
     repeatedCounting: '',
     defectiveNumber: '',
