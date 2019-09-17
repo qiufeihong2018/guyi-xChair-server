@@ -939,7 +939,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "state",
-            "description": "<p>The state of PipelineState(流水线状态).</p>"
+            "description": "<p>The state of PipelineState(流水线状态:off(关机), on(运行), pending(待机)).</p>"
           },
           {
             "group": "Success 200",

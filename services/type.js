@@ -132,6 +132,10 @@ function parseCounterDigit(data) {
     let difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
     let difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
     let difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
+    console.log(difRepeated);
+    console.log(difDefective);
+    console.log(difProduction);
+
     if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
       Monitor.findByIdAndRemove({
         _id: prevVal._id
