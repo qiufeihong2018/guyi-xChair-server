@@ -135,17 +135,18 @@ function parseCounterDigit(data) {
     console.log(difRepeated);
     console.log(difDefective);
     console.log(difProduction);
-
-    if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
-      Monitor.findByIdAndRemove({
-        _id: prevVal._id
-      }).exec((err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        log.info(`${prevVal._id} is deleted`);
-      });
-    }
+    console.log(obj);
+    console.log(prevVal);
+    // if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
+    //   Monitor.findByIdAndRemove({
+    //     _id: prevVal._id
+    //   }).exec((err, data) => {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+    //     log.info(`${prevVal._id} is deleted`);
+    //   });
+    // }
   });
   return obj;
 
