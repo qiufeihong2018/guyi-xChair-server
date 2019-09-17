@@ -37,8 +37,32 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *      "message": "PipelineState register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   PipelineState.find({}).then((doc) => {
+    const currentTime = new Date();
+    // console.log(doc);
+    console.log(currentTime);
+    const lastTime = doc[doc.length - 1].endTime;
+    const lastState = doc[doc.length - 1].state;
+
+    console.log(lastTime);
+    const differentTime = currentTime - lastTime;
+    const plState = {
+      state: '',
+      startTime: '',
+      endTime: '',
+      difTime: ''
+    };
+    if (lastState === 'on') {
+      if (Math.abs(differentTime) > 300000) {
+        plState.state = 'off';
+        plState.startTime = lastTime;
+        plState.endTime = currentTime;
+        plState.difTime = differentTime;
+      }
+      doc.push(plState);
+    }
+
     log.info('Get data success');
     res.status(200).json(doc);
   });
@@ -101,7 +125,7 @@ function localDate(v) {
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString();
 }
-router.post('/search', function(req, res) {
+router.post('/search', function (req, res) {
 
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);

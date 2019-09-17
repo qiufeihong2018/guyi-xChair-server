@@ -13,7 +13,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
  * @apiParam {string} pipelineId  The id of pipeline(流水线的id).
  * @apiParam {string} companyId  The id of probe(公司id).
  * @apiParam {string} probeNo  The number of probe（采集器的型号）.
- * @apiParam {array} monitorList  The name of monitor（添加数据的时间）.
+ * @apiParam {array} monitorList  The name of monitor（添加采集器列表）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -91,7 +91,7 @@ router.delete('/:id', function(req, res, next) {
  * @apiParam {string} pipelineId  The id of pipeline(流水线的id).
  * @apiParam {object} companyId  The id of probe(公司id).
  * @apiParam {array} probeNo  The number of probe（采集器的型号）.
- * @apiParam {date} monitorList  The name of monitor（添加数据的时间）.
+ * @apiParam {date} monitorList  The name of monitor（添加采集器列表）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK

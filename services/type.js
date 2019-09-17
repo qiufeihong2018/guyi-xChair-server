@@ -70,23 +70,7 @@ function parseSwitchDigit(data) {
   return data;
 }
 
-/*
-解析counter(计数器)数字信号   CC**
-第一个8位入口数量（重复计次品次数），
-第二个8位次品次数，
-第三个8位出品数量（真实的产量）
-test:'AA02CC0100006B060001AD97000E65E8'
-*/
-function parseCounterDigit(data) {
-  let obj = {
-    repeatedCounting: '',
-    defectiveNumber: '',
-    productionQuantity: '',
-    createdAt: new Date()
-  };
-  obj.repeatedCounting = parseInt(data.slice(0, 8), 16);
-  obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
-  obj.productionQuantity = parseInt(data.slice(16, 24), 16);
+function getMonitorState(obj) {
   let prevVal = {};
   let difVal = '';
   let difTime = '';
@@ -96,12 +80,12 @@ function parseCounterDigit(data) {
     endTime: '',
     difTime: ''
   };
-  // 运行状态业务
   Monitor.find({
     monitorNo: 'CC01'
   }).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
+    // 运行状态业务
     prevVal = doc[0];
 
     difVal = obj.repeatedCounting - prevVal.value.repeatedCounting;
@@ -124,7 +108,7 @@ function parseCounterDigit(data) {
     plState.difTime = plState.endTime - plState.startTime;
 
 
-    PipelineState.create(plState, function (err) {
+    PipelineState.create(plState, function(err) {
       if (err) {
         console.log(err);
       }
@@ -147,6 +131,26 @@ function parseCounterDigit(data) {
       });
     }
   });
+}
+/*
+解析counter(计数器)数字信号   CC**
+第一个8位入口数量（重复计次品次数），
+第二个8位次品次数，
+第三个8位出品数量（真实的产量）
+test:'AA02CC0100006B060001AD97000E65E8'
+*/
+function parseCounterDigit(data) {
+  let obj = {
+    repeatedCounting: '',
+    defectiveNumber: '',
+    productionQuantity: '',
+    createdAt: new Date()
+  };
+  obj.repeatedCounting = parseInt(data.slice(0, 8), 16);
+  obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
+  obj.productionQuantity = parseInt(data.slice(16, 24), 16);
+
+  getMonitorState(obj);
   return obj;
 
 }
@@ -238,7 +242,7 @@ exports.getData = (doc) => {
   for (let key in doc) {
     var companyName = key;
     if (companyName) {
-      return new Promise(function (resolve, reject) {
+      return new Promise(function(resolve, reject) {
         Company.find({
           aliasName: companyName
         }).exec((err, data) => {

@@ -110,7 +110,7 @@ router.delete('/:id', function(req, res, next) {
  */
 router.put('/', function(req, res, next) {
   const data = req.body;
-  
+
   Pipeline.findByIdAndUpdate({
     _id: data.id
   }, {
