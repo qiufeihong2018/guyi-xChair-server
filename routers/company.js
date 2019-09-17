@@ -16,7 +16,7 @@ router.post('/', function(req, res, next) {
   CompanyModel.find({
     aliasName: data.aliasName
   }).exec((err, doc) => {
-    if (doc) {
+    if (doc.length > 0) {
       res.status(500).json({
         data: 'Data is exist'
       });
@@ -27,7 +27,7 @@ router.post('/', function(req, res, next) {
         }
       });
       res.status(200).json({
-        data: 'Add company'
+        data: 'Add company success'
       });
     }
   });
