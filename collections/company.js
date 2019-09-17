@@ -1,15 +1,18 @@
 'use strict';
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const { Schema, model} = mongoose;
 
 const CompanySchema = new Schema({
   companyName: {
+    // 公司全称(中文)
     type: String
   },
   aliasName: {
+    // 英文简称
     type: String
   },
   chineseName: {
+    // 中文简称
     type: String
   },
   pipelineList: [{
@@ -23,4 +26,4 @@ const CompanySchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('Company', CompanySchema);
+module.exports = model('Company', CompanySchema);

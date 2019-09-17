@@ -6,12 +6,12 @@ const Pipeline = require('../collections/pipeline');
 const log = require('../services/logger').createLogger('userAuthentication');
 
 /**
- * @api {post} /v1/pipeline Pipeline post
+ * @api {post} /v1/pipeline Pipeline post (新增pipeline)
  * @apiName PipelinePost
  * @apiGroup pipeline
  *
- * @apiParam {string} pipelineName  The name of pipeline(流水线的名字).
  * @apiParam {string} companyId  The id of pipeline(公司id).
+ * @apiParam {string} pipelineName  The name of pipeline(流水线的名字).
  * @apiParam {array} probeList  The list of probe（流水线的id列表）.
  *
  * @apiSuccessExample Success-Response:
@@ -32,7 +32,6 @@ const log = require('../services/logger').createLogger('userAuthentication');
  */
 router.post('/', function(req, res, next) {
   const doc = req.body;
-  console.log(doc);
   Pipeline.create(doc, function(err, doc) {
     if (err) {
       log.error(err);
@@ -43,8 +42,9 @@ router.post('/', function(req, res, next) {
     });
   });
 });
+
 /**
- * @api {delete} /v1/pipeline/:id Pipeline delete
+ * @api {delete} /v1/pipeline/:id Pipeline delete (删除指定pipeline)
  * @apiName PipelineDelete
  * @apiGroup pipeline
  *
@@ -110,8 +110,7 @@ router.delete('/:id', function(req, res, next) {
  */
 router.put('/', function(req, res, next) {
   const data = req.body;
-
-  console.log(data);
+  
   Pipeline.findByIdAndUpdate({
     _id: data.id
   }, {
@@ -131,52 +130,7 @@ router.put('/', function(req, res, next) {
     });
   });
 });
-/**
- * @api {get} /v1/pipeline/:companyId Pipeline companyIdGet
- * @apiName CompanyIdGet
- * @apiGroup pipeline
- *
- * @apiParam {string} companyId  The id of pipeline(公司的id).
- *
- * @apiSuccess {String} pipelineName  The name of pipeline(流水线名称).
- * @apiSuccess {String} companyId  The id of company(公司id值).
- * @apiSuccess {Array} probeList  The id of pipeline(采集器的id值列表).
- * @apiSuccess {date} createdAt  Time to get doc（添加数据的时间）.
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *[
- *     {
- *        "companyId": [ "5d7e6459201b65318803e3a2"],
- *        "probeList": [ "5d7e6459201b65318803e3a2",
- *            "5d7e6459201b65318803e3a2"],
- *        "_id": "5d7e7cc03af4bf6838e0addc",
- *        "pipelineName": "pipeline",
- *        "created_at": "2019-09-15T18:02:40.759Z",
- *        "updatedAt": "2019-09-15T18:02:40.759Z",
- *        "__v": 0
- *    },
- *  ]
- *
- * @apiError REGISTER_FAILURE The register failure.
- *
- * @apiErrorExample Error-Response:
- *     HTTP/1.1 500 Internal Server Error
- *    {
- *      "err": "REGISTER_FAILURE",
- *      "message": "Pipeline register failure!"
- *    }
- */
-router.get('/:companyId', function(req, res, next) {
-  const companyId = req.params.companyId;
-  if (companyId) {
-    Pipeline.find({
-      companyId: companyId
-    }).then((doc) => {
-      res.status(200).json(doc);
-    });
-  }
-});
+
 /**
  * @api {get} /v1/pipeline Pipeline get
  * @apiName PipelineGet
@@ -196,7 +150,7 @@ router.get('/:companyId', function(req, res, next) {
  *        "_id": "5d7e7cc03af4bf6838e0addc",
  *        "pipelineName": "pipeline",
  *        "created_at": "2019-09-15T18:02:40.759Z",
- *        "updatedAt": "2019-09-15TpipelineName18:02:40.759Z",
+ *        "updatedAt": "2019-09-15T18:02:40.759Z",
  *        "__v": 0
  *    },
  *  ]
