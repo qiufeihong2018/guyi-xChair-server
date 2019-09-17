@@ -37,7 +37,7 @@ const Product = new Schema({
   }
 }, {
   timestamps: {
-    createdAt: 'created_at'
+    createdAt: 'createdAt'
   }
 });
 

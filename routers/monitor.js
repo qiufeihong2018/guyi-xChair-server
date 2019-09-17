@@ -186,17 +186,18 @@ router.post('/search', function(req, res) {
   const start = req.body.start;
   const end = req.body.end;
   const companyId = req.body.companyId;
-
+  console.log(req.body);
   Monitor.find({
     $and: [{
-      createdAt: {
-        $gte: start,
-        $lte: end
+      'createdAt': {
+        '$gte': start,
+        '$lte': end
       }
     }, {
-      companyId: companyId
+      'companyId': companyId
     }]
   }).then((doc) => {
+    log.info('Search monitor');
     res.status(200).json(doc);
   });
 });
