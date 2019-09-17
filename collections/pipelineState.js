@@ -8,18 +8,22 @@ const PipelineState = new Schema({
     ref: 'Pipeline'
   },
   state: {
-    // [0, 1, 2]对应 [off(关机), on(运行), pending(待机)]
-    type: Boolean 
-  },
-  count: {
-    // 入口计数器
-    type: Number
+    //  off(关机), on(运行), pending(待机)
+    type: String
   },
   startTime: {
-
+    type: Date
   },
   endTime: {
-
+    type: Date
+  },
+  difTime: {
+    type: Number
+  }
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   }
 });
 

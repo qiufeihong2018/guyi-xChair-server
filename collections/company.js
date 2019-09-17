@@ -1,9 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
-const {
-  Schema,
-  model
-} = mongoose;
+const Schema = mongoose.Schema;
 
 const CompanySchema = new Schema({
   companyName: {
@@ -29,4 +26,4 @@ const CompanySchema = new Schema({
   }
 });
 
-module.exports = model('Company', CompanySchema);
+module.exports = mongoose.model('Company', CompanySchema);

@@ -56,6 +56,7 @@ exports.start = function () {
   app.use('/api/v1/pipeline', require('../routers/pipeline'));
   app.use('/api/v1/probe', require('../routers/probe'));
   app.use('/api/v1/monitor', require('../routers/monitor'));
+  app.use('/api/v1/pipelineState', require('../routers/pipelineState'));
 
 
   // start server
