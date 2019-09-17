@@ -77,7 +77,6 @@ function parseSwitchDigit(data) {
 test:'AA02CC0100006B060001AD97000E65E8'
 */
 function parseCounterDigit(data) {
-  console.log(data);
   let obj = {
     repeatedCounting: '',
     defectiveNumber: '',
@@ -215,6 +214,8 @@ function parseProductDigit(data) {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data) {
+  console.log(dataType);
+  console.log(data);
 
   const promise = {
     [TYPE.DD]: parseSwitchDigit(data),
