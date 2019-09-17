@@ -1,6 +1,11 @@
 /* eslint-disable prefer-const */
 'use strict';
 const Company = require('../collections/company');
+const PipelineState = require('../collections/pipelineState');
+const Monitor = require('../collections/monitor');
+const log = require('../services/logger').createLogger('monitor');
+
+
 // 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
 /**
  * 分为五类(目前electricity暂时不用)
@@ -75,12 +80,70 @@ function parseCounterDigit(data) {
   let obj = {
     repeatedCounting: '',
     defectiveNumber: '',
-    productionQuantity: ''
+    productionQuantity: '',
+    createdAt: new Date()
   };
   obj.repeatedCounting = parseInt(data.slice(0, 8), 16);
   obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
   obj.productionQuantity = parseInt(data.slice(16, 24), 16);
+  let prevVal = {};
+  let difVal = '';
+  let difTime = '';
+  let plState = {
+    state: '',
+    startTime: '',
+    endTime: ''
+  };
+  // 运行状态业务
+  Monitor.find({
+    monitorNo: 'CC01'
+  }).sort({
+    createdAt: -1
+  }).limit(1).exec((err, doc) => {
+    prevVal = doc[0];
+
+    difVal = obj.repeatedCounting - prevVal.value.repeatedCounting;
+    difTime = obj.createdAt - prevVal.createdAt;
+
+    if (Math.abs(difVal) > 0) {
+      plState.state = 'on';
+    }
+    if (Math.abs(difVal) === 0) {
+      if (Math.abs(difTime) > 300) {
+        plState.state = 'off';
+      }
+      plState.state = 'pending';
+    }
+    console.log(difTime)
+    plState.startTime = prevVal.createdAt;
+    plState.endTime = obj.createdAt;
+
+    PipelineState.create(plState, function (err) {
+      if (err) {
+        console.log(err);
+      }
+      log.info('Add status success');
+    });
+
+    // 数据纠错业务
+    let difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
+    let difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
+    let difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
+    if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
+      Monitor.findByIdAndRemove({
+        _id: prevVal._id
+      }).exec((err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        log.info(`${prevVal._id} is deleted`);
+      });
+    }
+
+  });
+
   return obj;
+
 }
 
 /* 解析power(耗电量(千瓦·时)数字信号 CD**
@@ -162,7 +225,7 @@ exports.getData = (doc) => {
   for (let key in doc) {
     var companyName = key;
     if (companyName) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         Company.find({
           aliasName: companyName
         }).exec((err, data) => {
