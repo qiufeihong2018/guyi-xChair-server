@@ -1,6 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose.Schema;
+const { Schema, model } = mongoose;
 
 const PipelineState = new Schema({
   pipelineId: {
