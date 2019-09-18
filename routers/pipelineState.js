@@ -5,6 +5,13 @@ const PipelineState = require('../collections/pipelineState');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
+// Analysis of Greenwich Time
+function localDate(v) {
+  v = Number(v);
+  const d = new Date(v || Date.now());
+  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString();
+}
 /**
  * @api {get} /v1/pipelineState PipelineState get
  * @apiName PipelineStateGet
@@ -111,13 +118,6 @@ router.get('/', function(req, res, next) {
  *    }
  */
 
-// Analysis of Greenwich Time
-function localDate(v) {
-  v = Number(v);
-  const d = new Date(v || Date.now());
-  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString();
-}
 router.post('/search', function(req, res) {
 
   const start = localDate(req.body.start);
@@ -128,9 +128,70 @@ router.post('/search', function(req, res) {
       '$lte': end
     }
   }).then((doc) => {
-
     log.info('Search PipelineState');
     res.status(200).json(doc);
+  });
+});
+
+/**
+ * @api {post} /v1/pipelineState/time PipelineState time
+ * @apiName PipelineStateTime
+ * @apiGroup pipelineState
+ *
+ * @apiParam {String} start  The startTime of pipelineState.
+ * @apiParam {String} end  The endTime of pipelineState.
+ *
+ * @apiSuccess {Number} offTime  The time of off(关闭的时间).
+ * @apiSuccess {Number} onTime  The time of on(运行的时间).
+ * @apiSuccess {Number} pendingTime  The time of pending(空转的时间).
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *{
+ *    "offTime": 3163746,
+ *    "onTime": 787098,
+ *    "pendingTime": 706623
+ *}
+ *
+ * @apiError REGISTER_FAILURE The register failure.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *    {
+ *      "err": "REGISTER_FAILURE",
+ *      "message": "PipelineState register failure!"
+ *    }
+ */
+
+router.post('/time', function(req, res) {
+
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
+  PipelineState.find({
+    'createdAt': {
+      '$gte': start,
+      '$lte': end
+    }
+  }).then((doc) => {
+    const time = {
+      offTime: 0,
+      onTime: 0,
+      pendingTime: 0
+    };
+
+    for (let i = 0; i < doc.length; i++) {
+      if (doc[i].state === 'off') {
+        time.offTime += doc[i].difTime;
+      }
+      if (doc[i].state === 'on') {
+        time.onTime += doc[i].difTime;
+      }
+      if (doc[i].state === 'pending') {
+        time.pendingTime += doc[i].difTime;
+      }
+    }
+    log.info('Search time');
+    res.status(200).json(time);
   });
 });
 
