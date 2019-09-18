@@ -116,8 +116,7 @@ function getMonitorState(obj) {
 
     difVal = obj.repeatedCounting - prevVal.count;
     difTime = obj.createdAt - prevVal.createdAt;
-    console.log(obj);
-    console.log(prevVal);
+
 
     if (Math.abs(difVal) > 0) {
       plState.state = 'on';
@@ -129,18 +128,40 @@ function getMonitorState(obj) {
         plState.state = 'pending';
       }
     }
-    plState.startTime = prevVal.createdAt;
+    plState.startTime = prevVal.endTime;
     plState.endTime = obj.createdAt;
     plState.difTime = plState.endTime - plState.startTime;
     plState.count = obj.repeatedCounting;
 
 
-    PipelineState.create(plState, function(err) {
-      if (err) {
-        console.log(err);
-      }
-      log.info('Add status success');
-    });
+    if (prevVal.state === plState.state) {
+      PipelineState.findByIdAndUpdate({
+        _id: prevVal._id
+      }, {
+        $set: {
+          endTime: obj.createdAt,
+          difTime: obj.createdAt - prevVal.startTime,
+          count: obj.repeatedCounting
+        }
+      }, {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+        setOnInsert: true
+      }, function(err, doc) {
+        if (err) {
+          log.error(err);
+        }
+        log.info(`Update PipelineState ${prevVal._id} success`);
+      });
+    } else {
+      PipelineState.create(plState, function(err) {
+        if (err) {
+          console.log(err);
+        }
+        log.info('Add status success');
+      });
+    }
   });
 }
 /*
