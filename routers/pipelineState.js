@@ -37,32 +37,34 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *      "message": "PipelineState register failure!"
  *    }
  */
+function getState(doc) {
+  // Simulate off state before next upload of monitor
+  const currentTime = new Date();
+  const lastTime = doc[doc.length - 1].endTime;
+  const differentTime = currentTime - lastTime;
+  const plState = {
+    state: '',
+    startTime: '',
+    endTime: '',
+    difTime: ''
+  };
+  if (Math.abs(differentTime) > 300000) {
+    plState.state = 'off';
+    plState.startTime = lastTime;
+    plState.endTime = currentTime;
+    plState.difTime = differentTime;
+    PipelineState.create(plState, function(err) {
+      if (err) {
+        console.log(err);
+      }
+      log.info('Add pipelineState success');
+    });
+  }
+}
+
 router.get('/', function(req, res, next) {
   PipelineState.find({}).then((doc) => {
-
-    // Simulate off state before next upload of monitor
-    const currentTime = new Date();
-    const lastTime = doc[doc.length - 1].endTime;
-    const differentTime = currentTime - lastTime;
-    const plState = {
-      state: '',
-      startTime: '',
-      endTime: '',
-      difTime: ''
-    };
-    if (Math.abs(differentTime) > 300000) {
-      plState.state = 'off';
-      plState.startTime = lastTime;
-      plState.endTime = currentTime;
-      plState.difTime = differentTime;
-      PipelineState.create(plState, function(err) {
-        if (err) {
-          console.log(err);
-        }
-        log.info('Add pipelineState success');
-      });
-    }
-
+    getState(doc);
     log.info('Get data success');
     res.status(200).json(doc);
   });
