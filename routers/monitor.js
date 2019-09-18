@@ -183,8 +183,11 @@ router.get('/', function(req, res) {
  *    }
  */
 
+// Analysis of Greenwich Time
 function localDate(v) {
+  v = Number(v);
   const d = new Date(v || Date.now());
+
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString();
 }
@@ -193,7 +196,6 @@ router.post('/search', function(req, res) {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
   const companyId = req.body.companyId;
-
   Monitor.find({
     $and: [{
       'createdAt': {
