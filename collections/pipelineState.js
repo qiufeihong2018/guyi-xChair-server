@@ -1,6 +1,9 @@
 'use strict';
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+const {
+  Schema,
+  model
+} = mongoose;
 
 const PipelineState = new Schema({
   pipelineId: {
@@ -20,6 +23,10 @@ const PipelineState = new Schema({
     type: Date
   },
   difTime: {
+    type: Number
+  },
+  // 当前的入口量
+  count: {
     type: Number
   }
 }, {

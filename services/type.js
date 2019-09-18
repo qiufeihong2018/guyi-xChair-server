@@ -70,52 +70,16 @@ function parseSwitchDigit(data) {
   return data;
 }
 
-function getMonitorState(obj) {
+function getCorrect(obj) {
+  // 数据纠错业务
   let prevVal = {};
-  let difVal = '';
-  let difTime = '';
-  let plState = {
-    state: '',
-    startTime: '',
-    endTime: '',
-    difTime: ''
-  };
+
   Monitor.find({
     monitorNo: 'CC01'
   }).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
-    // 运行状态业务
     prevVal = doc[0];
-
-    difVal = obj.repeatedCounting - prevVal.value.repeatedCounting;
-    difTime = obj.createdAt - prevVal.createdAt;
-    console.log(difVal);
-    console.log(difTime);
-
-    if (Math.abs(difVal) > 0) {
-      plState.state = 'on';
-    }
-    if (Math.abs(difVal) === 0) {
-      if (Math.abs(difTime) > 300000) {
-        plState.state = 'off';
-      } else {
-        plState.state = 'pending';
-      }
-    }
-    plState.startTime = prevVal.createdAt;
-    plState.endTime = obj.createdAt;
-    plState.difTime = plState.endTime - plState.startTime;
-
-
-    PipelineState.create(plState, function(err) {
-      if (err) {
-        console.log(err);
-      }
-      log.info('Add status success');
-    });
-
-    // 数据纠错业务
     let difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
     let difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
     let difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
@@ -130,6 +94,53 @@ function getMonitorState(obj) {
         log.info(`${prevVal._id} is deleted`);
       });
     }
+  });
+}
+
+function getMonitorState(obj) {
+  let prevVal = {};
+  let difVal = '';
+  let difTime = '';
+  let plState = {
+    state: '',
+    startTime: '',
+    endTime: '',
+    difTime: '',
+    count: ''
+  };
+  PipelineState.find({}).sort({
+    createdAt: -1
+  }).limit(1).exec((err, doc) => {
+    // 运行状态业务
+    prevVal = doc[0];
+
+    difVal = obj.repeatedCounting - prevVal.count;
+    difTime = obj.createdAt - prevVal.createdAt;
+    console.log(obj);
+    console.log(prevVal);
+
+    if (Math.abs(difVal) > 0) {
+      plState.state = 'on';
+    }
+    if (Math.abs(difVal) === 0) {
+      if (Math.abs(difTime) > 300000) {
+        plState.state = 'off';
+      } else {
+        plState.state = 'pending';
+      }
+    }
+    plState.startTime = prevVal.createdAt;
+    plState.endTime = obj.createdAt;
+    plState.difTime = plState.endTime - plState.startTime;
+    plState.count = obj.repeatedCounting;
+
+
+    PipelineState.create(plState, function(err) {
+      if (err) {
+        console.log(err);
+      }
+      log.info('Add status success');
+    });
   });
 }
 /*
@@ -151,6 +162,7 @@ function parseCounterDigit(data) {
   obj.productionQuantity = parseInt(data.slice(16, 24), 16);
 
   getMonitorState(obj);
+  getCorrect(obj);
   return obj;
 
 }

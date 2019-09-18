@@ -40,7 +40,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
 router.get('/', function(req, res, next) {
   PipelineState.find({}).then((doc) => {
 
-
+    // Simulate off state before next upload of monitor
     const currentTime = new Date();
     const lastTime = doc[doc.length - 1].endTime;
     const differentTime = currentTime - lastTime;
