@@ -188,7 +188,7 @@ function localDate(v) {
   v = Number(v);
   const d = new Date(v || Date.now());
 
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString();
 }
 router.post('/search', function(req, res) {
