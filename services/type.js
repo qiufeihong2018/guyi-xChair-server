@@ -115,7 +115,7 @@ function getMonitorState(obj) {
     prevVal = doc[0];
 
     difVal = obj.repeatedCounting - prevVal.count;
-    difTime = obj.createdAt - prevVal.createdAt;
+    difTime = obj.createdAt - prevVal.endTime;
 
 
     if (Math.abs(difVal) > 0) {
@@ -128,10 +128,6 @@ function getMonitorState(obj) {
         plState.state = 'pending';
       }
     }
-    plState.startTime = prevVal.endTime;
-    plState.endTime = obj.createdAt;
-    plState.difTime = plState.endTime - plState.startTime;
-    plState.count = obj.repeatedCounting;
 
 
     if (prevVal.state === plState.state) {
@@ -155,6 +151,9 @@ function getMonitorState(obj) {
         log.info(`Update PipelineState ${prevVal._id} success`);
       });
     } else {
+      plState.startTime = prevVal.endTime;
+      plState.endTime = obj.createdAt;
+      plState.count = obj.repeatedCounting;
       PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
