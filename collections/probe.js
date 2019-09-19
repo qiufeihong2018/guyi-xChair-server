@@ -14,8 +14,8 @@ const Probe = new Schema({
   probeNo: {
     type: String
   },
-  monitorList: {
-    type: Array
+  companyAlias: {
+    type: String
   }
 }, {
   timestamps: {

@@ -13,7 +13,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
  * @apiParam {string} pipelineId  The id of pipeline(流水线的id).
  * @apiParam {string} companyId  The id of probe(公司id).
  * @apiParam {string} probeNo  The number of probe（采集器的型号）.
- * @apiParam {array} monitorList  The name of monitor（添加采集器列表）.
+ * @apiParam {string} companyAlias  The alias of company（公司别名）.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -31,9 +31,9 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *      "message": "Probe register failure!"
  *    }
  */
+
 router.post('/', function(req, res, next) {
   const doc = req.body;
-  console.log(doc);
   Probe.create(doc, function(err, doc) {
     if (err) {
       log.error(err);
@@ -44,6 +44,7 @@ router.post('/', function(req, res, next) {
     });
   });
 });
+
 /**
  * @api {delete} /v1/probe Probe delete
  * @apiName ProbeDelete
@@ -148,16 +149,13 @@ router.put('/', function(req, res, next) {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *[
- *  {
- *        "pipelineId": "5d7eda1aa88b42050147b6ce",
- *        "companyId": "5d7e6459201b65318803e3a2",
- *        "monitorList": [
- *            "DD01"
- *        ],
- *        "_id": "5d7ee0a84152b1118bee06b6",
+ *    {
+ *        "_id": "5d8383487e1dc518ae20bbde",
+ *        "pipelineId": "5d7f03636278515386017dc7",
+ *        "companyId": "5d8041511ba0c859fb1a5897",
  *        "probeNo": "AA02",
- *        "createdAt": "2019-09-16T01:08:56.613Z",
- *        "updatedAt": "2019-09-16T01:08:56.613Z",
+ *        "createdAt": "2019-09-19T13:31:52.196Z",
+ *        "updatedAt": "2019-09-19T13:31:52.196Z",
  *        "__v": 0
  *    }
  *]

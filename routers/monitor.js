@@ -33,7 +33,6 @@ const getData = require('../services/type').getData;
 router.post('/', function(req, res) {
   const doc = req.body;
   getData(doc).then((data) => {
-    console.log(data);
     log.info('Data analysis success');
     if (data) {
       Monitor.create(data, function(err) {
@@ -126,7 +125,19 @@ router.post('/', function(req, res) {
  *    }
  */
 router.get('/', function(req, res) {
-  Monitor.find({}).then((doc) => {
+  const opts = {
+    path: 'company',
+    select: {
+      companyName: 1
+    },
+    model: 'Company',
+    options: {
+      sort: {
+        companyName: -1
+      }
+    }
+  };
+  Monitor.find({}).populate(opts).then((doc) => {
     res.status(200).json(doc);
   });
 });

@@ -3,6 +3,8 @@
 const Company = require('../collections/company');
 const PipelineState = require('../collections/pipelineState');
 const Monitor = require('../collections/monitor');
+const Probe = require('../collections/probe');
+
 const log = require('../services/logger').createLogger('monitor');
 
 
@@ -97,12 +99,12 @@ function getCorrect(obj) {
   });
 }
 
-function getPipelineState(obj) {
+function getPipelineState(obj, probe) {
   let prevVal = {};
   let difVal = '';
   let difTime = '';
   let plState = {
-    pipelineList: [],
+    pipelineId: '',
     state: '',
     startTime: '',
     endTime: '',
@@ -115,7 +117,6 @@ function getPipelineState(obj) {
   }).limit(1).exec((err, doc) => {
     // 运行状态业务
     prevVal = doc[0];
-    plState.pipelineList.push(prevVal._id);
 
     difVal = obj.repeatedCounting - prevVal.count;
     difTime = obj.createdAt - prevVal.endTime;
@@ -157,6 +158,8 @@ function getPipelineState(obj) {
       plState.startTime = prevVal.endTime;
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
+      plState.pipelineId = probe[0].pipelineId;
+      console.log(plState);
       PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
@@ -173,7 +176,7 @@ function getPipelineState(obj) {
 第三个8位出品数量（真实的产量）
 test:'AA02CC0100006B060001AD97000E65E8'
 */
-function parseCounterDigit(data) {
+function parseCounterDigit(data, probe) {
   let obj = {
     repeatedCounting: '',
     defectiveNumber: '',
@@ -184,7 +187,7 @@ function parseCounterDigit(data) {
   obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
   obj.productionQuantity = parseInt(data.slice(16, 24), 16);
 
-  getPipelineState(obj);
+  getPipelineState(obj, probe);
   getCorrect(obj);
   return obj;
 
@@ -251,14 +254,14 @@ function parseProductDigit(data) {
 
 
 // 解析仪表盘的数字信号
-function parseDigitalData(dataType, data) {
+function parseDigitalData(dataType, data, probe) {
   let res = '';
   switch (dataType) {
     case 'DD':
       res = parseSwitchDigit(data);
       break;
     case 'CC':
-      res = parseCounterDigit(data);
+      res = parseCounterDigit(data, probe);
       break;
     case 'CD':
       res = parsePowerDigit(data);
@@ -299,13 +302,19 @@ exports.getData = (doc) => {
 
           obj.dataType = typeMap.get(monitor.slice(4, 6));
 
-          obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8));
-          resolve(obj);
+          // 获取pipelineId
+          Probe.find({
+            $and: [{
+              'companyId': obj.companyId
+            }, {
+              'probeNo': obj.probeNo
+            }]
+          }).exec((err, probe) => {
+            obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8), probe);
+            resolve(obj);
+          });
         });
       });
-
     }
-
   }
-
 };
