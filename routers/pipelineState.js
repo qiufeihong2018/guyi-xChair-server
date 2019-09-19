@@ -46,34 +46,77 @@ function localDate(v) {
  *      "message": "PipelineState register failure!"
  *    }
  */
-function getState(doc) {
+function getState() {
   // Simulate off state before next upload of pipelineState
-  const currentTime = new Date();
-  const lastTime = doc[doc.length - 1].endTime;
-  const differentTime = currentTime - lastTime;
+  let prevVal = {};
   const plState = {
     state: '',
     startTime: '',
     endTime: '',
-    difTime: ''
+    difTime: '',
+    count: ''
   };
-  if (Math.abs(differentTime) > 300000) {
-    plState.state = 'off';
-    plState.startTime = lastTime;
-    plState.endTime = currentTime;
-    plState.difTime = differentTime;
-    PipelineState.create(plState, function(err) {
-      if (err) {
-        console.log(err);
+  let currentTime = '';
+  let lastTime = '';
+  let differentTime = '';
+  let difTime = '';
+  PipelineState.find({}).sort({
+    createdAt: -1
+  }).limit(1).exec((err, data) => {
+    // 运行状态业务
+    prevVal = data[0];
+    // 当前时间
+    currentTime = new Date();
+    // 上一个pipelineState的结束时间
+    lastTime = prevVal.endTime;
+    // 两者的差值
+    differentTime = currentTime - lastTime;
+    // 关闭判断
+    if (Math.abs(differentTime) > 300000) {
+      plState.state = 'off';
+      plState.startTime = lastTime;
+      plState.endTime = currentTime;
+      plState.difTime = differentTime;
+      plState.count = prevVal.count;
+      // 当前时间-上一个pipelineState的开始时间
+      difTime = currentTime - prevVal.startTime;
+      // 1. 与上一个pipelineState同一个state更新数据
+      if (prevVal.state === plState.state) {
+        PipelineState.findByIdAndUpdate({
+          _id: prevVal._id
+        }, {
+          $set: {
+            endTime: currentTime,
+            difTime: difTime,
+            count: prevVal.count
+          }
+        }, {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true,
+          setOnInsert: true
+        }, function(err, doc) {
+          if (err) {
+            log.error(err);
+          }
+          log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
+        });
+      } else {
+        // 1. 与上一个pipelineState的state不相同创建数据
+        PipelineState.create(plState, function(err) {
+          if (err) {
+            console.log(err);
+          }
+          log.info('Add pipelineState success');
+        });
       }
-      log.info('Add pipelineState success');
-    });
-  }
+    }
+  });
+
 }
 
 router.get('/', function(req, res, next) {
   PipelineState.find({}).then((doc) => {
-    getState(doc);
     log.info('Get data success');
     res.status(200).json(doc);
   });
@@ -119,6 +162,7 @@ router.get('/', function(req, res, next) {
  */
 
 router.post('/search', function(req, res) {
+  getState();
 
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);

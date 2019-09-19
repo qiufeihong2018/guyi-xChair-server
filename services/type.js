@@ -148,7 +148,7 @@ function getMonitorState(obj) {
         if (err) {
           log.error(err);
         }
-        log.info(`Update PipelineState ${prevVal._id} success`);
+        log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state}  success`);
       });
     } else {
       plState.startTime = prevVal.endTime;

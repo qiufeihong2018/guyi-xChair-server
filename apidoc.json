@@ -1,6 +1,7 @@
-{ "name": "xChair-server",
-  "version": "0.1.0",
-  "description": "xChair-server api",
-  "title": "xChair-server",
-  "url" : "http://121.40.107.95:5001/api"
+{
+    "name": "xChair-server",
+    "version": "0.1.0",
+    "description": "xChair-server api",
+    "title": "xChair-server",
+    "url": "http://121.40.107.95:5001/api"
 }
