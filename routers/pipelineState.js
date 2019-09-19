@@ -206,6 +206,7 @@ router.post('/search', function(req, res) {
  *      "message": "PipelineState register failure!"
  *    }
  */
+// 获取时间（排除无difTime属性）
 function getTime(doc) {
   return new Promise(function(resolve, reject) {
     const time = {
