@@ -97,22 +97,25 @@ function getCorrect(obj) {
   });
 }
 
-function getMonitorState(obj) {
+function getPipelineState(obj) {
   let prevVal = {};
   let difVal = '';
   let difTime = '';
   let plState = {
+    pipelineList: [],
     state: '',
     startTime: '',
     endTime: '',
     difTime: '',
     count: ''
   };
+
   PipelineState.find({}).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
     // 运行状态业务
     prevVal = doc[0];
+    plState.pipelineList.push(prevVal._id);
 
     difVal = obj.repeatedCounting - prevVal.count;
     difTime = obj.createdAt - prevVal.endTime;
@@ -181,7 +184,7 @@ function parseCounterDigit(data) {
   obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
   obj.productionQuantity = parseInt(data.slice(16, 24), 16);
 
-  getMonitorState(obj);
+  getPipelineState(obj);
   getCorrect(obj);
   return obj;
 

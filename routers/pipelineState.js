@@ -163,7 +163,19 @@ router.get('/', function(req, res, next) {
 
 router.post('/search', function(req, res) {
   getState();
-
+  // Two tables Association
+  const opts = {
+    path: 'pipelineList',
+    select: {
+      pipelineName: 1
+    },
+    model: 'Pipeline',
+    options: {
+      sort: {
+        pipelineName: -1
+      }
+    }
+  };
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
   PipelineState.find({
@@ -171,7 +183,7 @@ router.post('/search', function(req, res) {
       '$gte': start,
       '$lte': end
     }
-  }).then((doc) => {
+  }).populate(opts).then((doc) => {
     log.info('Search PipelineState');
     res.status(200).json(doc);
   });
@@ -236,6 +248,8 @@ router.post('/time', function(req, res) {
 
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
+
+
   PipelineState.find({
     'createdAt': {
       '$gte': start,

@@ -5,6 +5,48 @@ const Pipeline = require('../collections/pipeline');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
+
+/**
+ * @api {get} /v1/pipeline/company/:companyId companyPipeline Get
+ * @apiDescription 获取该公司所有生产线
+ * @apiName GetPipelineList
+ * @apiGroup pipeline
+ *
+ * @apiParam {string} id  The id of company(公司的id).
+ *
+ * @apiSuccess {String} _id  The id of pipeline(生产线id值). *
+ * @apiSuccess {String} pipelineName  The name of pipeline(流水线名称).
+ * @apiSuccess {String} companyId  The id of company(公司id值).
+ * @apiSuccess {Array} probeList  The id of pipeline(采集器的id值列表).
+ * @apiSuccess {date} createdAt  Time to insert db（数据添加的时间）.
+ * @apiSuccess {date} updatedAt  Time to update db（数据更新的时间）.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *[
+ *     {
+ *        "_id": "5d7e7cc03af4bf6838e0addc",
+ *        "pipelineName": "AA01",
+ *        "companyId": "5d7e6459201b65318803e3a2"],
+ *        "probeList": [ "5d7e6459201b65318803e3a2", "5d7e6459201b65318803e3a2"],
+ *        "createdAt": "2019-09-15T18:02:40.759Z",
+ *        "updatedAt": "2019-09-15T18:02:40.759Z",
+ *        "__v": 0
+ *    },
+ *  ]
+ */
+router.get('/company/:companyId', async (req, res, next) => {
+  const {
+    companyId: companyId
+  } = req.params;
+  if (companyId) {
+    const doc = await Pipeline.find({
+      companyId: companyId
+    });
+    res.status(200).json(doc);
+  }
+});
+
 /**
  * @api {post} /v1/pipeline Pipeline post (新增pipeline)
  * @apiName PipelinePost
