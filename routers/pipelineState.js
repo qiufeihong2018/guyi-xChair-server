@@ -206,7 +206,31 @@ router.post('/search', function(req, res) {
  *      "message": "PipelineState register failure!"
  *    }
  */
+function getTime(doc) {
+  return new Promise(function(resolve, reject) {
+    const time = {
+      offTime: 0,
+      onTime: 0,
+      pendingTime: 0
+    };
 
+    for (let i = 0; i < doc.length; i++) {
+      if (doc[i].difTime !== undefined) {
+        const docDifTime = doc[i].difTime;
+        if (doc[i].state === 'off') {
+          time.offTime += docDifTime;
+        }
+        if (doc[i].state === 'on') {
+          time.onTime += docDifTime;
+        }
+        if (doc[i].state === 'pending') {
+          time.pendingTime += docDifTime;
+        }
+      }
+    }
+    resolve(time);
+  });
+}
 router.post('/time', function(req, res) {
 
   const start = localDate(req.body.start);
@@ -217,25 +241,10 @@ router.post('/time', function(req, res) {
       '$lte': end
     }
   }).then((doc) => {
-    const time = {
-      offTime: 0,
-      onTime: 0,
-      pendingTime: 0
-    };
-
-    for (let i = 0; i < doc.length; i++) {
-      if (doc[i].state === 'off') {
-        time.offTime += doc[i].difTime;
-      }
-      if (doc[i].state === 'on') {
-        time.onTime += doc[i].difTime;
-      }
-      if (doc[i].state === 'pending') {
-        time.pendingTime += doc[i].difTime;
-      }
-    }
-    log.info('Search time');
-    res.status(200).json(time);
+    getTime(doc).then((data) => {
+      log.info('Search time');
+      res.status(200).json(data);
+    });
   });
 });
 
