@@ -288,6 +288,7 @@ exports.getData = (doc) => {
             console.log(err);
           }
           let obj = {
+            pipelineId: '',
             companyId: '',
             probeNo: '',
             dataType: '',
@@ -311,6 +312,7 @@ exports.getData = (doc) => {
             }]
           }).exec((err, probe) => {
             obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8), probe);
+            obj.pipelineId = probe[0].pipelineId;
             resolve(obj);
           });
         });

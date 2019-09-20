@@ -214,15 +214,15 @@ router.get('/', function(req, res, next) {
 
 // 获取生产线详情
 router.get('/:id', async (req, res, next) => {
-  const { id } = req.params
-  let doc = await Pipeline.findById(id);
+  const { id } = req.params;
+  const doc = await Pipeline.findById(id);
   res.status(200).json(doc);
-})
+});
 
 // 某个pipeline的当前的(开机、关机、空转)状态
 // 基于pipeline的ID查询
 router.get('/:id/state', async (req, res, next) => {
-  const id = req.params.id
+  const id = req.params.id;
   res.status(200).json({
     id: id
   });
@@ -232,15 +232,15 @@ router.get('/:id/state', async (req, res, next) => {
 // 多个pipeline的当前的(开机、关机、空转)状态
 // 基于ids这个数组，元素为pipeline的ID
 router.post('/list/state', (req, res, next) => {
-  const ids = req.body.ids
+  const ids = req.body.ids;
   res.status(200).json({
     ids: ids
   });
 });
 
 router.get('/:id/state/duration', (req, res, next) => {
-  const id = req.params.id
+  const id = req.params.id;
   res.status(200).json({});
-})
+});
 
 module.exports = router;
