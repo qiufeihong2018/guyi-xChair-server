@@ -242,14 +242,22 @@ test:'AA04CF0146F04645F0455AF05A' 90确定
 function parseProductDigit(data) {
 
   let str = '';
-
+  let res = '';
   if (data.slice(-6) === STRING.OK) {
 
     for (let i = 0; i < data.length - 6; i += 6) {
       str += CFMap.get(data.slice(i, i + 6));
     }
   }
-  return str;
+  if (str.indexOf('确定') !== -1 || str.indexOf('清除') !== -1) {
+    res = str.split('确定');
+    res = res[res.length - 1].split('清除');
+    res = res[res.length - 1];
+    return res;
+  } else {
+    return str;
+  }
+
 }
 
 
