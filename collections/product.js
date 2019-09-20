@@ -8,7 +8,7 @@ const Product = new Schema({
     type: String
   },
   // 生产线ID
-  prodlineId: {
+  pipelineId: {
     type: String
   },
   // 产品型号代号(生产线上采集器设置的)(纯数字)
