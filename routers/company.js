@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const CompanyModel = require('../collections/company');
 const PipelineCol = require('../collections/pipeline');
+const ProductCol = require('../collections/product');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -125,6 +126,20 @@ router.get('/:id/pipeline/all', async (req, res, next) => {
     res.status(200).json(doc);
   }
   res.status(200).json({msg: "ID错误"});
+});
+
+
+// 获取公司的所有产品
+
+router.get('/:id/product', function(req, res, next) {
+  const { id } = req.params;
+  if (id) {
+    ProductCol.find({
+      companyId: id
+    }).then((doc) => {
+      res.status(200).json(doc);
+    });
+  }
 });
 
 module.exports = router;

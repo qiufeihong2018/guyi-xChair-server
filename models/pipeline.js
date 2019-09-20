@@ -19,7 +19,7 @@ class Pipeline {
       probeList: probeNoList
     });
 
-    return probeList
+    return probeNoList
   };
 };
 

@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const Pipeline = require('../collections/pipeline');
+const ProductCol = require('../collections/product');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -241,6 +242,20 @@ router.post('/list/state', (req, res, next) => {
 router.get('/:id/state/duration', (req, res, next) => {
   const id = req.params.id;
   res.status(200).json({});
+});
+
+
+// 获取该生产线的所有产品
+
+router.get('/:id/product', function(req, res, next) {
+  const { id } = req.params;
+  if (id) {
+    ProductCol.find({
+      pipelineId: id
+    }).then((doc) => {
+      res.status(200).json(doc);
+    });
+  }
 });
 
 module.exports = router;

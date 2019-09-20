@@ -54,6 +54,7 @@ exports.start = function () {
   app.use('/api/v1/auth', require('../routers/userAuthentication'));
   app.use('/api/v1/company', require('../routers/company'));
   app.use('/api/v1/pipeline', require('../routers/pipeline'));
+  app.use('/api/v1/product', require('../routers/product'));
   app.use('/api/v1/probe', require('../routers/probe'));
   app.use('/api/v1/monitor', require('../routers/monitor'));
   app.use('/api/v1/pipelineState', require('../routers/pipelineState'));

@@ -11,30 +11,40 @@ const Product = new Schema({
   pipelineId: {
     type: String
   },
-  // 产品型号代号(生产线上采集器设置的)(纯数字)
-  productNo: {
-    type: String
-  },
-  // 产品类型(沙发椅，办公椅，酒吧椅)
-  productType: {
+  // 生产线名
+  pipelineName: {
     type: String
   },
   // 产品注册代码(记录在册)
-  productModel: {
+  model: {
     type: String
   },
-  // 产品工艺
-  productCraft: {
+  // 产品型号代号(生产线上采集器设置的)(纯数字)
+  no: {
     type: String
   },
-  // 产品净重
+  // 产品类型(沙发椅，办公椅，酒吧椅)
+  type: {
+    type: String
+  },
+  // 产品净重(kg)
   suttleWeight: {
-    type: String
+    type: Number
   },
-  // 产品总重
+  // 产品总重(kg)
   totalWeight: {
-    type: String
-  }
+    type: Number
+  },
+  // 长宽高
+  length: {
+    type: Number,
+  },
+  width: {
+    type: Number
+  },
+  height: {
+    type: Number
+  },
 }, {
   timestamps: {
     createdAt: 'createdAt',
@@ -43,3 +53,4 @@ const Product = new Schema({
 });
 
 module.exports = mongoose.model('Product', Product);
+
