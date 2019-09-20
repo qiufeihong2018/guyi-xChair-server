@@ -148,7 +148,7 @@ function getPipelineState(obj, probe) {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function(err, doc) {
+      }, function (err, doc) {
         if (err) {
           log.error(err);
         }
@@ -160,7 +160,7 @@ function getPipelineState(obj, probe) {
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe[0].pipelineId;
       console.log(plState);
-      PipelineState.create(plState, function(err) {
+      PipelineState.create(plState, function (err) {
         if (err) {
           console.log(err);
         }
@@ -249,8 +249,12 @@ function parseProductDigit(data) {
       str += CFMap.get(data.slice(i, i + 6));
     }
   }
+  // 去掉确定和清除的干扰
   if (str.indexOf('确定') !== -1 || str.indexOf('清除') !== -1) {
     res = str.split('确定');
+    res.filter((a) => {
+      return a !== '';
+    });
     res = res[res.length - 1].split('清除');
     res = res[res.length - 1];
     return res;
@@ -288,7 +292,7 @@ exports.getData = (doc) => {
   for (let key in doc) {
     var companyName = key;
     if (companyName) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         Company.find({
           aliasName: companyName
         }).exec((err, data) => {
