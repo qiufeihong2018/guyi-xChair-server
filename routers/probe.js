@@ -2,6 +2,8 @@
 
 const router = require('express').Router();
 const Probe = require('../collections/probe');
+const PipelineCol = require('../collections/pipeline');
+const PipelineModel = require('../models/pipeline');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -31,18 +33,24 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *      "message": "Probe register failure!"
  *    }
  */
-
-router.post('/', function(req, res, next) {
+// 新增probe，并添加到指定的pipeline
+// 返回更新的结果
+router.post('/', async (req, res, next) => {
   const doc = req.body;
-  Probe.create(doc, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    res.status(200).json({
-      data: 'Add success',
-      status: 200
-    });
-  });
+  const { pipelineId, probeNo } = doc
+  // 查找如果找到就更新，没找到就新增
+  await Probe.findOneAndUpdate({
+    pipelineId,
+    probeNo
+  }, doc, { upsert: true, setDefaultsOnInsert: true }
+  );
+
+
+  // 更新指定的pipeline
+  const pipelineObj = new PipelineModel(pipelineId)
+  const probeList = await pipelineObj.updateProbeList()
+
+  res.status(200).json({probeList});
 });
 
 /**
@@ -68,20 +76,21 @@ router.post('/', function(req, res, next) {
  *      "message": "Probe register failure!"
  *    }
  */
-router.delete('/:id', function(req, res, next) {
-  const id = req.params.id;
+// 删除
+router.delete('/', async (req, res, next) => {
+  const { pipelineId, probeNo } = req.body;
 
-  Probe.findByIdAndRemove({
-    _id: id
-  }, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    res.status(200).json({
-      data: 'Delete success',
-      status: 200
-    });
+  await Probe.findOneAndRemove({
+    pipelineId,
+    probeNo
   });
+
+  // 更新指定的pipeline
+  const pipelineObj = new PipelineModel(pipelineId)
+  const probeList = await pipelineObj.updateProbeList()
+
+  res.status(200).json({probeList});
+
 });
 /**
  * @api {put} /v1/probe Probe put
@@ -113,7 +122,6 @@ router.delete('/:id', function(req, res, next) {
 router.put('/', function(req, res, next) {
   const data = req.body;
 
-  console.log(data);
   Probe.findByIdAndUpdate({
     _id: data.id
   }, {
