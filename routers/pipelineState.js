@@ -115,8 +115,11 @@ function getState() {
 
 }
 
-router.get('/', function(req, res, next) {
-  PipelineState.find({}).then((doc) => {
+router.get('/pipeline/:pipelineId', function(req, res, next) {
+  const pipelineId = req.params.pipelineId;
+  PipelineState.find({
+    pipelineId: pipelineId
+  }).then((doc) => {
     log.info('Get data success');
     res.status(200).json(doc);
   });
@@ -130,6 +133,7 @@ router.get('/', function(req, res, next) {
  *
  * @apiParam {String} start  The startTime of pipelineState.
  * @apiParam {String} end  The endTime of pipelineState.
+ * @apiParam {String} pipelineId  The pipelineId of pipelineState.
  *
  * @apiSuccess {String} state  The state of PipelineState(流水线状态:off(关机), on(运行), pending(待机)).
  * @apiSuccess {date} startTime  The startTime of PipelineState(流水线状态开始时间).
@@ -140,6 +144,7 @@ router.get('/', function(req, res, next) {
  *[
  *    {
  *        "_id": "5d80b45533495b71f34654a3",
+ *        "pipelineId": "5d7f03636278515386017dc7",
  *        "state": "pending",
  *        "startTime": "2019-09-17T10:23:40.011Z",
  *        "endTime": "2019-09-17T10:24:21.378Z",
@@ -163,27 +168,19 @@ router.get('/', function(req, res, next) {
 
 router.post('/search', function(req, res) {
   getState();
-  // Two tables Association
-  const opts = {
-    path: 'pipelineList',
-    select: {
-      pipelineName: 1
-    },
-    model: 'Pipeline',
-    options: {
-      sort: {
-        pipelineName: -1
-      }
-    }
-  };
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
+  const pipelineId = req.body.pipelineId;
   PipelineState.find({
-    'createdAt': {
-      '$gte': start,
-      '$lte': end
-    }
-  }).populate(opts).then((doc) => {
+    $and: [{
+      'createdAt': {
+        '$gte': start,
+        '$lte': end
+      }
+    }, {
+      'pipelineId': pipelineId
+    }]
+  }).then((doc) => {
     log.info('Search PipelineState');
     res.status(200).json(doc);
   });
