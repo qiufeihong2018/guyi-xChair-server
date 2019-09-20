@@ -72,19 +72,20 @@ router.post('/', function(req, res, next) {
  *      "message": "Product register failure!"
  *    }
  */
-router.delete('/:id', function(req, res, next) {
-  const id = req.params.id;
+router.delete('/:id', async (req, res, next) => {
+  const { id } = req.params;
 
-  Product.findByIdAndRemove({
+  await Product.findByIdAndRemove({
     _id: id
   }, function(err, doc) {
     if (err) {
       log.error(err);
     }
-    res.status(200).json({
-      data: 'Delete success',
-      status: 200
-    });
+  });
+
+  res.status(200).json({
+    data: 'Delete success',
+    status: 200
   });
 });
 /**
@@ -118,28 +119,34 @@ router.delete('/:id', function(req, res, next) {
  *      "message": "Product register failure!"
  *    }
  */
-router.put('/', function(req, res, next) {
+// 基础产品ID修改
+/**
+{
+  "id": "",
+  "pipelineId":  "5d834e6c0c8e9f276745ded0",
+  "pipelineName":  "ALT01",
+  "model":  "8810",
+  "no": "8810",
+  "type":  "办公转椅",
+  "suttleWeight":  8,
+  "totalWeight": 10,
+  "length": 100,
+  "width": 80,
+  "height": 120
+}
+*/
+router.put('', async (req, res, next) => {
   const data = req.body;
 
-  console.log(data);
-  Product.findByIdAndUpdate({
+  const product = await Product.findByIdAndUpdate({
     _id: data.id
   }, {
     $set: data
   }, {
     new: true,
-    upsert: true,
-    setDefaultsOnInsert: true,
-    setOnInsert: true
-  }, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    res.status(200).json({
-      data: 'Update success',
-      status: 200
-    });
   });
+
+  res.status(200).json(product)
 });
 
 /**
@@ -180,7 +187,8 @@ router.put('/', function(req, res, next) {
  *      "message": "Product register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
+// 基于产品ID查询
+router.get('/:id', function(req, res, next) {
   Product.find({}).then((doc) => {
     res.status(200).json(doc);
   });
