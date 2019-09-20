@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const CompanyModel = require('../collections/company');
+const PipelineCol = require('../collections/pipeline');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -114,6 +115,16 @@ router.delete('/:id', async (req, res, next) => {
   res.status(200).json({
     data: 'delete success'
   });
+});
+
+// 获取某公司的所有pipeline
+router.get('/:id/pipeline/all', async (req, res, next) => {
+  const { id: companyId } = req.params;
+  if (companyId) {
+    const doc = await PipelineCol.find({ companyId });
+    res.status(200).json(doc);
+  }
+  res.status(200).json({msg: "ID错误"});
 });
 
 module.exports = router;
