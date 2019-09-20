@@ -13,7 +13,7 @@ function localDate(v) {
   return d.toISOString();
 }
 /**
- * @api {get} /v1/pipelineState PipelineState get
+ * @api {get} /v1/pipeline/:pipelineId PipelineState get
  * @apiName PipelineStateGet
  * @apiGroup pipelineState
  *

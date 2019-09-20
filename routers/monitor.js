@@ -208,12 +208,15 @@ router.post('/search', function(req, res) {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
   const companyId = req.body.companyId;
+  const pipelineId = req.body.pipelineId;
+
   Monitor.find({
-    $and: [{
-      'createdAt': {
-        '$gte': start,
-        '$lte': end
-      }
+    'createdAt': {
+      '$gte': start,
+      '$lte': end
+    },
+    '$or': [{
+      'pipelineId': pipelineId
     }, {
       'companyId': companyId
     }]
