@@ -35,7 +35,7 @@ router.post('/', function(req, res) {
   getData(doc).then((data) => {
     console.log(data);
     log.info('Data analysis success');
-    if (data && data.value !== undefined) {
+    if (data && data.value !== '') {
       Monitor.create(data, function(err) {
         if (err) {
           log.error(err);
