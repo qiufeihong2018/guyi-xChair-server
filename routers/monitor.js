@@ -35,7 +35,7 @@ router.post('/', function(req, res) {
   getData(doc).then((data) => {
     console.log(data);
     log.info('Data analysis success');
-    if (data) {
+    if (data && data.value !== undefined) {
       Monitor.create(data, function(err) {
         if (err) {
           log.error(err);
@@ -126,19 +126,20 @@ router.post('/', function(req, res) {
  *    }
  */
 router.get('/', function(req, res) {
-  const opts = {
-    path: 'company',
-    select: {
-      companyName: 1
-    },
-    model: 'Company',
-    options: {
-      sort: {
-        companyName: -1
-      }
-    }
-  };
-  Monitor.find({}).populate(opts).then((doc) => {
+  // const opts = {
+  //   path: 'company',
+  //   select: {
+  //     companyName: 1
+  //   },
+  //   model: 'Company',
+  //   options: {
+  //     sort: {
+  //       companyName: -1
+  //     }
+  //   }
+  // };
+  // Monitor.find({}).populate(opts).then((doc) => {
+  Monitor.find({}).then((doc) => {
     res.status(200).json(doc);
   });
 });
@@ -208,12 +209,15 @@ router.post('/search', function(req, res) {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
   const companyId = req.body.companyId;
+  const pipelineId = req.body.pipelineId;
+
   Monitor.find({
-    $and: [{
-      'createdAt': {
-        '$gte': start,
-        '$lte': end
-      }
+    'createdAt': {
+      '$gte': start,
+      '$lte': end
+    },
+    '$or': [{
+      'pipelineId': pipelineId
     }, {
       'companyId': companyId
     }]
