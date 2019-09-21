@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const Monitor = require('../collections/monitor');
+const RawDataCol = require('../collections/rawData');
 
 const log = require('../services/logger').createLogger('monitor');
 const getData = require('../services/type').getData;
@@ -32,6 +33,9 @@ const getData = require('../services/type').getData;
 
 router.post('/', function(req, res) {
   const doc = req.body;
+  // 报错原始数据
+  RawDataCol.create({data: JSON.stringify(doc)})
+  // 数据处理
   getData(doc).then((data) => {
     console.log(data);
     log.info('Data analysis success');
