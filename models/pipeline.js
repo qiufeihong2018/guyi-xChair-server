@@ -52,12 +52,14 @@ class Pipeline {
         return JSON.stringify(el.doc.pipelineId) === JSON.stringify(item._id)
       }) || {}
       let name = item.pipelineName
-      return Pipeline.processState(data.doc, name)
+      let probeList = item.probeList
+      let companyId = item.companyId
+      return Pipeline.processState(data.doc, name, { probeList, companyId})
     })
     return list
   }
 
-  static processState(pipelineState, name) {
+  static processState(pipelineState, name, other) {
     let newObj = {
       id: 0,
       name: name,
@@ -66,16 +68,18 @@ class Pipeline {
       end: 0,
       dif: 0,
       count: 0,
+      ...other
     }
     if (pipelineState && pipelineState.pipelineId) {
       newObj = {
-        id: pipelineState.pipelineId || 0,
-        name: name || '未命名',
-        state: pipelineState.state || 'off',
-        start: pipelineState.startTime || 0,
-        end: pipelineState.endTime || 0,
-        dif: pipelineState.difTime || 0,
-        count: pipelineState.count || 0,
+        id: pipelineState.pipelineId,
+        name: name,
+        state: pipelineState.state,
+        start: pipelineState.startTime,
+        end: pipelineState.endTime,
+        dif: pipelineState.difTime,
+        count: pipelineState.count,
+        ...other
       }
     }
     return newObj
