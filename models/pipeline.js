@@ -30,32 +30,34 @@ class Pipeline {
     // });
     const pipelineState = await PipelineStateCol.findOne({ pipelineId: this.id }).sort({
       createdAt: 1
-    }).populate('pipelineId')
+    })
     const pipeline = Pipeline.processState(pipelineState)
     return pipeline
   }
 
   static async getListCurrentState(ids) {
-    const list = await PipelineStateCol.aggregate([
+    const rawList = await PipelineStateCol.aggregate([
       { $match: { pipelineId: { $in: ids } } },
-      { $group: { _id: '$pipelineId', createdAt: { $max: '$createdAt' } } },
-      { '$project': {'_id': 1, 'state': 1, 'count': 1} }
+      {
+        $group: {
+          _id: '$pipelineId',
+          doc: { $last: "$$ROOT" }
+        }
+      },
     ])
-    console.log(list)
+    const list = rawList.map(item => Pipeline.processState(item.doc))
+    return list
   }
 
   static processState(pipelineState) {
-    const pipeline = pipelineState.pipelineId
     const newObj = {
-      companyId: pipeline.companyId,
-      pipelineId: pipeline._id,
-      pipelineName: pipelineState.pipelineName,
+      id: pipelineState.pipelineId,
+      name: pipelineState.pipelineName,
       state: pipelineState.state,
       start: pipelineState.startTime,
       end: pipelineState.endTime,
       dif: pipelineState.difTime,
       count: pipelineState.count,
-      probeList: pipeline.probeList,
     }
     return newObj
   }

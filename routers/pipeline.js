@@ -220,7 +220,6 @@ router.get('/:id', async (req, res, next) => {
   const doc = await PipelineCol.findById(id);
   const pipeline = new PipelineModel(id)
   const state = await pipeline.getCurrentState()
-  console.log('state', state)
   res.status(200).json(state);
 });
 
@@ -236,11 +235,10 @@ router.get('/:id/state', async (req, res, next) => {
 
 // 多个pipeline的当前的(开机、关机、空转)状态
 // 基于ids这个数组，元素为pipeline的ID
-router.post('/list/state', (req, res, next) => {
+router.post('/list/state', async (req, res, next) => {
   const ids = req.body.ids;
-  res.status(200).json({
-    ids: ids
-  });
+  const pipelineList = await PipelineModel.getListCurrentState(ids)
+  res.status(200).json(pipelineList);
 });
 
 router.get('/:id/state/duration', (req, res, next) => {
