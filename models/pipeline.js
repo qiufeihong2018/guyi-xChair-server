@@ -51,10 +51,10 @@ class Pipeline {
       let data = pipelineStateList.find(el => {
         return JSON.stringify(el.doc.pipelineId) === JSON.stringify(item._id)
       }) || {}
-      let name = item.pipelineName
+      let pipelineName = item.pipelineName
       let probeList = item.probeList
       let companyId = item.companyId
-      return Pipeline.processState(data.doc, name, { probeList, companyId})
+      return Pipeline.processState(data.doc, pipelineName, { probeList, companyId})
     })
     return list
   }
@@ -62,7 +62,7 @@ class Pipeline {
   static processState(pipelineState, name, other) {
     let newObj = {
       id: 0,
-      name: name,
+      pipelineName: name,
       state: 'off',
       start: 0,
       end: 0,
@@ -73,7 +73,7 @@ class Pipeline {
     if (pipelineState && pipelineState.pipelineId) {
       newObj = {
         id: pipelineState.pipelineId,
-        name: name,
+        pipelineName: name,
         state: pipelineState.state,
         start: pipelineState.startTime,
         end: pipelineState.endTime,
