@@ -7,6 +7,9 @@ const Probe = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
   },
+  pipelineName: {
+    type: String
+  },
   companyId: {
     type: Schema.Types.ObjectId,
     ref: 'Company'

@@ -1,9 +1,11 @@
 'use strict';
 
 const router = require('express').Router();
-const CompanyModel = require('../collections/company');
+const CompanyCol = require('../collections/company');
 const PipelineCol = require('../collections/pipeline');
 const ProductCol = require('../collections/product');
+// Model层
+const PipelineModel = require('../models/pipeline');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -34,7 +36,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *  ]
  */
 router.get('/all', async (req, res, next) => {
-  const doc = await CompanyModel.find({});
+  const doc = await CompanyCol.find({});
   res.status(200).json(doc);
 });
 
@@ -46,7 +48,7 @@ router.get('/all', async (req, res, next) => {
  */
 router.post('/', function(req, res, next) {
   const data = req.body;
-  CompanyModel.find({
+  CompanyCol.find({
     aliasName: data.aliasName
   }).exec((err, doc) => {
     if (doc.length > 0) {
@@ -54,7 +56,7 @@ router.post('/', function(req, res, next) {
         data: 'Data is exist'
       });
     } else {
-      CompanyModel.create(data, function(err, res) {
+      CompanyCol.create(data, function(err, res) {
         if (err) {
           log.error(err);
         }
@@ -95,10 +97,9 @@ router.get('/:id', async (req, res, next) => {
   const {
     id
   } = req.params;
-  const doc = await CompanyModel.findById(id);
+  const doc = await CompanyCol.findById(id);
   res.status(200).json(doc);
 });
-
 
 /**
  * @api {delete} /v1/company/:id 删除公司(DELETE)
@@ -112,7 +113,7 @@ router.delete('/:id', async (req, res, next) => {
   const {
     id
   } = req.params;
-  await CompanyModel.findByIdAndRemove(id);
+  await CompanyCol.findByIdAndRemove(id);
   res.status(200).json({
     data: 'delete success'
   });
@@ -123,9 +124,12 @@ router.get('/:id/pipeline/all', async (req, res, next) => {
   const { id: companyId } = req.params;
   if (companyId) {
     const doc = await PipelineCol.find({ companyId });
+    const idList = doc.map(item => item._id)
+    const pipelineList = await PipelineModel.getListCurrentState(idList)
     res.status(200).json(doc);
+  } else {
+    res.status(200).json({msg: "ID错误"});
   }
-  res.status(200).json({msg: "ID错误"});
 });
 
 

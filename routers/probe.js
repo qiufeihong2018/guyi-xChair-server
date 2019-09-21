@@ -34,13 +34,15 @@ const log = require('../services/logger').createLogger('userAuthentication');
  *    }
  */
 // 新增probe，并添加到指定的pipeline
+// 传入 pipelineId, pipelineName, probeNo
 // 返回更新的结果
 router.post('/', async (req, res, next) => {
   const doc = req.body;
-  const { pipelineId, probeNo } = doc
+  const { pipelineId, probeName, probeNo } = doc
   // 查找如果找到就更新，没找到就新增
   await Probe.findOneAndUpdate({
     pipelineId,
+    probeName,
     probeNo
   }, doc, { upsert: true, setDefaultsOnInsert: true }
   );

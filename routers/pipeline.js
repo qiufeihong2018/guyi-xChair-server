@@ -1,7 +1,8 @@
 'use strict';
 
 const router = require('express').Router();
-const Pipeline = require('../collections/pipeline');
+const PipelineCol = require('../collections/pipeline');
+const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
 
 const log = require('../services/logger').createLogger('userAuthentication');
@@ -41,7 +42,7 @@ router.get('/company/:companyId', async (req, res, next) => {
     companyId: companyId
   } = req.params;
   if (companyId) {
-    const doc = await Pipeline.find({
+    const doc = await PipelineCol.find({
       companyId: companyId
     });
     res.status(200).json(doc);
@@ -112,7 +113,7 @@ router.post('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   const id = req.params.id;
 
-  Pipeline.findByIdAndRemove({
+  PipelineCol.findByIdAndRemove({
     _id: id
   }, function(err, doc) {
     if (err) {
@@ -154,7 +155,7 @@ router.delete('/:id', function(req, res, next) {
 router.put('/', function(req, res, next) {
   const data = req.body;
 
-  Pipeline.findByIdAndUpdate({
+  PipelineCol.findByIdAndUpdate({
     _id: data.id
   }, {
     $set: data
@@ -208,7 +209,7 @@ router.put('/', function(req, res, next) {
  *    }
  */
 router.get('/', function(req, res, next) {
-  Pipeline.find({}).then((doc) => {
+  PipelineCol.find({}).then((doc) => {
     res.status(200).json(doc);
   });
 });
@@ -216,8 +217,11 @@ router.get('/', function(req, res, next) {
 // 获取生产线详情
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
-  const doc = await Pipeline.findById(id);
-  res.status(200).json(doc);
+  const doc = await PipelineCol.findById(id);
+  const pipeline = new PipelineModel(id)
+  const state = await pipeline.getCurrentState()
+  console.log('state', state)
+  res.status(200).json(state);
 });
 
 // 某个pipeline的当前的(开机、关机、空转)状态
