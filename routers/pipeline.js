@@ -71,12 +71,12 @@ router.get('/company/:companyId', async (req, res, next) => {
  *     HTTP/1.1 500 Internal Server Error
  *    {
  *      "err": "REGISTER_FAILURE",
- *      "message": "Pipeline register failure!"
+ *      "message": "Pipeline register failure!"Pipeline
  *    }
  */
 router.post('/', function(req, res, next) {
   const doc = req.body;
-  Pipeline.create(doc, function(err, doc) {
+  PipelineCol.create(doc, function(err, doc) {
     if (err) {
       log.error(err);
     }
