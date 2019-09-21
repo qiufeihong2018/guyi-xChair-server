@@ -24,14 +24,13 @@ class Pipeline {
   };
   // 获取该生产线当前的心跳
   async getCurrentState() {
-    // const pipeline = await PipelineCol.findById(this.id)
-    // const state = await PipelineStateCol.findOne({ pipelineId: this.id }).sort({
-    //   createdAt: -1
-    // });
+    const pipelineCol = await PipelineCol.findById(this.id)
+    const name = pipelineCol.pipelineName
+    
     const pipelineState = await PipelineStateCol.findOne({ pipelineId: this.id }).sort({
       createdAt: 1
     })
-    const pipeline = Pipeline.processState(pipelineState)
+    const pipeline = Pipeline.processState(pipelineState, name)
     return pipeline
   }
 
@@ -49,10 +48,10 @@ class Pipeline {
     return list
   }
 
-  static processState(pipelineState) {
+  static processState(pipelineState, name="未命名") {
     const newObj = {
       id: pipelineState.pipelineId,
-      name: pipelineState.pipelineName,
+      name: name,
       state: pipelineState.state,
       start: pipelineState.startTime,
       end: pipelineState.endTime,

@@ -38,11 +38,10 @@ const log = require('../services/logger').createLogger('userAuthentication');
 // 返回更新的结果
 router.post('/', async (req, res, next) => {
   const doc = req.body;
-  const { pipelineId, probeName, probeNo } = doc
+  const { pipelineId, probeNo } = doc
   // 查找如果找到就更新，没找到就新增
   await Probe.findOneAndUpdate({
     pipelineId,
-    probeName,
     probeNo
   }, doc, { upsert: true, setDefaultsOnInsert: true }
   );

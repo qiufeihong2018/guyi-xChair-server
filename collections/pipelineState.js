@@ -10,9 +10,6 @@ const PipelineState = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Pipeline'
   },
-  pipelineName: {
-    type: String
-  },
   state: {
     //  off(关机), on(运行), pending(待机)
     type: String

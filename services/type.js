@@ -105,7 +105,6 @@ function getPipelineState(obj, probe) {
   let difTime = '';
   let plState = {
     pipelineId: '',
-    pipelineName: '',
     state: '',
     startTime: '',
     endTime: '',
@@ -160,7 +159,6 @@ function getPipelineState(obj, probe) {
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe[0].pipelineId;
-      plState.pipelineName = probe[0].pipelineName;
       console.log(plState);
       PipelineState.create(plState, function (err) {
         if (err) {
