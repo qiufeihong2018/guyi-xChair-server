@@ -122,14 +122,11 @@ router.delete('/:id', async (req, res, next) => {
 // 获取某公司的所有pipeline,  并且包含所有状态
 router.get('/:id/pipeline/all', async (req, res, next) => {
   const { id: companyId } = req.params;
-  if (companyId) {
-    const doc = await PipelineCol.find({ companyId });
-    const idList = doc.map(item => item._id)
-    const pipelineList = await PipelineModel.getListCurrentState(idList)
-    res.status(200).json(pipelineList);
-  } else {
-    res.status(200).json({msg: "ID错误"});
-  }
+  const doc = await PipelineCol.find({ companyId });
+  const idList = doc.map(item => item._id);
+  
+  const pipelineList = await PipelineModel.getListCurrentState(idList);
+  res.status(200).json(pipelineList);
 });
 
 

@@ -26,7 +26,7 @@ class Pipeline {
   async getCurrentState() {
     const pipelineCol = await PipelineCol.findById(this.id)
     const name = pipelineCol.pipelineName
-    
+
     const pipelineState = await PipelineStateCol.findOne({ pipelineId: this.id }).sort({
       createdAt: 1
     })
@@ -35,7 +35,7 @@ class Pipeline {
   }
 
   static async getListCurrentState(ids) {
-    const rawList = await PipelineStateCol.aggregate([
+    const pipelineStateList = await PipelineStateCol.aggregate([
       { $match: { pipelineId: { $in: ids } } },
       {
         $group: {
@@ -44,19 +44,39 @@ class Pipeline {
         }
       },
     ])
-    const list = rawList.map(item => Pipeline.processState(item.doc))
+    const pipelineList = await PipelineCol.aggregate([
+      { $match: { _id: { $in: ids } } },
+    ])
+    const list = pipelineList.map(item => {
+      let data = pipelineStateList.find(el => {
+        return JSON.stringify(el.doc.pipelineId) === JSON.stringify(item._id)
+      }) || {}
+      let name = item.pipelineName
+      return Pipeline.processState(data.doc, name)
+    })
     return list
   }
 
-  static processState(pipelineState, name="未命名") {
-    const newObj = {
-      id: pipelineState.pipelineId,
+  static processState(pipelineState, name) {
+    let newObj = {
+      id: 0,
       name: name,
-      state: pipelineState.state,
-      start: pipelineState.startTime,
-      end: pipelineState.endTime,
-      dif: pipelineState.difTime,
-      count: pipelineState.count,
+      state: 'off',
+      start: 0,
+      end: 0,
+      dif: 0,
+      count: 0,
+    }
+    if (pipelineState && pipelineState.pipelineId) {
+      newObj = {
+        id: pipelineState.pipelineId || 0,
+        name: name || '未命名',
+        state: pipelineState.state || 'off',
+        start: pipelineState.startTime || 0,
+        end: pipelineState.endTime || 0,
+        dif: pipelineState.difTime || 0,
+        count: pipelineState.count || 0,
+      }
     }
     return newObj
   }
