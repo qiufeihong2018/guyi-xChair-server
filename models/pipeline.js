@@ -54,14 +54,14 @@ class Pipeline {
       let pipelineName = item.pipelineName
       let probeList = item.probeList
       let companyId = item.companyId
-      return Pipeline.processState(data.doc, pipelineName, { probeList, companyId})
+      let id = item._id
+      return Pipeline.processState(data.doc, pipelineName, { probeList, companyId, id})
     })
     return list
   }
 
   static processState(pipelineState, name, other) {
     let newObj = {
-      id: 0,
       pipelineName: name,
       state: 'off',
       start: 0,
@@ -72,7 +72,6 @@ class Pipeline {
     }
     if (pipelineState && pipelineState.pipelineId) {
       newObj = {
-        id: pipelineState.pipelineId,
         pipelineName: name,
         state: pipelineState.state,
         start: pipelineState.startTime,

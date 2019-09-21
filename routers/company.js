@@ -124,7 +124,6 @@ router.get('/:id/pipeline/all', async (req, res, next) => {
   const { id: companyId } = req.params;
   const doc = await PipelineCol.find({ companyId });
   const idList = doc.map(item => item._id);
-  
   const pipelineList = await PipelineModel.getListCurrentState(idList);
   res.status(200).json(pipelineList);
 });

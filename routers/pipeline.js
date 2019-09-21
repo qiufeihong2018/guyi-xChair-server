@@ -76,6 +76,7 @@ router.get('/company/:companyId', async (req, res, next) => {
  */
 router.post('/', function(req, res, next) {
   const doc = req.body;
+
   PipelineCol.create(doc, function(err, doc) {
     if (err) {
       log.error(err);
