@@ -9,7 +9,6 @@ const RawDataSchema = new Schema({
 }, {
   timestamps: {
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
   }
 });
 

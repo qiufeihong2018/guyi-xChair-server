@@ -5,7 +5,7 @@ const Monitor = require('../collections/monitor');
 const RawDataCol = require('../collections/rawData');
 
 const log = require('../services/logger').createLogger('monitor');
-const getData = require('../services/type').getData;
+const { getData } = require('../services/type');
 
 /**
  * @api {post} /v1/monitor Monitor Post
@@ -31,27 +31,24 @@ const getData = require('../services/type').getData;
  *    }
  */
 
-router.post('/', function(req, res) {
+router.post('/', async (req, res) => {
   const doc = req.body;
   // 报错原始数据
   RawDataCol.create({data: JSON.stringify(doc)})
   // 数据处理
-  getData(doc).then((data) => {
-    console.log(data);
-    log.info('Data analysis success');
-    if (data && data.value !== '') {
-      Monitor.create(data, function(err) {
-        if (err) {
-          log.error(err);
-        }
-        res.status(200).json({
-          status: 200,
-          data: 'Post success！'
-        });
+  const monitorData = await getData(doc)
+  if (monitorData) {
+    console.log(monitorData);
+    Monitor.create(monitorData, function(err) {
+      if (err) {
+        log.error(err);
+      }
+      res.status(200).json({
+        status: 200,
+        data: 'Post success！'
       });
-    }
-  });
-
+    });
+  }
 });
 
 /**

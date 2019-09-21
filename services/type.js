@@ -258,77 +258,86 @@ function parseProductDigit(data) {
     res = res[res.length - 1].split('清除');
     res = res[res.length - 1];
     return res;
-  } else {
-    return str;
   }
-
+  return str;
 }
 
+// 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
+/**
+ * 分为五类(目前electricity暂时不用) 
+ * switch(开关)   DD**
+ * counter(计数器)  CC**
+ * power(耗电量(千瓦·时) CD**
+ * electricity(电压、电流...) CE**
+ * product(产品编号) CF
+ */
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data, probe) {
-  let res = '';
-  switch (dataType) {
-    case 'DD':
-      res = parseSwitchDigit(data);
-      break;
-    case 'CC':
-      res = parseCounterDigit(data, probe);
-      break;
-    case 'CD':
-      res = parsePowerDigit(data);
-      break;
-    case 'CE':
-      res = parseElectricityDigit(data);
-      break;
-    default:
-      res = parseProductDigit(data);
+  const promise = {
+    switch: parseSwitchDigit,
+    counter: parseCounterDigit,
+    power: parsePowerDigit,
+    electricity: parseElectricityDigit,
+    product: parseProductDigit,
   }
-  return res;
+  return promise[dataType](data, probe)
 }
 
+// 暴露出去
 // 获取解析数据的主函数
-exports.getData = (doc) => {
-  for (let key in doc) {
-    var companyName = key;
-    if (companyName) {
-      return new Promise(function (resolve, reject) {
-        Company.find({
-          aliasName: companyName
-        }).exec((err, data) => {
-          if (err) {
-            console.log(err);
-          }
-          let obj = {
-            pipelineId: '',
-            companyId: '',
-            probeNo: '',
-            dataType: '',
-            value: '',
-            monitorNo: ''
-          };
-          let monitor = doc[companyName];
-          obj.companyId = data[0]._id;
-          obj.monitorNo = monitor.slice(4, 8);
+exports.getData = async (rawData) => {
+  const companyName = Object.keys(rawData)[0];
+  const monitor = Object.values(rawData)[0];
 
-          obj.probeNo = monitor.slice(0, 4);
+  if (!companyName) return;
 
-          obj.dataType = typeMap.get(monitor.slice(4, 6));
+  const company = await Company.findOne({
+    aliasName: companyName
+  })
+  const obj = {
+    pipelineId: '',
+    companyId: company._id,
+    probeNo: monitor.slice(0, 4),
+    monitorNo: monitor.slice(4, 8),
+    dataType: typeMap.get(monitor.slice(4, 6)),
+    value: ''
+  };
+  
+  const probe = await Probe.findOne({
+    $and: [{
+      'companyId': obj.companyId
+    }, {
+      'probeNo': obj.probeNo
+    }]
+  });
 
-          // 获取pipelineId
-          Probe.find({
-            $and: [{
-              'companyId': obj.companyId
-            }, {
-              'probeNo': obj.probeNo
-            }]
-          }).exec((err, probe) => {
-            obj.value = parseDigitalData(monitor.slice(4, 6), monitor.slice(8), probe);
-            obj.pipelineId = probe[0].pipelineId;
-            resolve(obj);
-          });
-        });
-      });
-    }
-  }
+  obj.value = parseDigitalData(obj.dataType, monitor.slice(8), probe);
+  obj.pipelineId = probe.pipelineId;
+  
+  return obj
 };
+
+
+// 暂时废弃
+function processData(rawData) {
+  let company = Object.keys(rawData)[0]
+  let value = Object.values(rawData)[0]
+
+  let companyId = CompanyModel.findOne({ 'name': company }, (err, data) => {
+    return data.id
+  })
+
+  let probe = value.slice(0, 4) // 采集器
+  let monitor = value.slice(4, 8)// 仪表盘
+  const dataType = monitor.slice(0, 2) // 仪表盘类型, 用于promise
+  let digitalData = value.substring(value.length - 8) // 仪表盘数字信号
+  // 找到公司的ID, 公司名, 找到流水线的ID
+  return {
+    companyId,
+    probe,
+    monitor,
+    dataType,
+    digitalData,
+  }
+}
