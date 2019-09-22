@@ -2,9 +2,11 @@
 
 const router = require('express').Router();
 const PipelineCol = require('../collections/pipeline');
+const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
 const MonitorCol = require('../collections/monitor');
+const timeUtil = require('../utils/time');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -315,6 +317,39 @@ router.post('/stateDetail', async (req, res, next) => {
     data: result
   });
 })
+
+// 时间累计
+router.post('/state/time', async (req, res, next) => {
+  const id = req.body.id;
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
+
+  // PipelineStateCol.find({
+  //   'createdAt': {
+  //     '$gte': start,
+  //     '$lte': end
+  //   }
+  // }).then((doc) => {
+  //   timeUtil.getTime(doc).then((data) => {
+  //     log.info('Search time');
+  //     res.status(200).json(data);
+  //   });
+  // });
+
+  const sqlResult = await PipelineStateCol.find({
+    pipelineId: id,
+    createdAt: {
+      $gte: start,
+      $lte: end
+    }
+  });
+  const result = await timeUtil.getTime(sqlResult);
+
+  res.status(200).json({
+    data: result
+  });
+})
+
 
 router.post('/state', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
