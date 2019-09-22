@@ -311,7 +311,7 @@ router.post('/stateDetail', async (req, res, next) => {
   }
 
   res.status(200).json({
-    type,
+    type: dataType,
     data: result
   });
 })
