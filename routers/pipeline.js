@@ -16,6 +16,28 @@ function localDate(v) {
   return d.toISOString();
 }
 
+// 解析power的数据
+function processDataOfPower(rawData) {
+  return rawData.map(item => {
+    return {
+      positive: item.value.positiveEnergy,
+      negative: item.value.negativeEnergy,
+      time: item.createdAt
+    }
+  })
+}
+
+// 解析counter的数据
+function processDataOfCounter(rawData) {
+  return rawData.map(item => {
+    return {
+      in: item.value.repeatedCounting, // 入口数
+      failed: item.value.defectiveNumber, // 次品数
+      out: item.value.productionQuantity, // 出口数
+      time: item.createdAt
+    }
+  })
+}
 
 /**
  * @api {get} /v1/pipeline/company/:companyId companyPipeline Get
@@ -260,6 +282,39 @@ router.get('/state', (req, res, next) => {
   const id = req.params.id;
   res.status(200).json({});
 });
+
+// 带着详细的时间节点
+// 带start & end
+router.post('/stateDetail', async (req, res, next) => {
+  const id = req.body.id;
+  const dataType = req.body.dataType;
+  // const durationType = req.body.durationType; // day 和 yester
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
+
+  let sqlResult = await MonitorCol.find({
+    createdAt: {
+      $gte: start,
+      $lte: end
+    },
+    // _id: {$regex: /5$/},
+    pipelineId: id,
+    dataType: dataType
+  });
+
+  let result = undefined
+  if (dataType === 'power') {
+    result = processDataOfPower(sqlResult)
+  } else {
+    // counter
+    result = processDataOfCounter(sqlResult)
+  }
+
+  res.status(200).json({
+    type,
+    data: result
+  });
+})
 
 router.post('/state', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
