@@ -2,15 +2,13 @@
 
 const router = require('express').Router();
 const PipelineCol = require('../collections/pipeline');
+const CompanyCol = require('../collections/company');
 const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
-<<<<<<< HEAD
 const monitorService = require('../services/monitorService');
-=======
 const MonitorCol = require('../collections/monitor');
 const timeUtil = require('../utils/time');
->>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -111,15 +109,31 @@ router.get('/company/:companyId', async (req, res, next) => {
  *      "message": "Pipeline register failure!"Pipeline
  *    }
  */
-router.post('/', function(req, res, next) {
-  const doc = req.body;
+// 传入 pipelineName、companyId、probeList
+router.post('/', async (req, res, next) => {
+  const { pipelineName, companyId } = req.body
+  const data = req.body
 
-  PipelineCol.create(doc, function(err, doc) {
+  const pipeline = await PipelineCol.create(data)
+
+  const company = await CompanyCol.findById(companyId)
+  const pipelineList = company.pipelineList
+
+  CompanyCol.findByIdAndUpdate({
+    _id: companyId
+  }, {
+    $set: {pipelineList: [...pipelineList, pipeline.id]}
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
     res.status(200).json({
-      data: 'Add success',
+      data: 'Update success',
       status: 200
     });
   });
@@ -148,21 +162,37 @@ router.post('/', function(req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', async(req, res, next) => {
   const id = req.params.id;
-
-  PipelineCol.findByIdAndRemove({
+  const pipeline = await PipelineCol.findByIdAndRemove({
     _id: id
-  }, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    res.status(200).json({
-      data: 'Delete success',
-      status: 200
-    });
   });
-});
+  
+  const companyId = pipeline.companyId
+  const company = await CompanyCol.findById(companyId)
+  const pipelineList = company.pipelineList
+  const index = pipelineList.indexOf(pipeline._id)
+  pipelineList.splice(index, 1)
+
+
+  await CompanyCol.findByIdAndUpdate({
+    _id: companyId
+  }, {
+    $set: {pipelineList: [...pipelineList]}
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  });
+
+  res.status(200).json({
+    data: 'Update success',
+    status: 200
+  });  
+
+})
+
 /**
  * @api {put} /v1/pipeline Pipeline put
  * @apiName PipelinePut
@@ -279,23 +309,29 @@ router.post('/list/state', async (req, res, next) => {
   res.status(200).json(pipelineList);
 });
 
-router.get('/:id/stats', async (req, res, next) => {
+router.post('/state/stats', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
   /**
    * id pipelineId
    * dataType counter power
    * durationType today yesterday
    */
-<<<<<<< HEAD
-  const pipelineId = req.params.id;
-  const dataType = req.query.dataType;
-  const durationType = req.query.durationType;
+  const pipelineId = req.body.id;
+  const dataType = req.body.dataType;
+  const durationType = req.body.durationType;
   // console.log(pipelineId, dataType, durationType);
-  const result = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
+  const sqlResult = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
+  let result = undefined
+  if (dataType === 'power') {
+    result = processDataOfPower(sqlResult)
+  } else {
+    // counter
+    result = processDataOfCounter(sqlResult)
+  }
   
-=======
-  const id = req.params.id;
-  res.status(200).json({});
+  res.status(200).json({
+    data: result
+  });
 });
 
 // 带着详细的时间节点
@@ -329,7 +365,7 @@ router.post('/stateDetail', async (req, res, next) => {
     type: dataType,
     data: result
   });
-})
+});
 
 // 时间累计
 router.post('/state/time', async (req, res, next) => {
@@ -361,7 +397,7 @@ router.post('/state/time', async (req, res, next) => {
   res.status(200).json({
     data: result
   });
-})
+});
 
 
 router.post('/state', async (req, res, next) => {
@@ -425,7 +461,6 @@ router.post('/state', async (req, res, next) => {
   //   'pipelineId': id,
   //   'dataType': 'power'
   // })
->>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
   res.status(200).json(result);
 });
 
