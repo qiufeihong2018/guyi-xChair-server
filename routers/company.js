@@ -130,9 +130,8 @@ router.get('/:id/pipeline/all', async (req, res, next) => {
 });
 
 // 获取某公司的所有pipeline在一个时间段的耗电量和生产量
-router.get('/:id/pipeline/stats', async (req, res, next) => {
-  const { id: companyId } = req.params;
-  const { dataType, start, end } = req.query;
+router.post('/pipeline/stats', async (req, res, next) => {
+  const { id: companyId, dataType, start, end } = req.body;
   const result = await monitorService.companyAnalysis(companyId, dataType, start, end);
   res.status(200).json(result);
 });

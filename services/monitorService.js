@@ -2,6 +2,7 @@
 'use strict';
 const MonitorCol = require('../collections/monitor');
 const CompanyCol = require('../collections/company');
+const PipelineCol = require('../collections/pipeline');
 
 async function dataAnalysis(pipelineId, dataType, date) {
   // eslint-disable-next-line indent
@@ -74,15 +75,18 @@ async function companyAnalysis(companyId, dataType, start, end) {
   const company = await CompanyCol.findById(companyId);
   if (!company || company.pipelineList.length === 0) return null;
 
-  const res = {};
+  const res = [];
   for (const pipeline of company.pipelineList) {
     const count = await pipelineCount(pipeline, dataType, start, end);
+
+    const pipelineCol = await PipelineCol.findById(pipeline);
+    const pipelineName = pipelineCol.pipelineName
     res.push({
-      pipeline: pipeline,
+      pipelineId: pipeline,
+      pipelineName: pipelineName,
       dataType: dataType,
       value: count
     });
-
   }
   return res;
 }

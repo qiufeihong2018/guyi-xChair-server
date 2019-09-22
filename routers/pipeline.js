@@ -319,7 +319,7 @@ router.post('/state/stats', async (req, res, next) => {
   const pipelineId = req.body.id;
   const dataType = req.body.dataType;
   const durationType = req.body.durationType;
-  // console.log(pipelineId, dataType, durationType);
+
   const sqlResult = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
   let result = undefined
   if (dataType === 'power') {
