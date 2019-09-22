@@ -45,6 +45,33 @@ if (mode === MODE.DEVE) {
   trans.push(fileTrans);
 }
 
+// exports.createLogger = function(source) {
+//   const myFormat = combine(
+//     label({ label: source }),
+//     timestamp({ format: 'YYYY-MM-DD hh:mm:ss' }),
+//     printf(({ level, message, label, timestamp }) => {
+//       return `${timestamp} [${label}][${level.toUpperCase()}]: ${message}`;
+//     })
+//   );
+//   return new (createLogger)({
+//     format: myFormat,
+//     transports: trans
+//   });
+// };
+
+const myFormat = combine(
+  label({ label: 'log' }),
+  timestamp({ format: 'YYYY-MM-DD hh:mm:ss' }),
+  printf(({ level, message, label, timestamp }) => {
+    return `${timestamp} [${label}][${level.toUpperCase()}]: ${message}`;
+  })
+);
+
+const logger = new (createLogger)({
+  format: myFormat,
+  transports: trans
+});
+
 exports.createLogger = function(source) {
   const myFormat = combine(
     label({ label: source }),
@@ -53,8 +80,5 @@ exports.createLogger = function(source) {
       return `${timestamp} [${label}][${level.toUpperCase()}]: ${message}`;
     })
   );
-  return new (createLogger)({
-    format: myFormat,
-    transports: trans
-  });
+  return logger.child({ format: myFormat });
 };

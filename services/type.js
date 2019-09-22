@@ -157,7 +157,7 @@ function getPipelineState(obj, probe) {
       plState.startTime = prevVal.endTime;
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
-      plState.pipelineId = probe[0].pipelineId;
+      plState.pipelineId = probe.pipelineId;
       console.log(plState);
       PipelineState.create(plState, function(err) {
         if (err) {
@@ -266,7 +266,7 @@ function parseProductDigit(data) {
  * switch(开关)   DD**
  * counter(计数器)  CC**
  * power(耗电量(千瓦·时) CD**
- * electricity(电压、电流...) CE**
+ * electricity(电压、电流...) CE** 
  * product(产品编号) CF
  */
 

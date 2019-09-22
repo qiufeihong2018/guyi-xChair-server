@@ -2,9 +2,15 @@
 
 const router = require('express').Router();
 const PipelineCol = require('../collections/pipeline');
+const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
+<<<<<<< HEAD
+const monitorService = require('../services/monitorService');
+=======
 const MonitorCol = require('../collections/monitor');
+const timeUtil = require('../utils/time');
+>>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -16,6 +22,28 @@ function localDate(v) {
   return d.toISOString();
 }
 
+// 解析power的数据
+function processDataOfPower(rawData) {
+  return rawData.map(item => {
+    return {
+      positive: item.value.positiveEnergy,
+      negative: item.value.negativeEnergy,
+      time: item.createdAt
+    }
+  })
+}
+
+// 解析counter的数据
+function processDataOfCounter(rawData) {
+  return rawData.map(item => {
+    return {
+      in: item.value.repeatedCounting, // 入口数
+      failed: item.value.defectiveNumber, // 次品数
+      out: item.value.productionQuantity, // 出口数
+      time: item.createdAt
+    }
+  })
+}
 
 /**
  * @api {get} /v1/pipeline/company/:companyId companyPipeline Get
@@ -83,10 +111,10 @@ router.get('/company/:companyId', async (req, res, next) => {
  *      "message": "Pipeline register failure!"Pipeline
  *    }
  */
-router.post('/', function (req, res, next) {
+router.post('/', function(req, res, next) {
   const doc = req.body;
 
-  PipelineCol.create(doc, function (err, doc) {
+  PipelineCol.create(doc, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -120,12 +148,12 @@ router.post('/', function (req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.delete('/:id', function (req, res, next) {
+router.delete('/:id', function(req, res, next) {
   const id = req.params.id;
 
   PipelineCol.findByIdAndRemove({
     _id: id
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -162,7 +190,7 @@ router.delete('/:id', function (req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.put('/', function (req, res, next) {
+router.put('/', function(req, res, next) {
   const data = req.body;
 
   PipelineCol.findByIdAndUpdate({
@@ -174,7 +202,7 @@ router.put('/', function (req, res, next) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -218,7 +246,7 @@ router.put('/', function (req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next) {
   PipelineCol.find({}).then((doc) => {
     res.status(200).json(doc);
   });
@@ -228,8 +256,8 @@ router.get('/', function (req, res, next) {
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   const doc = await PipelineCol.findById(id);
-  const pipeline = new PipelineModel(id)
-  const state = await pipeline.getCurrentState()
+  const pipeline = new PipelineModel(id);
+  const state = await pipeline.getCurrentState();
   res.status(200).json(state);
 });
 
@@ -247,19 +275,94 @@ router.get('/:id/state', async (req, res, next) => {
 // 基于ids这个数组，元素为pipeline的ID
 router.post('/list/state', async (req, res, next) => {
   const ids = req.body.ids;
-  const pipelineList = await PipelineModel.getListCurrentState(ids)
+  const pipelineList = await PipelineModel.getListCurrentState(ids);
   res.status(200).json(pipelineList);
 });
 
-//
-router.get('/state', (req, res, next) => {
+router.get('/:id/stats', async (req, res, next) => {
+  // 对 couter、power、electricity 这三个进行统计
   /**
-   * duration
-   * type: 
+   * id pipelineId
+   * dataType counter power
+   * durationType today yesterday
    */
+<<<<<<< HEAD
+  const pipelineId = req.params.id;
+  const dataType = req.query.dataType;
+  const durationType = req.query.durationType;
+  // console.log(pipelineId, dataType, durationType);
+  const result = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
+  
+=======
   const id = req.params.id;
   res.status(200).json({});
 });
+
+// 带着详细的时间节点
+// 带start & end
+router.post('/stateDetail', async (req, res, next) => {
+  const id = req.body.id;
+  const dataType = req.body.dataType;
+  // const durationType = req.body.durationType; // day 和 yester
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
+
+  let sqlResult = await MonitorCol.find({
+    createdAt: {
+      $gte: start,
+      $lte: end
+    },
+    // _id: {$regex: /5$/},
+    pipelineId: id,
+    dataType: dataType
+  });
+
+  let result = undefined
+  if (dataType === 'power') {
+    result = processDataOfPower(sqlResult)
+  } else {
+    // counter
+    result = processDataOfCounter(sqlResult)
+  }
+
+  res.status(200).json({
+    type: dataType,
+    data: result
+  });
+})
+
+// 时间累计
+router.post('/state/time', async (req, res, next) => {
+  const id = req.body.id;
+  const start = localDate(req.body.start);
+  const end = localDate(req.body.end);
+
+  // PipelineStateCol.find({
+  //   'createdAt': {
+  //     '$gte': start,
+  //     '$lte': end
+  //   }
+  // }).then((doc) => {
+  //   timeUtil.getTime(doc).then((data) => {
+  //     log.info('Search time');
+  //     res.status(200).json(data);
+  //   });
+  // });
+
+  const sqlResult = await PipelineStateCol.find({
+    pipelineId: id,
+    createdAt: {
+      $gte: start,
+      $lte: end
+    }
+  });
+  const result = await timeUtil.getTime(sqlResult);
+
+  res.status(200).json({
+    data: result
+  });
+})
+
 
 router.post('/state', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
@@ -322,12 +425,13 @@ router.post('/state', async (req, res, next) => {
   //   'pipelineId': id,
   //   'dataType': 'power'
   // })
+>>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
   res.status(200).json(result);
-})
+});
 
 
 // 获取该生产线的所有产品
-router.get('/:id/product', function (req, res, next) {
+router.get('/:id/product', function(req, res, next) {
   const { id } = req.params;
   if (id) {
     ProductCol.find({
