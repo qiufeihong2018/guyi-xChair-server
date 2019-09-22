@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 'use strict';
 const Company = require('../collections/company');
 const PipelineState = require('../collections/pipelineState');
@@ -22,7 +21,7 @@ const VALUE = require('../constant/system').VALUE;
 const STRING = require('../constant/system').STRING;
 const NUMBER = require('../constant/system').NUMBER;
 
-let typeMap = new Map([
+const typeMap = new Map([
   [TYPE.DD, VALUE.DD],
   [TYPE.CC, VALUE.CC],
   [TYPE.CD, VALUE.CD],
@@ -30,7 +29,7 @@ let typeMap = new Map([
   [TYPE.CF, VALUE.CF]
 ]);
 
-let CFMap = new Map([
+const CFMap = new Map([
   [STRING.CF1, NUMBER.CF1],
   [STRING.CF2, NUMBER.CF2],
   [STRING.CF3, NUMBER.CF3],
@@ -60,7 +59,7 @@ function getEnergy(data) {
   // 转化为字符串
   data = data + '';
   // eslint-disable-next-line max-len
-  let energy = (65536 * (256 * parseInt(data.slice(0, 2), 16) + parseInt(data.slice(2, 4), 16)) + (256 * (parseInt(data.slice(4, 5), 16) * 16 + parseInt(data.slice(5, 6), 16)) + (parseInt(data.slice(6, 7), 16) * 16 + parseInt(data.slice(7, 8), 16)))) / 100;
+  const energy = (65536 * (256 * parseInt(data.slice(0, 2), 16) + parseInt(data.slice(2, 4), 16)) + (256 * (parseInt(data.slice(4, 5), 16) * 16 + parseInt(data.slice(5, 6), 16)) + (parseInt(data.slice(6, 7), 16) * 16 + parseInt(data.slice(7, 8), 16)))) / 100;
   return energy;
 }
 
@@ -82,9 +81,9 @@ function getCorrect(obj) {
     createdAt: -1
   }).limit(1).exec((err, doc) => {
     prevVal = doc[0];
-    let difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
-    let difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
-    let difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
+    const difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
+    const difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
+    const difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
 
     if (difRepeated < 0 || difDefective < 0 || difProduction < 0) {
       Monitor.findByIdAndRemove({
@@ -103,7 +102,7 @@ function getPipelineState(obj, probe) {
   let prevVal = {};
   let difVal = '';
   let difTime = '';
-  let plState = {
+  const plState = {
     pipelineId: '',
     state: '',
     startTime: '',
@@ -148,7 +147,7 @@ function getPipelineState(obj, probe) {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function (err, doc) {
+      }, function(err, doc) {
         if (err) {
           log.error(err);
         }
@@ -160,7 +159,7 @@ function getPipelineState(obj, probe) {
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       console.log(plState);
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }
@@ -177,7 +176,7 @@ function getPipelineState(obj, probe) {
 test:'AA02CC0100006B060001AD97000E65E8'
 */
 function parseCounterDigit(data, probe) {
-  let obj = {
+  const obj = {
     repeatedCounting: '',
     defectiveNumber: '',
     productionQuantity: '',
@@ -197,7 +196,7 @@ function parseCounterDigit(data, probe) {
 test:'AA03CD010000006800004042'
  */
 function parsePowerDigit(data) {
-  let obj = {
+  const obj = {
     positiveEnergy: '',
     negativeEnergy: ''
   };
@@ -213,7 +212,7 @@ function parsePowerDigit(data) {
 test：AA03CE0108B5035F025C07100772013C
 */
 function parseElectricityDigit(data) {
-  let obj = {
+  const obj = {
     voltage: '',
     electric: '',
     activePower: '',
@@ -240,7 +239,6 @@ function parseElectricityDigit(data) {
 test:'AA04CF0146F04645F0455AF05A' 90确定
 */
 function parseProductDigit(data) {
-
   let str = '';
   let res = '';
   if (data.slice(-6) === STRING.OK) {
@@ -264,7 +262,7 @@ function parseProductDigit(data) {
 
 // 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
 /**
- * 分为五类(目前electricity暂时不用) 
+ * 分为五类(目前electricity暂时不用)
  * switch(开关)   DD**
  * counter(计数器)  CC**
  * power(耗电量(千瓦·时) CD**
@@ -280,8 +278,8 @@ function parseDigitalData(dataType, data, probe) {
     power: parsePowerDigit,
     electricity: parseElectricityDigit,
     product: parseProductDigit,
-  }
-  return promise[dataType](data, probe)
+  };
+  return promise[dataType](data, probe);
 }
 
 // 暴露出去
@@ -294,7 +292,7 @@ exports.getData = async (rawData) => {
 
   const company = await Company.findOne({
     aliasName: companyName
-  })
+  });
   const obj = {
     pipelineId: '',
     companyId: company._id,
@@ -303,7 +301,7 @@ exports.getData = async (rawData) => {
     dataType: typeMap.get(monitor.slice(4, 6)),
     value: ''
   };
-  
+
   const probe = await Probe.findOne({
     $and: [{
       'companyId': obj.companyId
@@ -314,30 +312,30 @@ exports.getData = async (rawData) => {
 
   obj.value = parseDigitalData(obj.dataType, monitor.slice(8), probe);
   obj.pipelineId = probe.pipelineId;
-  
-  return obj
+
+  return obj;
 };
 
 
-// 暂时废弃
-function processData(rawData) {
-  let company = Object.keys(rawData)[0]
-  let value = Object.values(rawData)[0]
+// // 暂时废弃
+// function processData(rawData) {
+//   const company = Object.keys(rawData)[0];
+//   const value = Object.values(rawData)[0];
 
-  let companyId = CompanyModel.findOne({ 'name': company }, (err, data) => {
-    return data.id
-  })
+//   const companyId = Company.findOne({ 'name': company }, (err, data) => {
+//     return data.id;
+//   });
 
-  let probe = value.slice(0, 4) // 采集器
-  let monitor = value.slice(4, 8)// 仪表盘
-  const dataType = monitor.slice(0, 2) // 仪表盘类型, 用于promise
-  let digitalData = value.substring(value.length - 8) // 仪表盘数字信号
-  // 找到公司的ID, 公司名, 找到流水线的ID
-  return {
-    companyId,
-    probe,
-    monitor,
-    dataType,
-    digitalData,
-  }
-}
+//   const probe = value.slice(0, 4); // 采集器
+//   const monitor = value.slice(4, 8);// 仪表盘
+//   const dataType = monitor.slice(0, 2); // 仪表盘类型, 用于promise
+//   const digitalData = value.substring(value.length - 8); // 仪表盘数字信号
+//   // 找到公司的ID, 公司名, 找到流水线的ID
+//   return {
+//     companyId,
+//     probe,
+//     monitor,
+//     dataType,
+//     digitalData,
+//   };
+// }
