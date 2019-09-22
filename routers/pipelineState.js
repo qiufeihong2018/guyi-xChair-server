@@ -240,7 +240,9 @@ function getTime(doc) {
     }
     resolve(time);
   });
-}
+};
+
+// 放弃
 router.post('/time', function(req, res) {
 
   const start = localDate(req.body.start);
