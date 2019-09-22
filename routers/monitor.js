@@ -5,8 +5,8 @@ const Monitor = require('../collections/monitor');
 const RawDataCol = require('../collections/rawData');
 
 const log = require('../services/logger').createLogger('monitor');
-const { getData } = require('../services/type');
-
+const getData = require('../services/type').getData;
+const localDate = require('../utils/time').localDate;
 /**
  * @api {post} /v1/monitor Monitor Post
  * @apiName MonitorPost
@@ -34,11 +34,15 @@ const { getData } = require('../services/type');
 router.post('/', async (req, res) => {
   const doc = req.body;
   // 报错原始数据
-  let dataValue = Object.values(doc)[0]
-  let dateType = dataValue.slice(4, 6)
-  await RawDataCol.create({data: JSON.stringify(doc), value: dataValue, type: dateType})
+  const dataValue = Object.values(doc)[0];
+  const dateType = dataValue.slice(4, 6);
+  await RawDataCol.create({
+    data: JSON.stringify(doc),
+    value: dataValue,
+    type: dateType
+  });
   // 数据处理
-  const monitorData = await getData(doc)
+  const monitorData = await getData(doc);
   if (monitorData) {
     console.log(monitorData);
     Monitor.create(monitorData, function(err) {
@@ -199,14 +203,6 @@ router.get('/', function(req, res) {
  *    }
  */
 
-// Analysis of Greenwich Time
-function localDate(v) {
-  v = Number(v);
-  const d = new Date(v || Date.now());
-
-  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString();
-}
 
 router.post('/search', function(req, res) {
   const start = localDate(req.body.start);

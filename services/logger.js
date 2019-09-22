@@ -37,7 +37,6 @@ const dailyRotateFileTrans = new (transports.DailyRotateFile)({
 
 if (mode === MODE.DEVE) {
   trans.push(consoleTrans);
-  trans.push(dailyRotateFileTrans);
   fileTrans.level = 'debug';
   trans.push(fileTrans);
 } else if (mode === MODE.PROD) {

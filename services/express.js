@@ -12,6 +12,9 @@ const config = require('../config')();
 const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
+// 触发统计方法
+const dayStatistics = require('../models/statistics').dayStatistics;
+dayStatistics();
 
 exports.start = function () {
 
@@ -58,6 +61,7 @@ exports.start = function () {
   app.use('/api/v1/probe', require('../routers/probe'));
   app.use('/api/v1/monitor', require('../routers/monitor'));
   app.use('/api/v1/pipelineState', require('../routers/pipelineState'));
+  app.use('/api/v1/statistics', require('../routers/statistics'));
 
 
   // start server
