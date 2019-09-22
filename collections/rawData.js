@@ -6,6 +6,12 @@ const RawDataSchema = new Schema({
   data: {
     type: String
   },
+  value: {
+    type: String
+  },
+  type: {
+    type: String
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',

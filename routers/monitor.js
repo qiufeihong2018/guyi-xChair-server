@@ -34,7 +34,9 @@ const { getData } = require('../services/type');
 router.post('/', async (req, res) => {
   const doc = req.body;
   // 报错原始数据
-  RawDataCol.create({data: JSON.stringify(doc)})
+  let dataValue = Object.values(doc)[0]
+  let dateType = dataValue.slice(4, 6)
+  await RawDataCol.create({data: JSON.stringify(doc), value: dataValue, type: dateType})
   // 数据处理
   const monitorData = await getData(doc)
   if (monitorData) {
@@ -205,8 +207,8 @@ function localDate(v) {
   // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString();
 }
-router.post('/search', function(req, res) {
 
+router.post('/search', function(req, res) {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
   const companyId = req.body.companyId;
