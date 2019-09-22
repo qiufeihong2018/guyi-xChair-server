@@ -38,7 +38,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
 // 返回更新的结果
 router.post('/', async (req, res, next) => {
   const doc = req.body;
-  const { pipelineId, probeNo } = doc
+  const { pipelineId, probeNo } = doc;
   // 查找如果找到就更新，没找到就新增
   await Probe.findOneAndUpdate({
     pipelineId,
@@ -48,10 +48,10 @@ router.post('/', async (req, res, next) => {
 
 
   // 更新指定的pipeline
-  const pipelineObj = new PipelineModel(pipelineId)
-  const probeList = await pipelineObj.updateProbeList()
+  const pipelineObj = new PipelineModel(pipelineId);
+  const probeList = await pipelineObj.updateProbeList();
 
-  res.status(200).json({probeList});
+  res.status(200).json({ probeList });
 });
 
 /**
@@ -87,10 +87,10 @@ router.delete('/', async (req, res, next) => {
   });
 
   // 更新指定的pipeline
-  const pipelineObj = new PipelineModel(pipelineId)
-  const probeList = await pipelineObj.updateProbeList()
+  const pipelineObj = new PipelineModel(pipelineId);
+  const probeList = await pipelineObj.updateProbeList();
 
-  res.status(200).json({probeList});
+  res.status(200).json({ probeList });
 
 });
 /**
