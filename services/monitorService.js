@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 'use strict';
 const MonitorCol = require('../collections/monitor');
+const CompanyCol = require('../collections/company');
 
 async function dataAnalysis(pipelineId, dataType, date) {
   // eslint-disable-next-line indent
@@ -69,8 +70,65 @@ function getTimePeriod(date) {
   }
 }
 
+async function companyAnalysis(companyId, dataType, start, end) {
+  const company = await CompanyCol.findById(companyId);
+  if (!company || company.pipelineList.length === 0) return null;
+
+  const res = {};
+  for (const pipeline of company.pipelineList) {
+    const count = await pipelineCount(pipeline, dataType, start, end);
+    res.push({
+      pipeline: pipeline,
+      dataType: dataType,
+      value: count
+    });
+
+  }
+  return res;
+}
+
+async function pipelineCount(pipelineId, dataType, start, end) {
+  const max = await MonitorCol
+    .find({ 'pipelineId': pipelineId,
+            'dataType': dataType,
+            'createdAt': { $gte: start, $lt: end } })
+     .sort({ 'createdAt': -1 })
+    .limit(1);
+  const min = await MonitorCol
+  .find({ 'pipelineId': pipelineId,
+          'dataType': dataType,
+          'createdAt': { $gte: start, $lt: end } })
+   .sort({ 'createdAt': 1 })
+  .limit(1);
+
+  if (max.length === 0 || min.length === 0)
+    return null;
+
+  if (dataType === 'counter') {
+    console.log(max[0].value.productionQuantity, min[0].value.productionQuantity);
+    const repeatedCounting = max[0].value.repeatedCounting - min[0].value.repeatedCounting;
+    const defectiveNumber = max[0].value.defectiveNumber - min[0].value.defectiveNumber;
+    const productionQuantity = max[0].value.productionQuantity - min[0].value.productionQuantity;
+
+    return {
+      repeatedCounting,
+      defectiveNumber,
+      productionQuantity
+    };
+  } else {
+    const positiveEnergy = max[0].value.positiveEnergy - min[0].value.positiveEnergy;
+    const negativeEnergy = max[0].value.negativeEnergy - min[0].value.negativeEnergy;
+
+    return {
+      positiveEnergy,
+      negativeEnergy
+    };
+  }
+}
+
 function timeHander(date) {
   return date.substr(0, 11) + '00:00:00.000Z';
 }
 exports.dataAnalysis = dataAnalysis;
 exports.getTimePeriod = getTimePeriod;
+exports.companyAnalysis = companyAnalysis;

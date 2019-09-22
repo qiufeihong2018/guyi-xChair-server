@@ -167,7 +167,7 @@ router.delete('/:id', async(req, res, next) => {
   const pipeline = await PipelineCol.findByIdAndRemove({
     _id: id
   });
-  
+
   const companyId = pipeline.companyId
   const company = await CompanyCol.findById(companyId)
   const pipelineList = company.pipelineList
@@ -328,7 +328,6 @@ router.post('/state/stats', async (req, res, next) => {
     // counter
     result = processDataOfCounter(sqlResult)
   }
-  
   res.status(200).json({
     data: result
   });
