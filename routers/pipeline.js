@@ -5,12 +5,9 @@ const PipelineCol = require('../collections/pipeline');
 const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
-<<<<<<< HEAD
 const monitorService = require('../services/monitorService');
-=======
 const MonitorCol = require('../collections/monitor');
 const timeUtil = require('../utils/time');
->>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -286,146 +283,12 @@ router.get('/:id/stats', async (req, res, next) => {
    * dataType counter power
    * durationType today yesterday
    */
-<<<<<<< HEAD
   const pipelineId = req.params.id;
   const dataType = req.query.dataType;
   const durationType = req.query.durationType;
   // console.log(pipelineId, dataType, durationType);
   const result = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
   
-=======
-  const id = req.params.id;
-  res.status(200).json({});
-});
-
-// 带着详细的时间节点
-// 带start & end
-router.post('/stateDetail', async (req, res, next) => {
-  const id = req.body.id;
-  const dataType = req.body.dataType;
-  // const durationType = req.body.durationType; // day 和 yester
-  const start = localDate(req.body.start);
-  const end = localDate(req.body.end);
-
-  let sqlResult = await MonitorCol.find({
-    createdAt: {
-      $gte: start,
-      $lte: end
-    },
-    // _id: {$regex: /5$/},
-    pipelineId: id,
-    dataType: dataType
-  });
-
-  let result = undefined
-  if (dataType === 'power') {
-    result = processDataOfPower(sqlResult)
-  } else {
-    // counter
-    result = processDataOfCounter(sqlResult)
-  }
-
-  res.status(200).json({
-    type: dataType,
-    data: result
-  });
-})
-
-// 时间累计
-router.post('/state/time', async (req, res, next) => {
-  const id = req.body.id;
-  const start = localDate(req.body.start);
-  const end = localDate(req.body.end);
-
-  // PipelineStateCol.find({
-  //   'createdAt': {
-  //     '$gte': start,
-  //     '$lte': end
-  //   }
-  // }).then((doc) => {
-  //   timeUtil.getTime(doc).then((data) => {
-  //     log.info('Search time');
-  //     res.status(200).json(data);
-  //   });
-  // });
-
-  const sqlResult = await PipelineStateCol.find({
-    pipelineId: id,
-    createdAt: {
-      $gte: start,
-      $lte: end
-    }
-  });
-  const result = await timeUtil.getTime(sqlResult);
-
-  res.status(200).json({
-    data: result
-  });
-})
-
-
-router.post('/state', async (req, res, next) => {
-  // 对 couter、power、electricity 这三个进行统计
-  const { id, type } = req.body;
-  const timeSpan = 60 * 60 * 1000
-  const dayStart = +new Date(new Date(new Date().toLocaleDateString()).getTime()) - 24 * timeSpan
-  const dayEnd = dayStart + 24 * timeSpan
-
-  const timeList = Array.from({ length: 25 }, (_, i) => i-1).map(i => {
-    return {
-      start: localDate(dayStart + i * timeSpan),
-      end: localDate(dayStart + (i + 1) * timeSpan)
-    }
-  })
-
-  const durationType = {
-    latestDay: '', // 
-    yesterday: '', // 昨天
-    week: '', //
-    year: '' // 
-  }
-
-  let counter = await MonitorCol.find({
-    createdAt: {
-      $gte: timeList[0].start,
-      $lte: timeList[23].end
-    },
-    pipelineId: id,
-    dataType: 'counter',
-  }, {dataType: 1, value:1, createdAt:1})
-
-  const list = []
-  // 数据的value可能不增加；数据可能会丢失
-  timeList.map(time => {
-    let item = counter.find(el => {
-      if ((+ new Date(el.createdAt)) >= (+ new Date(time.start)) && (+ new Date(el.createdAt)) <= (+ new Date(time.end)) ) {
-        return true
-      }
-    })
-    if (!item) return list.push(item)
-    return list.push(item.value.productionQuantity)
-  })  
-
-  const result = {
-    value: list,
-    time: ['00:00-01:00','01:00-02:00','02:00-03:00','03:00-04:00','04:00-05:00','05:00-06:00',
-          '06:00-07:00','07:00-08:00', '08:00-09:00','09:00-10:00','10:00-11:00','11:00-12:00',
-          '12:00-13:00','13:00-14:00','14:00-15:00','15:00-16:00','16:00-17:00','17:00-18:00',
-          '18:00-19:00','19:00-20:00','20:00-21:00','21:00-22:00','22:00-23:00','23:00-24:00']
-  }
-
-  // console.log('list', list)
-
-
-  // const power = await MonitorCol.find({
-  //   'createdAt': {
-  //     "$gte": start,
-  //     "$lte": end
-  //   },
-  //   'pipelineId': id,
-  //   'dataType': 'power'
-  // })
->>>>>>> 37d3d5c14d21008253f0c1434cc7c747e8e6709c
   res.status(200).json(result);
 });
 

@@ -6,6 +6,7 @@ const PipelineCol = require('../collections/pipeline');
 const ProductCol = require('../collections/product');
 // Model层
 const PipelineModel = require('../models/pipeline');
+const monitorService = require('../services/monitorService');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
@@ -73,7 +74,7 @@ router.post('/', function(req, res, next) {
  * @apiDescription 获取公司详情
  * @apiName GetCompanyDetail
  * @apiGroup company
- * 
+ *
  * @apiParam {string} id  The id of company(公司的id).
  *
  * @apiSuccess {string} _id  The id of company（公司id值）.
@@ -106,7 +107,7 @@ router.get('/:id', async (req, res, next) => {
  * @apiDescription 删除公司
  * @apiName DeleteCompany
  * @apiGroup company
- * 
+ *
  * @apiParam {string} id  The id of company(公司的id).
  */
 router.delete('/:id', async (req, res, next) => {
@@ -123,9 +124,17 @@ router.delete('/:id', async (req, res, next) => {
 router.get('/:id/pipeline/all', async (req, res, next) => {
   const { id: companyId } = req.params;
   const doc = await PipelineCol.find({ companyId });
-  const idList = doc.map(item => item._id);
+  const idList = doc.map((item) => item._id);
   const pipelineList = await PipelineModel.getListCurrentState(idList);
   res.status(200).json(pipelineList);
+});
+
+// 获取某公司的所有pipeline在一个时间段的耗电量和生产量
+router.get('/:id/pipeline/stats', async (req, res, next) => {
+  const { id: companyId } = req.params;
+  const { dataType, start, end } = req.query;
+  const result = await monitorService.companyAnalysis(companyId, dataType, start, end);
+  res.status(200).json(result);
 });
 
 
