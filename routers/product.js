@@ -38,7 +38,7 @@ const log = require('../services/logger').createLogger('userAuthentication');
  */
 router.post('/', function(req, res, next) {
   const doc = req.body;
-  console.log('doc', doc)
+  // console.log('doc', doc)
   Product.create(doc, function(err, doc) {
     if (err) {
       log.error(err);

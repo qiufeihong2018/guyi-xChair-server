@@ -6,6 +6,7 @@ const CompanyCol = require('../collections/company');
 const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
+const ProductStateCol = require('../collections/productState');
 const monitorService = require('../services/monitorService');
 const MonitorCol = require('../collections/monitor');
 const timeUtil = require('../utils/time');
@@ -23,24 +24,39 @@ function localDate(v) {
 // 解析power的数据
 function processDataOfPower(rawData) {
   return rawData.map(item => {
-    return {
-      positive: item.value.positiveEnergy,
-      negative: item.value.negativeEnergy,
-      time: item.createdAt
+    if (item && item.value) {
+      return {
+        positive: item.value.positiveEnergy,
+        negative: item.value.negativeEnergy,
+        time: item.createdAt
+      };
     }
-  })
+    return {
+      positive: 0,
+      negative: 0,
+      time: ''
+    };
+  });
 }
 
 // 解析counter的数据
 function processDataOfCounter(rawData) {
   return rawData.map(item => {
-    return {
-      in: item.value.repeatedCounting, // 入口数
-      failed: item.value.defectiveNumber, // 次品数
-      out: item.value.productionQuantity, // 出口数
-      time: item.createdAt
+    if (item && item.value) {
+      return {
+        in: item.value.repeatedCounting, // 入口数
+        failed: item.value.defectiveNumber, // 次品数
+        out: item.value.productionQuantity, // 出口数
+        time: item.createdAt
+      };
     }
-  })
+    return {
+      in: 0, // 入口数
+      failed: 0, // 次品数
+      out: 0, // 出口数
+      time: ''
+    };
+  });
 }
 
 /**
@@ -111,18 +127,18 @@ router.get('/company/:companyId', async (req, res, next) => {
  */
 // 传入 pipelineName、companyId、probeList
 router.post('/', async (req, res, next) => {
-  const { pipelineName, companyId } = req.body
-  const data = req.body
+  const { pipelineName, companyId } = req.body;
+  const data = req.body;
 
-  const pipeline = await PipelineCol.create(data)
+  const pipeline = await PipelineCol.create(data);
 
-  const company = await CompanyCol.findById(companyId)
-  const pipelineList = company.pipelineList
+  const company = await CompanyCol.findById(companyId);
+  const pipelineList = company.pipelineList;
 
   CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: {pipelineList: [...pipelineList, pipeline.id]}
+    $set: { pipelineList: [...pipelineList, pipeline.id] }
   }, {
     new: true,
     upsert: true,
@@ -162,23 +178,23 @@ router.post('/', async (req, res, next) => {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.delete('/:id', async(req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   const id = req.params.id;
   const pipeline = await PipelineCol.findByIdAndRemove({
     _id: id
   });
 
-  const companyId = pipeline.companyId
-  const company = await CompanyCol.findById(companyId)
-  const pipelineList = company.pipelineList
-  const index = pipelineList.indexOf(pipeline._id)
-  pipelineList.splice(index, 1)
+  const companyId = pipeline.companyId;
+  const company = await CompanyCol.findById(companyId);
+  const pipelineList = company.pipelineList;
+  const index = pipelineList.indexOf(pipeline._id);
+  pipelineList.splice(index, 1);
 
 
   await CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: {pipelineList: [...pipelineList]}
+    $set: { pipelineList: [...pipelineList] }
   }, {
     new: true,
     upsert: true,
@@ -189,9 +205,9 @@ router.delete('/:id', async(req, res, next) => {
   res.status(200).json({
     data: 'Update success',
     status: 200
-  });  
+  });
 
-})
+});
 
 /**
  * @api {put} /v1/pipeline Pipeline put
@@ -300,6 +316,24 @@ router.get('/:id/state', async (req, res, next) => {
   });
 });
 
+// 查询该所有产品的状态
+router.get('/:id/productState', async (req, res, next) => {
+  const { id: pipelineId } = req.params;
+  const start = +new Date(new Date(new Date().toLocaleDateString()).getTime());
+  const end = +new Date();
+  const productList = await MonitorCol.find({
+    createdAt: {
+      $gte: start,
+      $lte: end
+    },
+    dataType: 'product'
+  });
+
+  res.status(200).json({
+    data: productList
+  });
+});
+
 // 用于多条生产线对比
 // 多个pipeline的当前的(开机、关机、空转)状态
 // 基于ids这个数组，元素为pipeline的ID
@@ -321,12 +355,12 @@ router.post('/state/stats', async (req, res, next) => {
   const durationType = req.body.durationType;
 
   const sqlResult = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
-  let result = undefined
+  let result;
   if (dataType === 'power') {
-    result = processDataOfPower(sqlResult)
+    result = processDataOfPower(sqlResult);
   } else {
     // counter
-    result = processDataOfCounter(sqlResult)
+    result = processDataOfCounter(sqlResult);
   }
   res.status(200).json({
     data: result
@@ -342,7 +376,7 @@ router.post('/stateDetail', async (req, res, next) => {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
 
-  let sqlResult = await MonitorCol.find({
+  const sqlResult = await MonitorCol.find({
     createdAt: {
       $gte: start,
       $lte: end
@@ -352,12 +386,12 @@ router.post('/stateDetail', async (req, res, next) => {
     dataType: dataType
   });
 
-  let result = undefined
+  let result;
   if (dataType === 'power') {
-    result = processDataOfPower(sqlResult)
+    result = processDataOfPower(sqlResult);
   } else {
     // counter
-    result = processDataOfCounter(sqlResult)
+    result = processDataOfCounter(sqlResult);
   }
 
   res.status(200).json({
@@ -402,52 +436,52 @@ router.post('/state/time', async (req, res, next) => {
 router.post('/state', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
   const { id, type } = req.body;
-  const timeSpan = 60 * 60 * 1000
-  const dayStart = +new Date(new Date(new Date().toLocaleDateString()).getTime()) - 24 * timeSpan
-  const dayEnd = dayStart + 24 * timeSpan
+  const timeSpan = 60 * 60 * 1000;
+  const dayStart = +new Date(new Date(new Date().toLocaleDateString()).getTime()) - 24 * timeSpan;
+  const dayEnd = dayStart + 24 * timeSpan;
 
-  const timeList = Array.from({ length: 25 }, (_, i) => i-1).map(i => {
+  const timeList = Array.from({ length: 25 }, (_, i) => i - 1).map((i) => {
     return {
       start: localDate(dayStart + i * timeSpan),
       end: localDate(dayStart + (i + 1) * timeSpan)
-    }
-  })
+    };
+  });
 
   const durationType = {
-    latestDay: '', // 
+    latestDay: '', //
     yesterday: '', // 昨天
     week: '', //
-    year: '' // 
-  }
+    year: '' //
+  };
 
-  let counter = await MonitorCol.find({
+  const counter = await MonitorCol.find({
     createdAt: {
       $gte: timeList[0].start,
       $lte: timeList[23].end
     },
     pipelineId: id,
     dataType: 'counter',
-  }, {dataType: 1, value:1, createdAt:1})
+  }, { dataType: 1, value: 1, createdAt: 1 });
 
-  const list = []
+  const list = [];
   // 数据的value可能不增加；数据可能会丢失
-  timeList.map(time => {
-    let item = counter.find(el => {
-      if ((+ new Date(el.createdAt)) >= (+ new Date(time.start)) && (+ new Date(el.createdAt)) <= (+ new Date(time.end)) ) {
-        return true
+  timeList.map((time) => {
+    const item = counter.find((el) => {
+      if ((+new Date(el.createdAt)) >= (+new Date(time.start)) && (+new Date(el.createdAt)) <= (+new Date(time.end))) {
+        return true;
       }
-    })
-    if (!item) return list.push(item)
-    return list.push(item.value.productionQuantity)
-  })  
+    });
+    if (!item) return list.push(item);
+    return list.push(item.value.productionQuantity);
+  });
 
   const result = {
     value: list,
-    time: ['00:00-01:00','01:00-02:00','02:00-03:00','03:00-04:00','04:00-05:00','05:00-06:00',
-          '06:00-07:00','07:00-08:00', '08:00-09:00','09:00-10:00','10:00-11:00','11:00-12:00',
-          '12:00-13:00','13:00-14:00','14:00-15:00','15:00-16:00','16:00-17:00','17:00-18:00',
-          '18:00-19:00','19:00-20:00','20:00-21:00','21:00-22:00','22:00-23:00','23:00-24:00']
-  }
+    time: ['00:00-01:00', '01:00-02:00', '02:00-03:00', '03:00-04:00', '04:00-05:00', '05:00-06:00',
+           '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
+           '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
+           '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00']
+  };
 
   // console.log('list', list)
 

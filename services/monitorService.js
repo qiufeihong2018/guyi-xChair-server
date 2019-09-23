@@ -13,8 +13,8 @@ async function dataAnalysis(pipelineId, dataType, date) {
   let pre = await MonitorCol
     .find({ 'pipelineId': pipelineId,
             'dataType': dataType,
-            'createdAt': { $gte: timePeriod.start - 24 * 60 * 60 * 1000, $lt: timePeriod.start } })
-     .sort({ 'createdAt': -1 })
+            'createdAt': { $gte: timePeriod.start, $lt: timePeriod.end } })
+     .sort({ 'createdAt': 1 })
     .limit(1);
 
   res.push(pre);
@@ -42,7 +42,9 @@ async function dataAnalysis(pipelineId, dataType, date) {
 
   const finalResult = [];
   for (const obj of res) {
-    finalResult.push(obj[0]);
+    if (obj.length > 0)
+      finalResult.push(obj[0]);
+    else finalResult.push(null);
   }
 
   return finalResult;
@@ -80,7 +82,7 @@ async function companyAnalysis(companyId, dataType, start, end) {
     const count = await pipelineCount(pipeline, dataType, start, end);
 
     const pipelineCol = await PipelineCol.findById(pipeline);
-    const pipelineName = pipelineCol.pipelineName
+    const pipelineName = pipelineCol.pipelineName;
     res.push({
       pipelineId: pipeline,
       pipelineName: pipelineName,
@@ -109,7 +111,7 @@ async function pipelineCount(pipelineId, dataType, start, end) {
     return null;
 
   if (dataType === 'counter') {
-    console.log(max[0].value.productionQuantity, min[0].value.productionQuantity);
+    // console.log(max[0].value.productionQuantity, min[0].value.productionQuantity);
     const repeatedCounting = max[0].value.repeatedCounting - min[0].value.repeatedCounting;
     const defectiveNumber = max[0].value.defectiveNumber - min[0].value.defectiveNumber;
     const productionQuantity = max[0].value.productionQuantity - min[0].value.productionQuantity;

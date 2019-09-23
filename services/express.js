@@ -13,8 +13,8 @@ const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
 // 触发统计方法
-const dayStatistics = require('../models/statistics').dayStatistics;
-dayStatistics();
+const monitorStatistics = require('../models/statistics').monitorStatistics;
+monitorStatistics();
 
 exports.start = function () {
 

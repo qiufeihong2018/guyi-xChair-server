@@ -1,4 +1,31 @@
 'use strict';
+// 获取时间（排除无difTime属性）
+exports.getTime = (doc) => {
+  return new Promise(function(resolve, reject) {
+    const time = {
+      offTime: 0,
+      onTime: 0,
+      pendingTime: 0
+    };
+
+    for (let i = 0; i < doc.length; i++) {
+      if (doc[i].difTime !== undefined) {
+        const docDifTime = doc[i].difTime;
+        if (doc[i].state === 'off') {
+          time.offTime += docDifTime;
+        }
+        if (doc[i].state === 'on') {
+          time.onTime += docDifTime;
+        }
+        if (doc[i].state === 'pending') {
+          time.pendingTime += docDifTime;
+        }
+      }
+    }
+    resolve(time);
+  });
+};
+
 // 获取时间范围
 /**
  *
@@ -36,10 +63,8 @@ exports.getDuration = (duration) => {
 
 exports.localDate = (v) => {
   v = Number(v);
-  console.log(v)
   const d = new Date(v || Date.now());
 
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  console.log()
   return d.toISOString();
 };

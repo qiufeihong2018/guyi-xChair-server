@@ -5,13 +5,8 @@ const PipelineState = require('../collections/pipelineState');
 
 const log = require('../services/logger').createLogger('userAuthentication');
 
-// Analysis of Greenwich Time
-function localDate(v) {
-  v = Number(v);
-  const d = new Date(v || Date.now());
-  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString();
-}
+const localDate = require('../utils/time').localDate;
+
 /**
  * @api {get} /v1/pipeline/:pipelineId PipelineState get
  * @apiName PipelineStateGet
@@ -82,25 +77,58 @@ function getState() {
       difTime = currentTime - prevVal.startTime;
       // 1. 与上一个pipelineState同一个state更新数据
       if (prevVal.state === plState.state) {
-        PipelineState.findByIdAndUpdate({
-          _id: prevVal._id
-        }, {
-          $set: {
-            endTime: currentTime,
-            difTime: difTime,
-            count: prevVal.count
-          }
-        }, {
-          new: true,
-          upsert: true,
-          setDefaultsOnInsert: true,
-          setOnInsert: true
-        }, function(err, doc) {
-          if (err) {
-            log.error(err);
-          }
-          log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
-        });
+        // 判断是否是0点
+        // 由于前端30s轮询，所以后端判断要有一个容错
+        // eslint-disable-next-line max-len
+        if (Number(currentTime.getTime().toString().slice(-6)) >= 0 && Number(currentTime.getTime().toString().slice(-6)) <= 40) {
+          PipelineState.findByIdAndUpdate({
+            _id: prevVal._id
+          }, {
+            $set: {
+              endTime: currentTime,
+              difTime: difTime,
+              count: prevVal.count
+            }
+          }, {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true,
+            setOnInsert: true
+          }, function(err, doc) {
+            if (err) {
+              log.error(err);
+            }
+            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
+            PipelineState.create(plState, function(err) {
+              if (err) {
+                console.log(err);
+              }
+              log.info('Add 00:00:00 pipelineState success');
+            });
+          });
+
+        } else {
+          PipelineState.findByIdAndUpdate({
+            _id: prevVal._id
+          }, {
+            $set: {
+              endTime: currentTime,
+              difTime: difTime,
+              count: prevVal.count
+            }
+          }, {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true,
+            setOnInsert: true
+          }, function(err, doc) {
+            if (err) {
+              log.error(err);
+            }
+            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
+          });
+        }
+
       } else {
         // 1. 与上一个pipelineState的state不相同创建数据
         PipelineState.create(plState, function(err) {
@@ -170,6 +198,7 @@ router.post('/search', function(req, res) {
   getState();
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
+
   const pipelineId = req.body.pipelineId;
   PipelineState.find({
     $and: [{
@@ -180,8 +209,15 @@ router.post('/search', function(req, res) {
     }, {
       'pipelineId': pipelineId
     }]
+  }).sort({
+    'createdAt': 1
   }).then((doc) => {
     log.info('Search PipelineState');
+    // console.log(doc[doc.length - 1])
+    // doc[doc.length - 1].endTime = '2019-09-22T00:00:00.000Z'
+    // eslint-disable-next-line max-len
+    // doc[doc.length - 1].difTime = 116009542 - (new Date('2019-09-22T16:46:41.099Z').getTime() - new Date('2019-09-22T16:46:41.099Z').getTime())
+    // console.log(doc[doc.length - 1])
     res.status(200).json(doc);
   });
 });
@@ -240,7 +276,7 @@ function getTime(doc) {
     }
     resolve(time);
   });
-};
+}
 
 // 放弃
 router.post('/time', function(req, res) {
