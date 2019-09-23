@@ -109,7 +109,7 @@ async function pipelineCount(pipelineId, dataType, start, end) {
     return null;
 
   if (dataType === 'counter') {
-    console.log(max[0].value.productionQuantity, min[0].value.productionQuantity);
+    // console.log(max[0].value.productionQuantity, min[0].value.productionQuantity);
     const repeatedCounting = max[0].value.repeatedCounting - min[0].value.repeatedCounting;
     const defectiveNumber = max[0].value.defectiveNumber - min[0].value.defectiveNumber;
     const productionQuantity = max[0].value.productionQuantity - min[0].value.productionQuantity;

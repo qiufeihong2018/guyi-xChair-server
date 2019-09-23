@@ -6,6 +6,7 @@ const CompanyCol = require('../collections/company');
 const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
+const ProductStateCol = require('../collections/productState');
 const monitorService = require('../services/monitorService');
 const MonitorCol = require('../collections/monitor');
 const timeUtil = require('../utils/time');
@@ -122,13 +123,13 @@ router.post('/', async (req, res, next) => {
   CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: {pipelineList: [...pipelineList, pipeline.id]}
+    $set: { pipelineList: [...pipelineList, pipeline.id] }
   }, {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function(err, doc) {
+  }, function (err, doc) {
     if (err) {
       log.error(err);
     }
@@ -162,7 +163,7 @@ router.post('/', async (req, res, next) => {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.delete('/:id', async(req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   const id = req.params.id;
   const pipeline = await PipelineCol.findByIdAndRemove({
     _id: id
@@ -178,7 +179,7 @@ router.delete('/:id', async(req, res, next) => {
   await CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: {pipelineList: [...pipelineList]}
+    $set: { pipelineList: [...pipelineList] }
   }, {
     new: true,
     upsert: true,
@@ -189,7 +190,7 @@ router.delete('/:id', async(req, res, next) => {
   res.status(200).json({
     data: 'Update success',
     status: 200
-  });  
+  });
 
 })
 
@@ -220,7 +221,7 @@ router.delete('/:id', async(req, res, next) => {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.put('/', function(req, res, next) {
+router.put('/', function (req, res, next) {
   const data = req.body;
 
   PipelineCol.findByIdAndUpdate({
@@ -232,7 +233,7 @@ router.put('/', function(req, res, next) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function(err, doc) {
+  }, function (err, doc) {
     if (err) {
       log.error(err);
     }
@@ -276,7 +277,7 @@ router.put('/', function(req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   PipelineCol.find({}).then((doc) => {
     res.status(200).json(doc);
   });
@@ -299,6 +300,24 @@ router.get('/:id/state', async (req, res, next) => {
     id: id
   });
 });
+
+// 查询该所有产品的状态
+router.get('/:id/productState', async (req, res, next) => {
+  const { id: pipelineId } = req.params
+  const start = +new Date(new Date(new Date().toLocaleDateString()).getTime())
+  const end = +new Date()
+  const productList = await MonitorCol.find({
+    createdAt: {
+      $gte: start,
+      $lte: end
+    },
+    dataType: 'product'
+  })
+
+  res.status(200).json({
+    data: productList
+  });
+})
 
 // 用于多条生产线对比
 // 多个pipeline的当前的(开机、关机、空转)状态
@@ -406,7 +425,7 @@ router.post('/state', async (req, res, next) => {
   const dayStart = +new Date(new Date(new Date().toLocaleDateString()).getTime()) - 24 * timeSpan
   const dayEnd = dayStart + 24 * timeSpan
 
-  const timeList = Array.from({ length: 25 }, (_, i) => i-1).map(i => {
+  const timeList = Array.from({ length: 25 }, (_, i) => i - 1).map(i => {
     return {
       start: localDate(dayStart + i * timeSpan),
       end: localDate(dayStart + (i + 1) * timeSpan)
@@ -427,26 +446,26 @@ router.post('/state', async (req, res, next) => {
     },
     pipelineId: id,
     dataType: 'counter',
-  }, {dataType: 1, value:1, createdAt:1})
+  }, { dataType: 1, value: 1, createdAt: 1 })
 
   const list = []
   // 数据的value可能不增加；数据可能会丢失
   timeList.map(time => {
     let item = counter.find(el => {
-      if ((+ new Date(el.createdAt)) >= (+ new Date(time.start)) && (+ new Date(el.createdAt)) <= (+ new Date(time.end)) ) {
+      if ((+ new Date(el.createdAt)) >= (+ new Date(time.start)) && (+ new Date(el.createdAt)) <= (+ new Date(time.end))) {
         return true
       }
     })
     if (!item) return list.push(item)
     return list.push(item.value.productionQuantity)
-  })  
+  })
 
   const result = {
     value: list,
-    time: ['00:00-01:00','01:00-02:00','02:00-03:00','03:00-04:00','04:00-05:00','05:00-06:00',
-          '06:00-07:00','07:00-08:00', '08:00-09:00','09:00-10:00','10:00-11:00','11:00-12:00',
-          '12:00-13:00','13:00-14:00','14:00-15:00','15:00-16:00','16:00-17:00','17:00-18:00',
-          '18:00-19:00','19:00-20:00','20:00-21:00','21:00-22:00','22:00-23:00','23:00-24:00']
+    time: ['00:00-01:00', '01:00-02:00', '02:00-03:00', '03:00-04:00', '04:00-05:00', '05:00-06:00',
+      '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
+      '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
+      '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00']
   }
 
   // console.log('list', list)
@@ -465,7 +484,7 @@ router.post('/state', async (req, res, next) => {
 
 
 // 获取该生产线的所有产品
-router.get('/:id/product', function(req, res, next) {
+router.get('/:id/product', function (req, res, next) {
   const { id } = req.params;
   if (id) {
     ProductCol.find({

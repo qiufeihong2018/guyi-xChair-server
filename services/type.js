@@ -1,6 +1,9 @@
 /* eslint-disable prefer-const */
 'use strict';
 const Company = require('../collections/company');
+const PipelineCol = require('../collections/pipeline');
+const ProductCol = require('../collections/product');
+const ProductStateCol = require('../collections/productState');
 const PipelineState = require('../collections/pipelineState');
 const Monitor = require('../collections/monitor');
 const Probe = require('../collections/probe');
@@ -239,7 +242,12 @@ function parseElectricityDigit(data) {
 解析product(产品编号)数字信号 CF
 test:'AA04CF0146F04645F0455AF05A' 90确定
 */
-function parseProductDigit(data) {
+const parseProductDigit = async (data, probe, pipelineId) => {
+  // probe 废弃使用
+
+  // const pipeline = await PipelineCol.findOne({_id: pipelineId})
+  // const product = await ProductCol.findOne({_id: pipelineId})
+  // const pipelineState = await pipelineStateCol.findOne({pipelineId: pipelineId})
 
   let str = '';
   let res = '';
@@ -274,6 +282,7 @@ function parseProductDigit(data) {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data, probe) {
+  const pipelineId = probe.pipelineId
   const promise = {
     switch: parseSwitchDigit,
     counter: parseCounterDigit,
@@ -281,7 +290,7 @@ function parseDigitalData(dataType, data, probe) {
     electricity: parseElectricityDigit,
     product: parseProductDigit,
   }
-  return promise[dataType](data, probe)
+  return promise[dataType](data, probe, pipelineId)
 }
 
 // 暴露出去
