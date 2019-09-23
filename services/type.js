@@ -150,7 +150,7 @@ function getPipelineState(obj, probe) {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function (err, doc) {
+      }, function(err, doc) {
         if (err) {
           log.error(err);
         }
@@ -162,7 +162,7 @@ function getPipelineState(obj, probe) {
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       console.log(plState);
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }
@@ -237,7 +237,14 @@ function parseElectricityDigit(data) {
   return obj;
 }
 
-createProState(res, probe) {
+function createProState(res, probe) {
+  const proState = {
+    productId: '',
+    pipelineId: '',
+    state: false,
+    startTime: new Date(),
+    endTime: ''
+  };
   // 将之前的开的状态关闭，结束时间为当前时间
   ProductStateCol.findByIdAndUpdate({
     state: true
@@ -251,7 +258,7 @@ createProState(res, probe) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -294,20 +301,12 @@ const parseProductDigit = async (data, probe, pipelineId) => {
     res = res[res.length - 1].split('清除');
     res = res[res.length - 1];
     if (res !== '') {
-      const proState = {
-        productId: '',
-        pipelineId: '',
-        state: false,
-        startTime: new Date(),
-        endTime: ''
-      };
-      createProState(res, probe)
-
+      createProState(res, probe);
       return res;
     }
   }
   if (str !== '') {
-    createProState(str, probe)
+    createProState(str, probe);
     return str;
   }
 };
@@ -318,7 +317,7 @@ const parseProductDigit = async (data, probe, pipelineId) => {
  * switch(开关)   DD**
  * counter(计数器)  CC**
  * power(耗电量(千瓦·时) CD**
- * electricity(电压、电流...) CE** 
+ * electricity(电压、电流...) CE**
  * product(产品编号) CF
  */
 
