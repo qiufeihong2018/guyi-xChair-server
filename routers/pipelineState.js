@@ -78,7 +78,9 @@ function getState() {
       // 1. 与上一个pipelineState同一个state更新数据
       if (prevVal.state === plState.state) {
         // 判断是否是0点
-        if (Number(currentTime.getTime().toString().slice(-6)) === 0) {
+        // 由于前端30s轮询，所以后端判断要有一个容错
+        // eslint-disable-next-line max-len
+        if (Number(currentTime.getTime().toString().slice(-6)) >= 0 && Number(currentTime.getTime().toString().slice(-6)) <= 40) {
           PipelineState.findByIdAndUpdate({
             _id: prevVal._id
           }, {

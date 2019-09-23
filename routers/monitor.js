@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
   });
   // 数据处理
   const monitorData = await getData(doc);
-  if (monitorData) {
+  if (monitorData.value !== '') {
     console.log(monitorData);
     Monitor.create(monitorData, function(err) {
       if (err) {
