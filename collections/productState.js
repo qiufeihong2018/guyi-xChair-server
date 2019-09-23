@@ -2,7 +2,7 @@
  * 产品状态
  * 用于记录生产什么产品，在哪里生产，是否还在生产，在什么时间段里生产
  * 分别是 what(产品ID)、where(生产线ID)、if(state)、when(start|end)
- * */ 
+ * */
 'use strict';
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;

@@ -1,8 +1,7 @@
 'use strict';
 const Company = require('../collections/company');
-const PipelineCol = require('../collections/pipeline');
 const ProductCol = require('../collections/product');
-const ProductStateCol = require('../collections/productState');
+const ProductState = require('../collections/productState');
 const PipelineState = require('../collections/pipelineState');
 const Monitor = require('../collections/monitor');
 const Probe = require('../collections/probe');
@@ -66,14 +65,6 @@ function getEnergy(data) {
   return energy;
 }
 
-/* 解析switch(开关)数字信号   DD**
-如DD01：数字量采集通道1 （开和关；交给PD约定）01 00 2位
-test:'AA04DD0101'
-*/
-function parseSwitchDigit(data) {
-  return data;
-}
-
 function getCorrect(obj) {
   // 数据纠错业务
   let prevVal = {};
@@ -93,7 +84,7 @@ function getCorrect(obj) {
         _id: prevVal._id
       }).exec((err, data) => {
         if (err) {
-          console.log(err);
+          // console.log(err);
         }
         log.info(`${prevVal._id} is deleted`);
       });
@@ -161,7 +152,7 @@ function getPipelineState(obj, probe) {
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
-      console.log(plState);
+      // console.log(plState);
       PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
@@ -171,6 +162,70 @@ function getPipelineState(obj, probe) {
     }
   });
 }
+
+
+function createProState(res, probe) {
+  const proState = {
+    productId: '',
+    pipelineId: '',
+    state: true,
+    startTime: new Date(),
+    endTime: ''
+  };
+  ProductState.find({}).exec((err, doc) => {
+    if (doc.length <= 0) {
+      ProductState.create(proState);
+    }
+  });
+  // 将之前的开的状态关闭，结束时间为当前时间
+  ProductState.findOneAndUpdate({
+    $and: [
+      {
+        pipelineId: probe.pipelineId
+      },
+      {
+        state: true
+      }
+    ]
+  }, {
+    $set: {
+      state: false,
+      endTime: proState.startTime
+    }
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  }, function(err, doc) {
+    if (err) {
+      log.error(err);
+    }
+    // console.log('doc',doc)
+    log.info('Update ProductState success');
+    // 创建新的state数据
+    ProductCol.find({
+      no: res
+    }).sort({
+      createdAt: -1
+    }).limit(1).exec((err, doc) => {
+      proState.productId = doc[0]._id;
+      proState.pipelineId = probe.pipelineId;
+      proState.state = true;
+      // console.log(proState);
+      ProductState.create(proState);
+    });
+  });
+}
+
+/* 解析switch(开关)数字信号   DD**
+如DD01：数字量采集通道1 （开和关；交给PD约定）01 00 2位
+test:'AA04DD0101'
+*/
+function parseSwitchDigit(data) {
+  return data;
+}
+
 /*
 解析counter(计数器)数字信号   CC**
 第一个8位入口数量（重复计次品次数），
@@ -237,48 +292,13 @@ function parseElectricityDigit(data) {
   return obj;
 }
 
-function createProState(res, probe) {
-  const proState = {
-    productId: '',
-    pipelineId: '',
-    state: false,
-    startTime: new Date(),
-    endTime: ''
-  };
-  // 将之前的开的状态关闭，结束时间为当前时间
-  ProductStateCol.findByIdAndUpdate({
-    state: true
-  }, {
-    $set: {
-      state: false,
-      endTime: proState.startTime
-    }
-  }, {
-    new: true,
-    upsert: true,
-    setDefaultsOnInsert: true,
-    setOnInsert: true
-  }, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    log.info(`Update ProductStateCol ${doc._id} - ${doc.state}  success`);
-    // 创建新的state数据
-    const prevPro = ProductCol.find({
-      no: res
-    });
-    proState.productId = prevPro._id;
-    proState.pipelineId = probe.pipelineId;
-    proState.state = true;
-    ProductStateCol.create(proState);
-  });
-}
 /*
 解析product(产品编号)数字信号 CF
 test:'AA04CF0146F04645F0455AF05A' 90确定
 */
-const parseProductDigit = async (data, probe, pipelineId) => {
+const parseProductDigit = async (data, probe) => {
   // probe 废弃使用
+  // console.log(data, probe)
 
   // const pipeline = await PipelineCol.findOne({_id: pipelineId})
   // const product = await ProductCol.findOne({_id: pipelineId})
@@ -292,6 +312,7 @@ const parseProductDigit = async (data, probe, pipelineId) => {
       str += CFMap.get(data.slice(i, i + 6));
     }
   }
+
   // 去掉确定和清除的干扰
   if (str.indexOf('确定') !== -1 || str.indexOf('清除') !== -1) {
     res = str.split('确定');
@@ -305,6 +326,7 @@ const parseProductDigit = async (data, probe, pipelineId) => {
       return res;
     }
   }
+
   if (str !== '') {
     createProState(str, probe);
     return str;
@@ -323,7 +345,7 @@ const parseProductDigit = async (data, probe, pipelineId) => {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data, probe) {
-  const pipelineId = probe.pipelineId;
+
   const promise = {
     switch: parseSwitchDigit,
     counter: parseCounterDigit,
@@ -331,7 +353,8 @@ function parseDigitalData(dataType, data, probe) {
     electricity: parseElectricityDigit,
     product: parseProductDigit,
   };
-  return promise[dataType](data, probe, pipelineId);
+
+  return promise[dataType](data, probe);
 }
 
 // 暴露出去

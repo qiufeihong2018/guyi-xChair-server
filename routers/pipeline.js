@@ -24,18 +24,20 @@ function localDate(v) {
 // 解析power的数据
 function processDataOfPower(rawData) {
   return rawData.map(item => {
+    if (item && item.value) {
     return {
       positive: item.value.positiveEnergy,
       negative: item.value.negativeEnergy,
       time: item.createdAt
     };
+  }
   });
 }
 
 // 解析counter的数据
 function processDataOfCounter(rawData) {
   return rawData.map(item => {
-    console.log('item', item)
+    // console.log('item', item)
     if (item && item.value) {
       return {
         in: item.value.repeatedCounting, // 入口数
