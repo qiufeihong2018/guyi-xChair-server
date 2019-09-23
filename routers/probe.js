@@ -2,7 +2,6 @@
 
 const router = require('express').Router();
 const Probe = require('../collections/probe');
-const PipelineCol = require('../collections/pipeline');
 const PipelineModel = require('../models/pipeline');
 
 const log = require('../services/logger').createLogger('userAuthentication');
