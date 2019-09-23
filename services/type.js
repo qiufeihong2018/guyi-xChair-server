@@ -150,7 +150,7 @@ function getPipelineState(obj, probe) {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function(err, doc) {
+      }, function (err, doc) {
         if (err) {
           log.error(err);
         }
@@ -162,7 +162,7 @@ function getPipelineState(obj, probe) {
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       console.log(plState);
-      PipelineState.create(plState, function(err) {
+      PipelineState.create(plState, function (err) {
         if (err) {
           console.log(err);
         }
@@ -237,6 +237,35 @@ function parseElectricityDigit(data) {
   return obj;
 }
 
+createProState(res, probe) {
+  // 将之前的开的状态关闭，结束时间为当前时间
+  ProductStateCol.findByIdAndUpdate({
+    state: true
+  }, {
+    $set: {
+      state: false,
+      endTime: proState.startTime
+    }
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  }, function (err, doc) {
+    if (err) {
+      log.error(err);
+    }
+    log.info(`Update ProductStateCol ${doc._id} - ${doc.state}  success`);
+    // 创建新的state数据
+    const prevPro = ProductCol.find({
+      no: res
+    });
+    proState.productId = prevPro._id;
+    proState.pipelineId = probe.pipelineId;
+    proState.state = true;
+    ProductStateCol.create(proState);
+  });
+}
 /*
 解析product(产品编号)数字信号 CF
 test:'AA04CF0146F04645F0455AF05A' 90确定
@@ -264,10 +293,24 @@ const parseProductDigit = async (data, probe, pipelineId) => {
     });
     res = res[res.length - 1].split('清除');
     res = res[res.length - 1];
-    return res;
+    if (res !== '') {
+      const proState = {
+        productId: '',
+        pipelineId: '',
+        state: false,
+        startTime: new Date(),
+        endTime: ''
+      };
+      createProState(res, probe)
+
+      return res;
+    }
   }
-  return str;
-}
+  if (str !== '') {
+    createProState(str, probe)
+    return str;
+  }
+};
 
 // 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
 /**
@@ -281,15 +324,15 @@ const parseProductDigit = async (data, probe, pipelineId) => {
 
 // 解析仪表盘的数字信号
 function parseDigitalData(dataType, data, probe) {
-  const pipelineId = probe.pipelineId
+  const pipelineId = probe.pipelineId;
   const promise = {
     switch: parseSwitchDigit,
     counter: parseCounterDigit,
     power: parsePowerDigit,
     electricity: parseElectricityDigit,
     product: parseProductDigit,
-  }
-  return promise[dataType](data, probe, pipelineId)
+  };
+  return promise[dataType](data, probe, pipelineId);
 }
 
 // 暴露出去
