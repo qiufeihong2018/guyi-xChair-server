@@ -355,15 +355,15 @@ router.post('/state/stats', async (req, res, next) => {
   const durationType = req.body.durationType;
 
   const sqlResult = await monitorService.dataAnalysis(pipelineId, dataType, durationType);
-  let result;
-  if (dataType === 'power') {
-    result = processDataOfPower(sqlResult);
-  } else {
-    // counter
-    result = processDataOfCounter(sqlResult);
-  }
+  // let result;
+  // if (dataType === 'power') {
+  //   result = processDataOfPower(sqlResult);
+  // } else {
+  //   // counter
+  //   result = processDataOfCounter(sqlResult);
+  // }
   res.status(200).json({
-    data: result
+    data: sqlResult
   });
 });
 

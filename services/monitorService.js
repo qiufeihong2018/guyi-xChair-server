@@ -47,7 +47,16 @@ async function dataAnalysis(pipelineId, dataType, date) {
     else finalResult.push(null);
   }
 
-  return finalResult;
+  let result;
+  if (dataType === 'power') {
+    result = processDataOfPower(finalResult);
+  } else {
+    // counter
+    result = processDataOfCounter(finalResult);
+  }
+
+
+  return result;
 }
 
 function getTimePeriod(date) {
@@ -134,6 +143,43 @@ async function pipelineCount(pipelineId, dataType, start, end) {
 
 function timeHander(date) {
   return date.substr(0, 11) + '00:00:00.000Z';
+}
+
+function processDataOfPower(rawData) {
+  return rawData.map((item) => {
+    if (item && item.value) {
+      return {
+        positive: item.value.positiveEnergy,
+        negative: item.value.negativeEnergy,
+        time: item.createdAt
+      };
+    }
+    return {
+      positive: 0,
+      negative: 0,
+      time: ''
+    };
+  });
+}
+
+// 解析counter的数据
+function processDataOfCounter(rawData) {
+  return rawData.map((item) => {
+    if (item && item.value) {
+      return {
+        in: item.value.repeatedCounting, // 入口数
+        failed: item.value.defectiveNumber, // 次品数
+        out: item.value.productionQuantity, // 出口数
+        time: item.createdAt
+      };
+    }
+    return {
+      in: 0, // 入口数
+      failed: 0, // 次品数
+      out: 0, // 出口数
+      time: ''
+    };
+  });
 }
 exports.dataAnalysis = dataAnalysis;
 exports.getTimePeriod = getTimePeriod;
