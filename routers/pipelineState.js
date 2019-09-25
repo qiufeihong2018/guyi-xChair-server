@@ -98,11 +98,12 @@ router.post('/search', function(req, res) {
   getState();
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
-
+  console.log(start)
+  console.log(end)
   const pipelineId = req.body.pipelineId;
   PipelineState.find({
     $and: [{
-      'createdAt': {
+      'startTime': {
         '$gte': start,
         '$lte': end
       }
@@ -110,7 +111,7 @@ router.post('/search', function(req, res) {
       'pipelineId': pipelineId
     }]
   }).sort({
-    'createdAt': 1
+    'startTime': 1
   }).then((doc) => {
     log.info('Search PipelineState');
     // console.log(doc[doc.length - 1])
@@ -227,15 +228,20 @@ router.put('/', function(req, res) {
   const {
     _id,
     endTime,
-    difTime
+    difTime,
+    startTime,
+    createdAt,
+    pipelineId,
   } = req.body;
-  console.log(_id, endTime, difTime)
   PipelineState.findByIdAndUpdate({
     _id: _id
   }, {
     $set: {
       endTime: endTime,
-      difTime: difTime
+      difTime: difTime,
+      startTime: startTime,
+      createdAt: createdAt,
+      pipelineId: pipelineId
     }
   }, {
     new: true,
@@ -251,8 +257,8 @@ router.post('/', function(req, res) {
   const data = req.body;
   // console.log(data)
   PipelineState.create(data).then((doc) => {
-    log.info(doc)
-  })
+    log.info(doc);
+  });
 });
 
 module.exports = router;
