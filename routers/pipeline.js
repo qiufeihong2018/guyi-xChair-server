@@ -31,11 +31,6 @@ function processDataOfPower(rawData) {
         time: item.createdAt
       };
     }
-    return {
-      positive: 0,
-      negative: 0,
-      time: ''
-    };
   });
 }
 
