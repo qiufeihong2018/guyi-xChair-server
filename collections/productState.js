@@ -11,6 +11,12 @@ const ProductState = new Schema({
   productId: {  // 产品ID
     type: String
   },
+  productModel: { // 产品型号(公司记录在册)
+    type: String
+  },
+  productNo: { // 产品数字代号(采集器传输: 纯数字)
+    type: String
+  },
   pipelineId: {  // 生产线ID
     type: String
   },
