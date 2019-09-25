@@ -198,4 +198,61 @@ router.post('/time', function(req, res) {
   });
 });
 
+// {
+// 	"_id" : ObjectId("5d89dee56d385020a05c0526"),
+// 	"state" : "off",
+// 	"startTime" : ISODate("2019-09-24T09:10:59.670Z"),
+// 	"endTime" : ISODate("2019-09-24T23:11:34.167Z"),
+// 	"difTime" : 50434497,
+// 	"count" : 8862,
+// 	"createdAt" : ISODate("2019-09-24T09:16:21.380Z"),
+// 	"updatedAt" : ISODate("2019-09-24T23:11:34.167Z"),
+// 	"__v" : 0
+// }
+// 2019-09-24T16:00:00.007Z
+// db.pipelinestates.findByIdAndUpdate({
+//   _id: '5d89dee56d385020a05c0526'
+// }, {
+//   $set: {
+//     endTime: '2019-09-24T16:00:00.007Z',
+//     difTime: '24541000'
+//   }
+// }, {
+//   new: true,
+//   upsert: true,
+//   setDefaultsOnInsert: true,
+//   setOnInsert: true
+// })
+router.put('/', function(req, res) {
+  const {
+    _id,
+    endTime,
+    difTime
+  } = req.body;
+  console.log(_id, endTime, difTime)
+  PipelineState.findByIdAndUpdate({
+    _id: _id
+  }, {
+    $set: {
+      endTime: endTime,
+      difTime: difTime
+    }
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  }, function(err, doc) {
+    log.info(doc);
+  });
+});
+
+router.post('/', function(req, res) {
+  const data = req.body;
+  // console.log(data)
+  PipelineState.create(data).then((doc) => {
+    log.info(doc)
+  })
+});
+
 module.exports = router;
