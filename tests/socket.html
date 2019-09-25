@@ -1,0 +1,8 @@
+<script src='/socket.io/socket.io.js'></script>
+<script>
+  var socket = io('http://192.168.1.81:5001');
+  socket.emit('get_pipeline_state_stats', { pipelineId:'5d834e6c0c8e9f276745ded0',  dataType:'counter', date:'yesterday' });
+  socket.on('pipeline_state_stats', function (data) {
+    console.log(data);
+  });
+</script>

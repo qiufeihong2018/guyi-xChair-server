@@ -47,7 +47,70 @@ async function dataAnalysis(pipelineId, dataType, date) {
     else finalResult.push(null);
   }
 
-  return finalResult;
+  let result;
+  if (dataType === 'power') {
+    result = processDataOfPower(finalResult);
+  } else {
+    // counter
+    result = processDataOfCounter(finalResult);
+  }
+
+
+  return result;
+}
+
+async function dataAnalysisByTimePeriod(pipelineId, dataType, timeStart, timeEnd) {
+  // eslint-disable-next-line indent
+  const hour = 60 * 60 * 1000;
+  const res = [];
+
+  let pre = await MonitorCol
+    .find({ 'pipelineId': pipelineId,
+            'dataType': dataType,
+            'createdAt': { $gte: timeStart, $lt: timeEnd } })
+     .sort({ 'createdAt': 1 })
+    .limit(1);
+
+  res.push(pre);
+
+  let start = timeStart;
+  let end = nextHour(start);
+  if (end > timeEnd) end = timeEnd + 1;
+
+
+  while (start < end) {
+    let result = await MonitorCol
+    .find({ 'pipelineId': pipelineId,
+            'dataType': dataType,
+            'createdAt': { $gte: start, $lt: end } })
+     .sort({ 'createdAt': -1 })
+    .limit(1);
+
+    if (result.length === 0) result = pre;
+    else pre = result;
+    res.push(result);
+    start = end;
+    end = start + hour;
+    if (end > timeEnd) end = timeEnd + 1;
+  }
+
+  const finalResult = [];
+  for (const obj of res) {
+    if (obj.length > 0)
+      finalResult.push(obj[0]);
+    else finalResult.push(null);
+  }
+
+  let result;
+  if (dataType === 'power') {
+    result = processDataOfPower(finalResult);
+  } else {
+    // counter
+    result = processDataOfCounter(finalResult);
+  }
+
+
+  return result;
 }
 
 function getTimePeriod(date) {
@@ -139,6 +202,49 @@ async function pipelineCount(pipelineId, dataType, start, end) {
 function timeHander(date) {
   return date.substr(0, 11) + '00:00:00.000Z';
 }
+
+function nextHour(timestamp) {
+  const res = timestamp - timestamp % 3600000 + 3600000;
+  return res;
+}
+
+function processDataOfPower(rawData) {
+  return rawData.map((item) => {
+    if (item && item.value) {
+      return {
+        positive: item.value.positiveEnergy,
+        negative: item.value.negativeEnergy,
+        time: item.createdAt
+      };
+    }
+    return {
+      positive: 0,
+      negative: 0,
+      time: ''
+    };
+  });
+}
+
+// 解析counter的数据
+function processDataOfCounter(rawData) {
+  return rawData.map((item) => {
+    if (item && item.value) {
+      return {
+        in: item.value.repeatedCounting, // 入口数
+        failed: item.value.defectiveNumber, // 次品数
+        out: item.value.productionQuantity, // 出口数
+        time: item.createdAt
+      };
+    }
+    return {
+      in: 0, // 入口数
+      failed: 0, // 次品数
+      out: 0, // 出口数
+      time: ''
+    };
+  });
+}
 exports.dataAnalysis = dataAnalysis;
 exports.getTimePeriod = getTimePeriod;
 exports.companyAnalysis = companyAnalysis;
+exports.dataAnalysisByTimePeriod = dataAnalysisByTimePeriod;

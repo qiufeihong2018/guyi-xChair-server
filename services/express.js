@@ -4,10 +4,11 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-
+const fs = require('fs');
+const path = require('path');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-
+const Socket = require('./socket');
 const config = require('../config')();
 const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
@@ -49,6 +50,13 @@ exports.start = function () {
     }
   };
 
+  // test
+  app.get('/socket', (req, res) => {
+    const html = fs.readFileSync(path.resolve(__dirname, '../tests/socket.html'), 'utf-8');
+    res.send(html);
+  });
+
+
   app.use(bodyParser.json()); // For parsing application/json
   // For parsing application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({
@@ -77,8 +85,11 @@ exports.start = function () {
 
   // start server
   app.set('port', config.expressHttpPort); // Set http port
-
-  app.listen(config.expressHttpPort, () => {
+  const server = require('http').Server(app);
+  const io = require('socket.io')(server);
+  const socket = new Socket(io);
+  socket.connect();
+  server.listen(config.expressHttpPort, () => {
     // 开启端口打印日志
     log.info(`express running on ${config.expressHttpPort} port`);
   });
