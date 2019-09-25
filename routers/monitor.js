@@ -5,7 +5,7 @@ const Monitor = require('../collections/monitor');
 const RawDataCol = require('../collections/rawData');
 
 const log = require('../services/logger').createLogger('monitor');
-const getData = require('../services/type').getData;
+const getData = require('../services/monitor').getData;
 const localDate = require('../utils/time').localDate;
 /**
  * @api {post} /v1/monitor Monitor Post
@@ -43,17 +43,20 @@ router.post('/', async (req, res) => {
   });
   // 数据处理
   const monitorData = await getData(doc);
-  if (monitorData.value !== '') {
-    // console.log(monitorData);
+  if (typeof monitorData.value !== 'undefined') {
     Monitor.create(monitorData, function(err) {
       if (err) {
         log.error(err);
       }
+      log.info('add monitorData!');
       res.status(200).json({
         status: 200,
         data: 'Post success！'
       });
     });
+  } else {
+    log.info(doc);
+    res.status(200).json(doc);
   }
 });
 

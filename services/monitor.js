@@ -1,23 +1,12 @@
 'use strict';
 const Company = require('../collections/company');
-const ProductCol = require('../collections/product');
-const ProductState = require('../collections/productState');
-const PipelineState = require('../collections/pipelineState');
 const Monitor = require('../collections/monitor');
 const Probe = require('../collections/probe');
+const createProState = require('./productState').createProState;
+const getPipelineState = require('./pipelineState').getPipelineState;
 
-const log = require('../services/logger').createLogger('monitor');
+const log = require('./logger').createLogger('monitor');
 
-
-// 生产线，针对采集器传来的信息(仪表盘信息))，进行处理
-/**
- * 分为五类(目前electricity暂时不用)
- * switch(开关)   DD**
- * counter(计数器)  CC**
- * power(耗电量(千瓦·时) CD**
- * electricity(电压、电流...) CE**
- * product(产品编号) CF
- */
 const TYPE = require('../constant/system').TYPE;
 const VALUE = require('../constant/system').VALUE;
 const STRING = require('../constant/system').STRING;
@@ -92,132 +81,6 @@ function getCorrect(obj) {
   });
 }
 
-function getPipelineState(obj, probe) {
-  let prevVal = {};
-  let difVal = '';
-  let difTime = '';
-  const plState = {
-    pipelineId: '',
-    state: '',
-    startTime: '',
-    endTime: '',
-    difTime: '',
-    count: ''
-  };
-
-  PipelineState.find({}).sort({
-    createdAt: -1
-  }).limit(1).exec((err, doc) => {
-    // 运行状态业务
-    prevVal = doc[0];
-
-    difVal = obj.repeatedCounting - prevVal.count;
-    difTime = obj.createdAt - prevVal.endTime;
-
-
-    if (Math.abs(difVal) > 0) {
-      plState.state = 'on';
-    }
-    if (Math.abs(difVal) === 0) {
-      if (Math.abs(difTime) > 300000) {
-        plState.state = 'off';
-      } else {
-        plState.state = 'pending';
-      }
-    }
-
-
-    if (prevVal.state === plState.state) {
-      PipelineState.findByIdAndUpdate({
-        _id: prevVal._id
-      }, {
-        $set: {
-          endTime: obj.createdAt,
-          difTime: obj.createdAt - prevVal.startTime,
-          count: obj.repeatedCounting
-        }
-      }, {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true,
-        setOnInsert: true
-      }, function(err, doc) {
-        if (err) {
-          log.error(err);
-        }
-        log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state}  success`);
-      });
-    } else {
-      plState.startTime = prevVal.endTime;
-      plState.endTime = obj.createdAt;
-      plState.count = obj.repeatedCounting;
-      plState.pipelineId = probe.pipelineId;
-      // console.log(plState);
-      PipelineState.create(plState, function(err) {
-        if (err) {
-          console.log(err);
-        }
-        log.info('Add status success');
-      });
-    }
-  });
-}
-
-
-function createProState(res, probe) {
-  const proState = {
-    productId: '',
-    pipelineId: '',
-    state: true,
-    startTime: new Date(),
-    endTime: ''
-  };
-  ProductState.find({}).exec((err, doc) => {
-    if (doc.length <= 0) {
-      ProductState.create(proState);
-    }
-  });
-  // 将之前的开的状态关闭，结束时间为当前时间
-  ProductState.findOneAndUpdate({
-    $and: [
-      {
-        pipelineId: probe.pipelineId
-      },
-      {
-        state: true
-      }
-    ]
-  }, {
-    $set: {
-      state: false,
-      endTime: proState.startTime
-    }
-  }, {
-    new: true,
-    upsert: true,
-    setDefaultsOnInsert: true,
-    setOnInsert: true
-  }, function(err, doc) {
-    if (err) {
-      log.error(err);
-    }
-    // console.log('doc',doc)
-    log.info('Update ProductState success');
-    // 创建新的state数据
-    ProductCol.find({
-      no: res
-    }).sort({
-      createdAt: -1
-    }).limit(1).exec((err, doc) => {
-      proState.productId = doc[0]._id;
-      proState.pipelineId = probe.pipelineId;
-      proState.state = true;
-      // console.log(proState);
-      ProductState.create(proState);
-    });
-  });
-}
-
 /* 解析switch(开关)数字信号   DD**
 如DD01：数字量采集通道1 （开和关；交给PD约定）01 00 2位
 test:'AA04DD0101'
@@ -249,6 +112,7 @@ function parseCounterDigit(data, probe) {
   return obj;
 
 }
+
 
 /* 解析power(耗电量(千瓦·时)数字信号 CD**
 test:'AA03CD010000006800004042'
@@ -296,23 +160,16 @@ function parseElectricityDigit(data) {
 解析product(产品编号)数字信号 CF
 test:'AA04CF0146F04645F0455AF05A' 90确定
 */
-const parseProductDigit = async (data, probe) => {
-  // probe 废弃使用
-  // console.log(data, probe)
-
-  // const pipeline = await PipelineCol.findOne({_id: pipelineId})
-  // const product = await ProductCol.findOne({_id: pipelineId})
-  // const pipelineState = await pipelineStateCol.findOne({pipelineId: pipelineId})
-
+const parseProductDigit = (data, probe) => {
   let str = '';
   let res = '';
-  if (data.slice(-6) === STRING.OK) {
 
+
+  if (data.slice(-6) === STRING.OK) {
     for (let i = 0; i < data.length - 6; i += 6) {
       str += CFMap.get(data.slice(i, i + 6));
     }
   }
-
   // 去掉确定和清除的干扰
   if (str.indexOf('确定') !== -1 || str.indexOf('清除') !== -1) {
     res = str.split('确定');
@@ -321,6 +178,7 @@ const parseProductDigit = async (data, probe) => {
     });
     res = res[res.length - 1].split('清除');
     res = res[res.length - 1];
+
     if (res !== '') {
       createProState(res, probe);
       return res;
@@ -387,30 +245,5 @@ exports.getData = async (rawData) => {
 
   obj.value = parseDigitalData(obj.dataType, monitor.slice(8), probe);
   obj.pipelineId = probe.pipelineId;
-
   return obj;
 };
-
-
-// // 暂时废弃
-// function processData(rawData) {
-//   const company = Object.keys(rawData)[0];
-//   const value = Object.values(rawData)[0];
-
-//   const companyId = Company.findOne({ 'name': company }, (err, data) => {
-//     return data.id;
-//   });
-
-//   const probe = value.slice(0, 4); // 采集器
-//   const monitor = value.slice(4, 8);// 仪表盘
-//   const dataType = monitor.slice(0, 2); // 仪表盘类型, 用于promise
-//   const digitalData = value.substring(value.length - 8); // 仪表盘数字信号
-//   // 找到公司的ID, 公司名, 找到流水线的ID
-//   return {
-//     companyId,
-//     probe,
-//     monitor,
-//     dataType,
-//     digitalData,
-//   };
-// }

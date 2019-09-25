@@ -122,10 +122,14 @@ function getTimePeriod(date) {
   dayStart = timeHander(dayStart);
   // console.log(dayStart);
   dayStart = new Date(dayStart).getTime() + 1000 * 60 * timezoneOffset;
+  // console.log(dayStart);
+  
   const today = {
     start: dayStart,
     end: currDate
   };
+  // console.log(today);
+
   if (date === 'today') {
     return today;
   } else {
@@ -135,7 +139,7 @@ function getTimePeriod(date) {
     };
   }
 }
-
+getTimePeriod('today')
 async function companyAnalysis(companyId, dataType, start, end) {
   const company = await CompanyCol.findById(companyId);
   if (!company || company.pipelineList.length === 0) return null;

@@ -13,10 +13,20 @@ const config = require('../config')();
 const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
+var CronJob = require('cron').CronJob;
 
-// 触发统计方法
-const monitorStatistics = require('../models/statistics').monitorStatistics;
-monitorStatistics();
+// 每天0点执行分割方法
+const zeroUpdatePipeState = require('../services/pipelineState').zeroUpdatePipeState;
+
+new CronJob('00 00 00 * * *', function () {
+  const d = new Date();
+  console.log(d);
+  zeroUpdatePipeState();
+}, null, true);
+
+// // 触发统计方法
+// const monitorStatistics = require('../services/statistics').monitorStatistics;
+// monitorStatistics();
 
 exports.start = function () {
 
@@ -83,5 +93,4 @@ exports.start = function () {
     // 开启端口打印日志
     log.info(`express running on ${config.expressHttpPort} port`);
   });
-
 };
