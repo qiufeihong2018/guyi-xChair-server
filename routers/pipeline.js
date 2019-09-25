@@ -367,6 +367,31 @@ router.post('/state/stats', async (req, res, next) => {
   });
 });
 
+router.post('/state/stats2', async (req, res, next) => {
+  // 对 couter、power、electricity 这三个进行统计
+  /**
+   * id pipelineId
+   * dataType counter power
+   * durationType today yesterday
+   */
+  const pipelineId = req.body.id;
+  const dataType = req.body.dataType;
+  const start = req.body.start;
+  const end = req.body.end;
+
+  const sqlResult = await monitorService.dataAnalysisByTimePeriod(pipelineId, dataType, start, end);
+  // let result;
+  // if (dataType === 'power') {
+  //   result = processDataOfPower(sqlResult);
+  // } else {
+  //   // counter
+  //   result = processDataOfCounter(sqlResult);
+  // }
+  res.status(200).json({
+    data: sqlResult
+  });
+});
+
 // 带着详细的时间节点
 // 带start & end
 router.post('/stateDetail', async (req, res, next) => {

@@ -14,8 +14,6 @@ const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
 
-
-
 // 触发统计方法
 const monitorStatistics = require('../models/statistics').monitorStatistics;
 monitorStatistics();
@@ -86,5 +84,4 @@ exports.start = function () {
     log.info(`express running on ${config.expressHttpPort} port`);
   });
 
- 
 };
