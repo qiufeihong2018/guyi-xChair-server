@@ -12,9 +12,20 @@ const config = require('../config')();
 const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
-// 触发统计方法
-const monitorStatistics = require('../models/statistics').monitorStatistics;
-monitorStatistics();
+var CronJob = require('cron').CronJob;
+
+// 每天0点执行分割方法
+const zeroUpdatePipeState = require('../services/pipelineState').zeroUpdatePipeState;
+
+new CronJob('00 00 00 * * *', function () {
+  const d = new Date();
+  console.log(d);
+  zeroUpdatePipeState();
+}, null, true);
+
+// // 触发统计方法
+// const monitorStatistics = require('../services/statistics').monitorStatistics;
+// monitorStatistics();
 
 exports.start = function () {
 

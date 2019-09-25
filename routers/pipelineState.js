@@ -6,7 +6,7 @@ const PipelineState = require('../collections/pipelineState');
 const log = require('../services/logger').createLogger('userAuthentication');
 
 const localDate = require('../utils/time').localDate;
-
+const getState = require('../services/pipelineState').getState;
 /**
  * @api {get} /v1/pipeline/:pipelineId PipelineState get
  * @apiName PipelineStateGet
@@ -41,107 +41,7 @@ const localDate = require('../utils/time').localDate;
  *      "message": "PipelineState register failure!"
  *    }
  */
-function getState() {
-  // Simulate off state before next upload of pipelineState
-  let prevVal = {};
-  const plState = {
-    state: '',
-    startTime: '',
-    endTime: '',
-    difTime: '',
-    count: ''
-  };
-  let currentTime = '';
-  let lastTime = '';
-  let differentTime = '';
-  let difTime = '';
-  PipelineState.find({}).sort({
-    createdAt: -1
-  }).limit(1).exec((err, data) => {
-    // 运行状态业务
-    prevVal = data[0];
-    // 当前时间
-    currentTime = new Date();
-    // 上一个pipelineState的结束时间
-    lastTime = prevVal.endTime;
-    // 两者的差值
-    differentTime = currentTime - lastTime;
-    // 关闭判断
-    if (Math.abs(differentTime) > 300000) {
-      plState.state = 'off';
-      plState.startTime = lastTime;
-      plState.endTime = currentTime;
-      plState.difTime = differentTime;
-      plState.count = prevVal.count;
-      // 当前时间-上一个pipelineState的开始时间
-      difTime = currentTime - prevVal.startTime;
-      // 1. 与上一个pipelineState同一个state更新数据
-      if (prevVal.state === plState.state) {
-        // 判断是否是0点
-        // 由于前端30s轮询，所以后端判断要有一个容错
-        // eslint-disable-next-line max-len
-        if (Number(currentTime.getTime().toString().slice(-6)) >= 0 && Number(currentTime.getTime().toString().slice(-6)) <= 40) {
-          PipelineState.findByIdAndUpdate({
-            _id: prevVal._id
-          }, {
-            $set: {
-              endTime: currentTime,
-              difTime: difTime,
-              count: prevVal.count
-            }
-          }, {
-            new: true,
-            upsert: true,
-            setDefaultsOnInsert: true,
-            setOnInsert: true
-          }, function(err, doc) {
-            if (err) {
-              log.error(err);
-            }
-            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
-            PipelineState.create(plState, function(err) {
-              if (err) {
-                console.log(err);
-              }
-              log.info('Add 00:00:00 pipelineState success');
-            });
-          });
 
-        } else {
-          PipelineState.findByIdAndUpdate({
-            _id: prevVal._id
-          }, {
-            $set: {
-              endTime: currentTime,
-              difTime: difTime,
-              count: prevVal.count
-            }
-          }, {
-            new: true,
-            upsert: true,
-            setDefaultsOnInsert: true,
-            setOnInsert: true
-          }, function(err, doc) {
-            if (err) {
-              log.error(err);
-            }
-            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
-          });
-        }
-
-      } else {
-        // 1. 与上一个pipelineState的state不相同创建数据
-        PipelineState.create(plState, function(err) {
-          if (err) {
-            console.log(err);
-          }
-          log.info('Add pipelineState success');
-        });
-      }
-    }
-  });
-
-}
 
 router.get('/pipeline/:pipelineId', function(req, res, next) {
   const pipelineId = req.params.pipelineId;
