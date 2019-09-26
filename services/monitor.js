@@ -180,13 +180,11 @@ const parseProductDigit = (data, probe) => {
     res = res[res.length - 1];
 
     if (res !== '') {
-      createProState(res, probe);
       return res;
     }
   }
 
   if (str !== '') {
-    createProState(str, probe);
     return str;
   }
 };

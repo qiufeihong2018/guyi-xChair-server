@@ -23,7 +23,7 @@ function localDate(v) {
 
 // 解析power的数据
 function processDataOfPower(rawData) {
-  return rawData.map(item => {
+  return rawData.map((item) => {
     if (item && item.value) {
       return {
         positive: item.value.positiveEnergy,
@@ -36,7 +36,7 @@ function processDataOfPower(rawData) {
 
 // 解析counter的数据
 function processDataOfCounter(rawData) {
-  return rawData.map(item => {
+  return rawData.map((item) => {
     if (item && item.value) {
       return {
         in: item.value.repeatedCounting, // 入口数
@@ -387,6 +387,16 @@ router.post('/state/stats2', async (req, res, next) => {
   });
 });
 
+router.post('/state/pipeline', async (req, res, next) => {
+  const pipelineId = req.body.pipelineId;
+  const pipelineState = await PipelineStateCol.findOne({ pipelineId: pipelineId, state: true });
+  if (pipelineState) {
+    const product = ProductCol.findOne({ no: pipelineState.productNo });
+    res.json(product);
+    return;
+  }
+  res.json(null);
+});
 // 带着详细的时间节点
 // 带start & end
 router.post('/stateDetail', async (req, res, next) => {

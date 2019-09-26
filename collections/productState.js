@@ -9,7 +9,7 @@ const { Schema, model } = mongoose;
 
 const ProductState = new Schema({
   productId: {  // 产品ID
-    type: String
+    type: Schema.Types.ObjectId
   },
   productModel: { // 产品型号(公司记录在册)
     type: String
@@ -18,7 +18,7 @@ const ProductState = new Schema({
     type: String
   },
   pipelineId: {  // 生产线ID
-    type: String
+    type: Schema.Types.ObjectId
   },
   state: {  // 是否在生产
     type: Boolean
@@ -29,6 +29,18 @@ const ProductState = new Schema({
   endTime: {  // 结束生产的时间
     type: Date
   },
+  counterBegin: {
+    type: Object
+  },
+  counterEnd: {
+    type: Object
+  },
+  powerBegin: {
+    type: Object
+  },
+  powerEnd: {
+    type: Object
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',
