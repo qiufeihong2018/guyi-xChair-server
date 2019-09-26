@@ -15,7 +15,6 @@ const getTime = require('../utils/time').getTime;
 const localDate = require('../utils/time').localDate;
 const log = require('../services/logger').createLogger('userAuthentication');
 
-
 // 解析power的数据
 function processDataOfPower(rawData) {
   return rawData.map((item) => {
@@ -417,16 +416,22 @@ router.post('/state/history', async (req, res, next) => {
       productType: ps.productType,
       startTime: new Date(ps.startTime).getTime(),
       endTime: new Date(ps.endTime).getTime(),
-      positiveEnergy: ps.powerBegin.positiveEnergy - ps.powerEnd.positiveEnergy,
-      negativeEnergy: ps.powerBegin.negativeEnergy - ps.powerEnd.negativeEnergy,
-      in: ps.counterBegin.repeatedCounting - ps.counterEnd.repeatedCounting,
-      failed: ps.counterBegin.defectiveNumber - ps.counterEnd.defectiveNumber,
-      out: ps.counterBegin.productionQuantity - ps.counterEnd.productionQuantity
+      positiveEnergy: ps.powerEnd.positiveEnergy - ps.powerBegin.positiveEnergy,
+      negativeEnergy: ps.powerEnd.negativeEnergy - ps.powerBegin.negativeEnergy,
+      in: ps.counterEnd.repeatedCounting - ps.counterBegin.repeatedCounting,
+      failed: ps.counterEnd.defectiveNumber - ps.counterBegin.defectiveNumber,
+      out: ps.counterEnd.productionQuantity - ps.counterBegin.productionQuantity
 
     });
   }
 
   res.json({ result: resArray });
+});
+
+router.post('/state/current', async (req, res, next) => {
+  const { pipelineId } = req.body;
+  const result = await monitorService.currentProductState(pipelineId);
+  res.json(result);
 });
 
 // 带着详细的时间节点
