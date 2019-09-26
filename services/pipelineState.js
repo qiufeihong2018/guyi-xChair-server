@@ -168,13 +168,14 @@ exports.getPipelineState = (obj, probe) => {
   PipelineState.find({}).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
+    // console.log(obj)
     // 运行状态业务
     if (doc.length === 0) {
       prevVal = {
         pipelineId: obj.pipelineId,
         state: obj.state,
         startTime: obj.startTime,
-        endTime: obj.endTime,
+        endTime: obj.startTime,
         difTime: obj.createdAt,
         count: obj.repeatedCounting
       }
@@ -183,9 +184,10 @@ exports.getPipelineState = (obj, probe) => {
     }
 
     difVal = obj.repeatedCounting - prevVal.count;
-    // console.log(obj);
+    // console.log('obj', obj);
     // console.log('prevVal', prevVal);
     difTime = obj.createdAt - prevVal.endTime;
+    // console.log('difTime', difTime);
 
     if (Math.abs(difVal) > 0) {
       plState.state = 'on';

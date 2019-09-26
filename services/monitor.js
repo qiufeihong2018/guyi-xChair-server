@@ -62,7 +62,12 @@ function getCorrect(obj) {
   }).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
-    prevVal = doc[0];
+   console.log(doc)
+    if(doc.length===0){
+      prevVal = doc[0];      
+    }else{
+      prevVal = doc[0];
+    }
     const difRepeated = obj.repeatedCounting - prevVal.value.repeatedCounting;
     const difDefective = obj.defectiveNumber - prevVal.value.defectiveNumber;
     const difProduction = obj.productionQuantity - prevVal.value.productionQuantity;
