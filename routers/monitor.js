@@ -3,7 +3,7 @@
 const router = require('express').Router();
 const Monitor = require('../collections/monitor');
 const RawDataCol = require('../collections/rawData');
-
+const monitorService = require('../services/monitorService');
 const log = require('../services/logger').createLogger('monitor');
 const getData = require('../services/monitor').getData;
 const localDate = require('../utils/time').localDate;
@@ -43,6 +43,7 @@ router.post('/', async (req, res) => {
   });
   // 数据处理
   const monitorData = await getData(doc);
+  monitorService.productChange(monitorData);
   if (typeof monitorData.value !== 'undefined') {
     Monitor.create(monitorData, function(err) {
       if (err) {

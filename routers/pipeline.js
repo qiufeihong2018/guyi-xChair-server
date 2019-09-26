@@ -4,10 +4,13 @@ const router = require('express').Router();
 const PipelineCol = require('../collections/pipeline');
 const CompanyCol = require('../collections/company');
 const PipelineStateCol = require('../collections/pipelineState');
+const ProductStateCol = require('../collections/productState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
 const monitorService = require('../services/monitorService');
 const MonitorCol = require('../collections/monitor');
+const timeUtil = require('../utils/time');
+const mongoose = require('mongoose');
 const getTime = require('../utils/time').getTime;
 const localDate = require('../utils/time').localDate;
 const log = require('../services/logger').createLogger('userAuthentication');
@@ -388,6 +391,55 @@ router.post('/state/stats2', async (req, res, next) => {
   res.status(200).json({
     data: sqlResult
   });
+});
+
+router.post('/state/product', async (req, res, next) => {
+  const pipelineId = req.body.pipelineId;
+  console.log(pipelineId);
+  const pipelineState = await ProductStateCol.findOne({ pipelineId: pipelineId, state: true });
+  if (pipelineState) {
+    const product = await ProductCol.findOne({ no: pipelineState.productNo });
+    res.json(product);
+    return;
+  }
+  res.json(null);
+});
+
+router.post('/state/product', async (req, res, next) => {
+  const pipelineId = req.body.pipelineId;
+  console.log(pipelineId);
+  const pipelineState = await ProductStateCol.findOne({ pipelineId: pipelineId, state: true });
+  if (pipelineState) {
+    const product = await ProductCol.findOne({ no: pipelineState.productNo });
+    res.json(product);
+    return;
+  }
+  res.json(null);
+});
+
+router.post('/state/history', async (req, res, next) => {
+  const { pipelineId, start, end } = req.body;
+  const pipelineStates = await ProductStateCol.find({ pipelineId: pipelineId, state: false,
+                                                      // eslint-disable-next-line max-len
+                                                      $or: [{ startTime: { $gte: start, $lte: end } }, { endTime: { $gte: start, $lte: end } }] });
+  const resArray = [];
+  for (const ps of pipelineStates) {
+    resArray.push({
+      productModel: ps.productModel,
+      productNo: ps.productNo,
+      productType: ps.productType,
+      statrTime: new Date(ps.startTime).getTime(),
+      endTime: new Date(ps.endTime).getTime(),
+      positiveEnergy: ps.powerBegin.positiveEnergy - ps.powerEnd.positiveEnergy,
+      negativeEnergy: ps.powerBegin.negativeEnergy - ps.powerEnd.negativeEnergy,
+      in: ps.counterBegin.repeatedCounting - ps.counterEnd.repeatedCounting,
+      failed: ps.counterBegin.defectiveNumber - ps.counterEnd.defectiveNumber,
+      out: ps.counterBegin.productionQuantity - ps.counterEnd.productionQuantity
+
+    });
+  }
+
+  res.json({ result: resArray });
 });
 
 // 带着详细的时间节点
