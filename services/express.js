@@ -19,6 +19,7 @@ var CronJob = require('cron').CronJob;
 const zeroUpdatePipeState = require('../services/pipelineState').zeroUpdatePipeState;
 
 new CronJob('00 00 00 * * *', function () {
+// new CronJob('10 50 10 * * *', function () {
   const d = new Date();
   console.log(d);
   zeroUpdatePipeState();
