@@ -179,10 +179,12 @@ async function companyAnalysis(companyId, dataType, start, end) {
 //   value: '8801' }
 async function productChange(event) {
   if (!event || event.dataType !== 'product') return;
+  console.log(event);
   const lastProductState = await ProductState.findOne({ pipelineId: event.pipelineId, state: true });
   const counterCurr = await MonitorCol.find({ pipelineId: event.pipelineId, dataType: 'counter' }).sort({ _id: -1 }).limit(1);
   const powerCurr = await MonitorCol.find({ pipelineId: event.pipelineId, dataType: 'power' }).sort({ _id: -1 }).limit(1);
   let power, counter;
+  const currentDate = new Date();
   counter = counterCurr[0];
   power = powerCurr[0];
 
@@ -202,23 +204,73 @@ async function productChange(event) {
     };
   }
 
-
+  const productNew = await ProductCol.findOne({ no: event.value });
+  
+  if (!productNew) return;
+  console.log(lastProductState);
   if (lastProductState) {
     await ProductState.updateOne({ pipelineId: event.pipelineId, state: true },
-                                 { state: false, counterEnd: counter.value, powerEnd: power.value, endTime: new Date() });
+                                 { state: false, counterEnd: counter.value, powerEnd: power.value, endTime: currentDate });
   }
-
-  const productNew = await ProductCol.findOne({ no: event.value });
-  if (!productNew) return;
   await ProductState.create({ productId: productNew._id,
                               productModel: productNew.model,
                               productNo: productNew.no,
                               productType: productNew.type,
                               pipelineId: event.pipelineId,
-                              state: true, startTime: new Date(),
+                              state: true, startTime: currentDate,
                               counterBegin: counter.value,
                               powerBegin: power.value
   });
+
+}
+
+// event data structure
+// { pipelineId: 5d834e6c0c8e9f276745ded0,
+//   companyId: 5d8041e4de1685795bc379b2,
+//   probeNo: 'AA02',
+//   monitorNo: 'CF01',
+//   dataType: 'product',
+//   value: '8801' }
+async function currentProductState(pipelineId) {
+
+  const lastProductState = await ProductState.findOne({ pipelineId: pipelineId, state: true });
+  if (!lastProductState) return null;
+
+  const counterCurr = await MonitorCol.find({ pipelineId: pipelineId, dataType: 'counter' }).sort({ _id: -1 }).limit(1);
+  const powerCurr = await MonitorCol.find({ pipelineId: pipelineId, dataType: 'power' }).sort({ _id: -1 }).limit(1);
+  let power, counter;
+  counter = counterCurr[0];
+  power = powerCurr[0];
+
+  if (counterCurr.length === 0) {
+    logger.error(`pipelineId ${pipelineId} has no counter monitor record`);
+    counter = {
+      dataType: 'counter',
+      value: { repeatedCounting: 0, defectiveNumber: 0, productionQuantity: 0 }
+    };
+  }
+
+
+  if (powerCurr.length === 0) {
+    logger.error(`pipelineId ${pipelineId} has no power monitor record`);
+    power = {
+      dataType: power, value: { positiveEnergy: 0, negativeEnergy: 0 }
+    };
+  }
+
+  return {
+    productModel: lastProductState.productModel,
+    productNo: lastProductState.productNo,
+    productType: lastProductState.productType,
+    startTime: new Date(lastProductState.startTime).getTime(),
+    endTime: null,
+    positiveEnergy: power.value.positiveEnergy - lastProductState.powerBegin.positiveEnergy,
+    negativeEnergy: power.value.negativeEnergy - lastProductState.powerBegin.negativeEnergy,
+    in: counter.value.repeatedCounting - lastProductState.counterBegin.repeatedCounting,
+    failed: counter.value.defectiveNumber - lastProductState.counterBegin.defectiveNumber,
+    out: counter.value.productionQuantity - lastProductState.counterBegin.productionQuantity
+
+  };
 
 }
 async function pipelineCount(pipelineId, dataType, start, end) {
@@ -314,3 +366,4 @@ exports.getTimePeriod = getTimePeriod;
 exports.companyAnalysis = companyAnalysis;
 exports.dataAnalysisByTimePeriod = dataAnalysisByTimePeriod;
 exports.productChange = productChange;
+exports.currentProductState = currentProductState;

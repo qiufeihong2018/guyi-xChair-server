@@ -174,9 +174,9 @@ exports.getPipelineState = (obj, probe) => {
       prevVal = {
         pipelineId: obj.pipelineId,
         state: obj.state,
-        startTime: obj.startTime,
-        endTime: obj.startTime,
-        difTime: obj.createdAt,
+        startTime: obj.createdAt,
+        endTime: obj.createdAt,
+        difTime: 0,
         count: obj.repeatedCounting
       }
     } else {
@@ -215,20 +215,21 @@ exports.getPipelineState = (obj, probe) => {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function (err, doc) {
+      }, function(err, doc) {
         if (err) {
           log.error(err);
         }
         log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state}  success`);
       });
     } else {
+      console.log('difTime', difTime);
       plState.difTime = difTime;
       plState.startTime = prevVal.endTime;
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       // console.log(plState);
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }
