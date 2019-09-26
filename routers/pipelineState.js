@@ -98,8 +98,8 @@ router.post('/search', function (req, res) {
   getState();
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
-  console.log(start)
-  console.log(end)
+  // console.log(start)
+  // console.log(end)
   const pipelineId = req.body.pipelineId;
   PipelineState.find({
     $and: [{
@@ -153,51 +153,51 @@ router.post('/search', function (req, res) {
  *    }
  */
 // 获取时间（排除无difTime属性）
-function getTime(doc) {
-  return new Promise(function (resolve, reject) {
-    const time = {
-      offTime: 0,
-      onTime: 0,
-      pendingTime: 0
-    };
+// function getTime(doc) {
+//   return new Promise(function (resolve, reject) {
+//     const time = {
+//       offTime: 0,
+//       onTime: 0,
+//       pendingTime: 0
+//     };
 
-    for (let i = 0; i < doc.length; i++) {
-      if (doc[i].difTime !== undefined) {
-        const docDifTime = doc[i].difTime;
-        if (doc[i].state === 'off') {
-          time.offTime += docDifTime;
-        }
-        if (doc[i].state === 'on') {
-          time.onTime += docDifTime;
-        }
-        if (doc[i].state === 'pending') {
-          time.pendingTime += docDifTime;
-        }
-      }
-    }
-    resolve(time);
-  });
-}
+//     for (let i = 0; i < doc.length; i++) {
+//       if (doc[i].difTime !== undefined) {
+//         const docDifTime = doc[i].difTime;
+//         if (doc[i].state === 'off') {
+//           time.offTime += docDifTime;
+//         }
+//         if (doc[i].state === 'on') {
+//           time.onTime += docDifTime;
+//         }
+//         if (doc[i].state === 'pending') {
+//           time.pendingTime += docDifTime;
+//         }
+//       }
+//     }
+//     resolve(time);
+//   });
+// }
 
-// 放弃
-router.post('/time', function (req, res) {
+// // 放弃
+// router.post('/time', function (req, res) {
 
-  const start = localDate(req.body.start);
-  const end = localDate(req.body.end);
+//   const start = localDate(req.body.start);
+//   const end = localDate(req.body.end);
 
 
-  PipelineState.find({
-    'createdAt': {
-      '$gte': start,
-      '$lte': end
-    }
-  }).then((doc) => {
-    getTime(doc).then((data) => {
-      log.info('Search time');
-      res.status(200).json(data);
-    });
-  });
-});
+//   PipelineState.find({
+//     'createdAt': {
+//       '$gte': start,
+//       '$lte': end
+//     }
+//   }).then((doc) => {
+//     getTime(doc).then((data) => {
+//       log.info('Search time');
+//       res.status(200).json(data);
+//     });
+//   });
+// });
 
 // {
 // 	"_id" : ObjectId("5d89dee56d385020a05c0526"),

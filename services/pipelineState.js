@@ -172,7 +172,7 @@ exports.getPipelineState = (obj, probe) => {
     prevVal = doc[0];
     difVal = obj.repeatedCounting - prevVal.count;
     // console.log(obj);
-    console.log('prevVal', prevVal);
+    // console.log('prevVal', prevVal);
     difTime = obj.createdAt - prevVal.endTime;
 
     if (Math.abs(difVal) > 0) {
