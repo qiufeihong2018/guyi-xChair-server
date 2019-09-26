@@ -168,14 +168,15 @@ exports.getPipelineState = (obj, probe) => {
   PipelineState.find({}).sort({
     createdAt: -1
   }).limit(1).exec((err, doc) => {
+    // console.log(obj)
     // 运行状态业务
     if (doc.length === 0) {
       prevVal = {
         pipelineId: obj.pipelineId,
         state: obj.state,
-        startTime: obj.startTime,
-        endTime: obj.endTime,
-        difTime: obj.createdAt,
+        startTime: obj.createdAt,
+        endTime: obj.createdAt,
+        difTime: 0,
         count: obj.repeatedCounting
       }
     } else {
@@ -183,9 +184,10 @@ exports.getPipelineState = (obj, probe) => {
     }
 
     difVal = obj.repeatedCounting - prevVal.count;
-    // console.log(obj);
+    // console.log('obj', obj);
     // console.log('prevVal', prevVal);
     difTime = obj.createdAt - prevVal.endTime;
+    // console.log('difTime', difTime);
 
     if (Math.abs(difVal) > 0) {
       plState.state = 'on';
@@ -213,20 +215,21 @@ exports.getPipelineState = (obj, probe) => {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function (err, doc) {
+      }, function(err, doc) {
         if (err) {
           log.error(err);
         }
         log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state}  success`);
       });
     } else {
+      console.log('difTime', difTime);
       plState.difTime = difTime;
       plState.startTime = prevVal.endTime;
       plState.endTime = obj.createdAt;
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       // console.log(plState);
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }
