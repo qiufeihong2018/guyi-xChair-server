@@ -139,7 +139,7 @@ router.post('/', async (req, res, next) => {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -233,7 +233,7 @@ router.delete('/:id', async (req, res, next) => {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.put('/', function (req, res, next) {
+router.put('/', function(req, res, next) {
   const data = req.body;
 
   PipelineCol.findByIdAndUpdate({
@@ -245,7 +245,7 @@ router.put('/', function (req, res, next) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -289,7 +289,7 @@ router.put('/', function (req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next) {
   PipelineCol.find({}).then((doc) => {
     res.status(200).json(doc);
   });
@@ -395,19 +395,6 @@ router.post('/state/stats2', async (req, res, next) => {
 
 router.post('/state/product', async (req, res, next) => {
   const pipelineId = req.body.pipelineId;
-  console.log(pipelineId);
-  const pipelineState = await ProductStateCol.findOne({ pipelineId: pipelineId, state: true });
-  if (pipelineState) {
-    const product = await ProductCol.findOne({ no: pipelineState.productNo });
-    res.json(product);
-    return;
-  }
-  res.json(null);
-});
-
-router.post('/state/product', async (req, res, next) => {
-  const pipelineId = req.body.pipelineId;
-  console.log(pipelineId);
   const pipelineState = await ProductStateCol.findOne({ pipelineId: pipelineId, state: true });
   if (pipelineState) {
     const product = await ProductCol.findOne({ no: pipelineState.productNo });
@@ -428,7 +415,7 @@ router.post('/state/history', async (req, res, next) => {
       productModel: ps.productModel,
       productNo: ps.productNo,
       productType: ps.productType,
-      statrTime: new Date(ps.startTime).getTime(),
+      startTime: new Date(ps.startTime).getTime(),
       endTime: new Date(ps.endTime).getTime(),
       positiveEnergy: ps.powerBegin.positiveEnergy - ps.powerEnd.positiveEnergy,
       negativeEnergy: ps.powerBegin.negativeEnergy - ps.powerEnd.negativeEnergy,
@@ -565,9 +552,9 @@ router.post('/state', async (req, res, next) => {
   const result = {
     value: list,
     time: ['00:00-01:00', '01:00-02:00', '02:00-03:00', '03:00-04:00', '04:00-05:00', '05:00-06:00',
-      '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
-      '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
-      '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00'
+           '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
+           '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
+           '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00'
     ]
   };
 
@@ -587,7 +574,7 @@ router.post('/state', async (req, res, next) => {
 
 
 // 获取该生产线的所有产品
-router.get('/:id/product', function (req, res, next) {
+router.get('/:id/product', function(req, res, next) {
   const {
     id
   } = req.params;
