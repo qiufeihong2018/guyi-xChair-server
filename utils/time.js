@@ -1,7 +1,7 @@
 'use strict';
 // 获取时间（排除无difTime属性）
 exports.getTime = (doc) => {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     const time = {
       offTime: 0,
       onTime: 0,
