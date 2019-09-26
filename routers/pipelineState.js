@@ -43,7 +43,7 @@ const getState = require('../services/pipelineState').getState;
  */
 
 
-router.get('/pipeline/:pipelineId', function(req, res, next) {
+router.get('/pipeline/:pipelineId', function (req, res, next) {
   const pipelineId = req.params.pipelineId;
   PipelineState.find({
     pipelineId: pipelineId
@@ -94,7 +94,7 @@ router.get('/pipeline/:pipelineId', function(req, res, next) {
  *    }
  */
 
-router.post('/search', function(req, res) {
+router.post('/search', function (req, res) {
   getState();
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
@@ -154,7 +154,7 @@ router.post('/search', function(req, res) {
  */
 // 获取时间（排除无difTime属性）
 function getTime(doc) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const time = {
       offTime: 0,
       onTime: 0,
@@ -180,7 +180,7 @@ function getTime(doc) {
 }
 
 // 放弃
-router.post('/time', function(req, res) {
+router.post('/time', function (req, res) {
 
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
@@ -224,7 +224,7 @@ router.post('/time', function(req, res) {
 //   setDefaultsOnInsert: true,
 //   setOnInsert: true
 // })
-router.put('/', function(req, res) {
+router.put('/', function (req, res) {
   const {
     _id,
     endTime,
@@ -232,6 +232,7 @@ router.put('/', function(req, res) {
     startTime,
     createdAt,
     pipelineId,
+    count
   } = req.body;
   PipelineState.findByIdAndUpdate({
     _id: _id
@@ -241,19 +242,20 @@ router.put('/', function(req, res) {
       difTime: difTime,
       startTime: startTime,
       createdAt: createdAt,
-      pipelineId: pipelineId
+      pipelineId: pipelineId,
+      count: count
     }
   }, {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function(err, doc) {
+  }, function (err, doc) {
     log.info(doc);
   });
 });
 
-router.post('/', function(req, res) {
+router.post('/', function (req, res) {
   const data = req.body;
   // console.log(data)
   PipelineState.create(data).then((doc) => {

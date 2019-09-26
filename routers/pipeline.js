@@ -6,24 +6,16 @@ const CompanyCol = require('../collections/company');
 const PipelineStateCol = require('../collections/pipelineState');
 const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
-const ProductStateCol = require('../collections/productState');
 const monitorService = require('../services/monitorService');
 const MonitorCol = require('../collections/monitor');
-const timeUtil = require('../utils/time');
-
+const getTime = require('../utils/time').getTime;
+const localDate = require('../utils/time').localDate;
 const log = require('../services/logger').createLogger('userAuthentication');
 
-function localDate(v) {
-  v = Number(v);
-  const d = new Date(v || Date.now());
-
-  // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString();
-}
 
 // 解析power的数据
 function processDataOfPower(rawData) {
-  return rawData.map(item => {
+  return rawData.map((item) => {
     if (item && item.value) {
       return {
         positive: item.value.positiveEnergy,
@@ -36,7 +28,7 @@ function processDataOfPower(rawData) {
 
 // 解析counter的数据
 function processDataOfCounter(rawData) {
-  return rawData.map(item => {
+  return rawData.map((item) => {
     if (item && item.value) {
       return {
         in: item.value.repeatedCounting, // 入口数
@@ -122,7 +114,10 @@ router.get('/company/:companyId', async (req, res, next) => {
  */
 // 传入 pipelineName、companyId、probeList
 router.post('/', async (req, res, next) => {
-  const { pipelineName, companyId } = req.body;
+  const {
+    pipelineName,
+    companyId
+  } = req.body;
   const data = req.body;
 
   const pipeline = await PipelineCol.create(data);
@@ -133,13 +128,15 @@ router.post('/', async (req, res, next) => {
   CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: { pipelineList: [...pipelineList, pipeline.id] }
+    $set: {
+      pipelineList: [...pipelineList, pipeline.id]
+    }
   }, {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function(err, doc) {
+  }, function (err, doc) {
     if (err) {
       log.error(err);
     }
@@ -189,7 +186,9 @@ router.delete('/:id', async (req, res, next) => {
   await CompanyCol.findByIdAndUpdate({
     _id: companyId
   }, {
-    $set: { pipelineList: [...pipelineList] }
+    $set: {
+      pipelineList: [...pipelineList]
+    }
   }, {
     new: true,
     upsert: true,
@@ -231,7 +230,7 @@ router.delete('/:id', async (req, res, next) => {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.put('/', function(req, res, next) {
+router.put('/', function (req, res, next) {
   const data = req.body;
 
   PipelineCol.findByIdAndUpdate({
@@ -243,7 +242,7 @@ router.put('/', function(req, res, next) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function(err, doc) {
+  }, function (err, doc) {
     if (err) {
       log.error(err);
     }
@@ -287,7 +286,7 @@ router.put('/', function(req, res, next) {
  *      "message": "Pipeline register failure!"
  *    }
  */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   PipelineCol.find({}).then((doc) => {
     res.status(200).json(doc);
   });
@@ -295,7 +294,9 @@ router.get('/', function(req, res, next) {
 
 // 获取生产线详情
 router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
+  const {
+    id
+  } = req.params;
   const doc = await PipelineCol.findById(id);
   const pipeline = new PipelineModel(id);
   const state = await pipeline.getCurrentState();
@@ -313,7 +314,9 @@ router.get('/:id/state', async (req, res, next) => {
 
 // 查询该所有产品的状态
 router.get('/:id/productState', async (req, res, next) => {
-  const { id: pipelineId } = req.params;
+  const {
+    id: pipelineId
+  } = req.params;
   const start = +new Date(new Date(new Date().toLocaleDateString()).getTime());
   const end = +new Date();
   const productList = await MonitorCol.find({
@@ -437,16 +440,19 @@ router.post('/state/time', async (req, res, next) => {
   //     res.status(200).json(data);
   //   });
   // });
-
+  // console.log(start)
   const sqlResult = await PipelineStateCol.find({
     pipelineId: id,
-    createdAt: {
+    startTime: {
       $gte: start,
       $lte: end
     }
+  }).sort({
+    startTime: -1
   });
-  const result = await timeUtil.getTime(sqlResult);
-
+  console.log(sqlResult);
+  const result = await getTime(sqlResult);
+  console.log(result);
   res.status(200).json({
     data: result
   });
@@ -455,12 +461,17 @@ router.post('/state/time', async (req, res, next) => {
 
 router.post('/state', async (req, res, next) => {
   // 对 couter、power、electricity 这三个进行统计
-  const { id, type } = req.body;
+  const {
+    id,
+    type
+  } = req.body;
   const timeSpan = 60 * 60 * 1000;
   const dayStart = +new Date(new Date(new Date().toLocaleDateString()).getTime()) - 24 * timeSpan;
   const dayEnd = dayStart + 24 * timeSpan;
 
-  const timeList = Array.from({ length: 25 }, (_, i) => i - 1).map((i) => {
+  const timeList = Array.from({
+    length: 25
+  }, (_, i) => i - 1).map((i) => {
     return {
       start: localDate(dayStart + i * timeSpan),
       end: localDate(dayStart + (i + 1) * timeSpan)
@@ -481,7 +492,11 @@ router.post('/state', async (req, res, next) => {
     },
     pipelineId: id,
     dataType: 'counter',
-  }, { dataType: 1, value: 1, createdAt: 1 });
+  }, {
+    dataType: 1,
+    value: 1,
+    createdAt: 1
+  });
 
   const list = [];
   // 数据的value可能不增加；数据可能会丢失
@@ -498,9 +513,10 @@ router.post('/state', async (req, res, next) => {
   const result = {
     value: list,
     time: ['00:00-01:00', '01:00-02:00', '02:00-03:00', '03:00-04:00', '04:00-05:00', '05:00-06:00',
-           '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
-           '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
-           '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00']
+      '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
+      '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
+      '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00', '22:00-23:00', '23:00-24:00'
+    ]
   };
 
   // console.log('list', list)
@@ -519,8 +535,10 @@ router.post('/state', async (req, res, next) => {
 
 
 // 获取该生产线的所有产品
-router.get('/:id/product', function(req, res, next) {
-  const { id } = req.params;
+router.get('/:id/product', function (req, res, next) {
+  const {
+    id
+  } = req.params;
   if (id) {
     ProductCol.find({
       pipelineId: id
