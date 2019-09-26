@@ -31,7 +31,7 @@ exports.zeroUpdatePipeState = () => {
       upsert: true,
       setDefaultsOnInsert: true,
       setOnInsert: true
-    }, function (err, doc) {
+    }, function(err, doc) {
       if (err) {
         log.error(err);
       }
@@ -42,7 +42,7 @@ exports.zeroUpdatePipeState = () => {
       plState.endTime = new Date();
       plState.difTime = 0;
       plState.count = prevVal.count;
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }
@@ -71,7 +71,7 @@ function startUpdateTime(updateTime) {
     upsert: true,
     setDefaultsOnInsert: true,
     setOnInsert: true
-  }, function (err, doc) {
+  }, function(err, doc) {
     if (err) {
       log.error(err);
     }
@@ -127,7 +127,7 @@ exports.getState = () => {
           upsert: true,
           setDefaultsOnInsert: true,
           setOnInsert: true
-        }, function (err, doc) {
+        }, function(err, doc) {
           if (err) {
             log.error(err);
           }
@@ -135,7 +135,7 @@ exports.getState = () => {
         });
       } else {
         // 1. 与上一个pipelineState的state不相同创建数据
-        PipelineState.create(plState, function (err) {
+        PipelineState.create(plState, function(err) {
           if (err) {
             console.log(err);
           }
@@ -171,6 +171,8 @@ exports.getPipelineState = (obj, probe) => {
     // 运行状态业务
     prevVal = doc[0];
     difVal = obj.repeatedCounting - prevVal.count;
+    // console.log(obj);
+    console.log('prevVal', prevVal);
     difTime = obj.createdAt - prevVal.endTime;
 
     if (Math.abs(difVal) > 0) {
@@ -199,7 +201,7 @@ exports.getPipelineState = (obj, probe) => {
         upsert: true,
         setDefaultsOnInsert: true,
         setOnInsert: true
-      }, function (err, doc) {
+      }, function(err, doc) {
         if (err) {
           log.error(err);
         }
@@ -212,7 +214,7 @@ exports.getPipelineState = (obj, probe) => {
       plState.count = obj.repeatedCounting;
       plState.pipelineId = probe.pipelineId;
       // console.log(plState);
-      PipelineState.create(plState, function (err) {
+      PipelineState.create(plState, function(err) {
         if (err) {
           console.log(err);
         }

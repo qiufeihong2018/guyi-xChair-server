@@ -17,6 +17,9 @@ const ProductState = new Schema({
   productNo: { // 产品数字代号(采集器传输: 纯数字)
     type: String
   },
+  productType: { // 产品类型(沙发椅，办公椅，酒吧椅)
+    type: String
+  },
   pipelineId: {  // 生产线ID
     type: Schema.Types.ObjectId
   },

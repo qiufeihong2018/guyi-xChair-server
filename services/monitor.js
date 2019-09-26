@@ -2,7 +2,6 @@
 const Company = require('../collections/company');
 const Monitor = require('../collections/monitor');
 const Probe = require('../collections/probe');
-const createProState = require('./productState').createProState;
 const getPipelineState = require('./pipelineState').getPipelineState;
 
 const log = require('./logger').createLogger('monitor');

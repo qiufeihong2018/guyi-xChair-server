@@ -204,7 +204,6 @@ async function productChange(event) {
 
 
   if (lastProductState) {
-    console.log(lastProductState);
     await ProductState.updateOne({ pipelineId: event.pipelineId, state: true },
                                  { state: false, counterEnd: counter.value, powerEnd: power.value, endTime: new Date() });
   }
@@ -214,6 +213,7 @@ async function productChange(event) {
   await ProductState.create({ productId: productNew._id,
                               productModel: productNew.model,
                               productNo: productNew.no,
+                              productType: productNew.type,
                               pipelineId: event.pipelineId,
                               state: true, startTime: new Date(),
                               counterBegin: counter.value,
