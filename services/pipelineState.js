@@ -103,7 +103,7 @@ exports.getState = () => {
     // 当前时间-上一个pipelineState的开始时间
     const difTime = currentTime - prevVal.startTime;
     // 判断关闭状态
-    if (Math.abs(differentTime) > 3000) {
+    if (Math.abs(differentTime) > 300000) {
       plState.pipelineId = prevVal.pipelineId;
       plState.state = 'off';
       plState.startTime = lastTime;
