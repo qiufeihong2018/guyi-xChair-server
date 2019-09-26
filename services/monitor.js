@@ -106,7 +106,6 @@ function parseCounterDigit(data, probe) {
   obj.repeatedCounting = parseInt(data.slice(0, 8), 16);
   obj.defectiveNumber = parseInt(data.slice(8, 16), 16);
   obj.productionQuantity = parseInt(data.slice(16, 24), 16);
-
   getPipelineState(obj, probe);
   getCorrect(obj);
   return obj;
