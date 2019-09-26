@@ -179,6 +179,7 @@ async function companyAnalysis(companyId, dataType, start, end) {
 //   value: '8801' }
 async function productChange(event) {
   if (!event || event.dataType !== 'product') return;
+  console.log(event);
   const lastProductState = await ProductState.findOne({ pipelineId: event.pipelineId, state: true });
   const counterCurr = await MonitorCol.find({ pipelineId: event.pipelineId, dataType: 'counter' }).sort({ _id: -1 }).limit(1);
   const powerCurr = await MonitorCol.find({ pipelineId: event.pipelineId, dataType: 'power' }).sort({ _id: -1 }).limit(1);
@@ -204,9 +205,9 @@ async function productChange(event) {
   }
 
   const productNew = await ProductCol.findOne({ no: event.value });
-
+  
   if (!productNew) return;
-
+  console.log(lastProductState);
   if (lastProductState) {
     await ProductState.updateOne({ pipelineId: event.pipelineId, state: true },
                                  { state: false, counterEnd: counter.value, powerEnd: power.value, endTime: currentDate });

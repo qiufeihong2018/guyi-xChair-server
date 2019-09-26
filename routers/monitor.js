@@ -43,8 +43,9 @@ router.post('/', async (req, res) => {
   });
   // 数据处理
   const monitorData = await getData(doc);
-  monitorService.productChange(monitorData);
+
   if (typeof monitorData.value !== 'undefined') {
+    monitorService.productChange(monitorData);
     Monitor.create(monitorData, function(err) {
       if (err) {
         log.error(err);
