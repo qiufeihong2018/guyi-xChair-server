@@ -502,9 +502,9 @@ router.post('/state/time', async (req, res, next) => {
   }).sort({
     startTime: -1
   });
-  console.log(sqlResult);
+  // console.log(sqlResult);
   const result = await getTime(sqlResult);
-  console.log(result);
+  // console.log(result);
   res.status(200).json({
     data: result
   });
