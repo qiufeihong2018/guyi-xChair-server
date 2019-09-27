@@ -6,7 +6,7 @@ const PipelineState = require('../collections/pipelineState');
 const log = require('../services/logger').createLogger('userAuthentication');
 
 const localDate = require('../utils/time').localDate;
-
+const getState = require('../services/pipelineState').getState;
 /**
  * @api {get} /v1/pipeline/:pipelineId PipelineState get
  * @apiName PipelineStateGet
@@ -41,109 +41,9 @@ const localDate = require('../utils/time').localDate;
  *      "message": "PipelineState register failure!"
  *    }
  */
-function getState() {
-  // Simulate off state before next upload of pipelineState
-  let prevVal = {};
-  const plState = {
-    state: '',
-    startTime: '',
-    endTime: '',
-    difTime: '',
-    count: ''
-  };
-  let currentTime = '';
-  let lastTime = '';
-  let differentTime = '';
-  let difTime = '';
-  PipelineState.find({}).sort({
-    createdAt: -1
-  }).limit(1).exec((err, data) => {
-    // 运行状态业务
-    prevVal = data[0];
-    // 当前时间
-    currentTime = new Date();
-    // 上一个pipelineState的结束时间
-    lastTime = prevVal.endTime;
-    // 两者的差值
-    differentTime = currentTime - lastTime;
-    // 关闭判断
-    if (Math.abs(differentTime) > 300000) {
-      plState.state = 'off';
-      plState.startTime = lastTime;
-      plState.endTime = currentTime;
-      plState.difTime = differentTime;
-      plState.count = prevVal.count;
-      // 当前时间-上一个pipelineState的开始时间
-      difTime = currentTime - prevVal.startTime;
-      // 1. 与上一个pipelineState同一个state更新数据
-      if (prevVal.state === plState.state) {
-        // 判断是否是0点
-        // 由于前端30s轮询，所以后端判断要有一个容错
-        // eslint-disable-next-line max-len
-        if (Number(currentTime.getTime().toString().slice(-6)) >= 0 && Number(currentTime.getTime().toString().slice(-6)) <= 40) {
-          PipelineState.findByIdAndUpdate({
-            _id: prevVal._id
-          }, {
-            $set: {
-              endTime: currentTime,
-              difTime: difTime,
-              count: prevVal.count
-            }
-          }, {
-            new: true,
-            upsert: true,
-            setDefaultsOnInsert: true,
-            setOnInsert: true
-          }, function(err, doc) {
-            if (err) {
-              log.error(err);
-            }
-            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
-            PipelineState.create(plState, function(err) {
-              if (err) {
-                console.log(err);
-              }
-              log.info('Add 00:00:00 pipelineState success');
-            });
-          });
 
-        } else {
-          PipelineState.findByIdAndUpdate({
-            _id: prevVal._id
-          }, {
-            $set: {
-              endTime: currentTime,
-              difTime: difTime,
-              count: prevVal.count
-            }
-          }, {
-            new: true,
-            upsert: true,
-            setDefaultsOnInsert: true,
-            setOnInsert: true
-          }, function(err, doc) {
-            if (err) {
-              log.error(err);
-            }
-            log.info(`Update PipelineState ${prevVal._id} - ${prevVal.state} success`);
-          });
-        }
 
-      } else {
-        // 1. 与上一个pipelineState的state不相同创建数据
-        PipelineState.create(plState, function(err) {
-          if (err) {
-            console.log(err);
-          }
-          log.info('Add pipelineState success');
-        });
-      }
-    }
-  });
-
-}
-
-router.get('/pipeline/:pipelineId', function(req, res, next) {
+router.get('/pipeline/:pipelineId', function (req, res, next) {
   const pipelineId = req.params.pipelineId;
   PipelineState.find({
     pipelineId: pipelineId
@@ -194,15 +94,16 @@ router.get('/pipeline/:pipelineId', function(req, res, next) {
  *    }
  */
 
-router.post('/search', function(req, res) {
+router.post('/search', function (req, res) {
   getState();
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
-
+  // console.log(start)
+  // console.log(end)
   const pipelineId = req.body.pipelineId;
   PipelineState.find({
     $and: [{
-      'createdAt': {
+      'startTime': {
         '$gte': start,
         '$lte': end
       }
@@ -210,7 +111,7 @@ router.post('/search', function(req, res) {
       'pipelineId': pipelineId
     }]
   }).sort({
-    'createdAt': 1
+    'startTime': 1
   }).then((doc) => {
     log.info('Search PipelineState');
     // console.log(doc[doc.length - 1])
@@ -252,49 +153,113 @@ router.post('/search', function(req, res) {
  *    }
  */
 // 获取时间（排除无difTime属性）
-function getTime(doc) {
-  return new Promise(function(resolve, reject) {
-    const time = {
-      offTime: 0,
-      onTime: 0,
-      pendingTime: 0
-    };
+// function getTime(doc) {
+//   return new Promise(function (resolve, reject) {
+//     const time = {
+//       offTime: 0,
+//       onTime: 0,
+//       pendingTime: 0
+//     };
 
-    for (let i = 0; i < doc.length; i++) {
-      if (doc[i].difTime !== undefined) {
-        const docDifTime = doc[i].difTime;
-        if (doc[i].state === 'off') {
-          time.offTime += docDifTime;
-        }
-        if (doc[i].state === 'on') {
-          time.onTime += docDifTime;
-        }
-        if (doc[i].state === 'pending') {
-          time.pendingTime += docDifTime;
-        }
-      }
+//     for (let i = 0; i < doc.length; i++) {
+//       if (doc[i].difTime !== undefined) {
+//         const docDifTime = doc[i].difTime;
+//         if (doc[i].state === 'off') {
+//           time.offTime += docDifTime;
+//         }
+//         if (doc[i].state === 'on') {
+//           time.onTime += docDifTime;
+//         }
+//         if (doc[i].state === 'pending') {
+//           time.pendingTime += docDifTime;
+//         }
+//       }
+//     }
+//     resolve(time);
+//   });
+// }
+
+// // 放弃
+// router.post('/time', function (req, res) {
+
+//   const start = localDate(req.body.start);
+//   const end = localDate(req.body.end);
+
+
+//   PipelineState.find({
+//     'createdAt': {
+//       '$gte': start,
+//       '$lte': end
+//     }
+//   }).then((doc) => {
+//     getTime(doc).then((data) => {
+//       log.info('Search time');
+//       res.status(200).json(data);
+//     });
+//   });
+// });
+
+// {
+// 	"_id" : ObjectId("5d89dee56d385020a05c0526"),
+// 	"state" : "off",
+// 	"startTime" : ISODate("2019-09-24T09:10:59.670Z"),
+// 	"endTime" : ISODate("2019-09-24T23:11:34.167Z"),
+// 	"difTime" : 50434497,
+// 	"count" : 8862,
+// 	"createdAt" : ISODate("2019-09-24T09:16:21.380Z"),
+// 	"updatedAt" : ISODate("2019-09-24T23:11:34.167Z"),
+// 	"__v" : 0
+// }
+// 2019-09-24T16:00:00.007Z
+// db.pipelinestates.findByIdAndUpdate({
+//   _id: '5d89dee56d385020a05c0526'
+// }, {
+//   $set: {
+//     endTime: '2019-09-24T16:00:00.007Z',
+//     difTime: '24541000'
+//   }
+// }, {
+//   new: true,
+//   upsert: true,
+//   setDefaultsOnInsert: true,
+//   setOnInsert: true
+// })
+router.put('/', function (req, res) {
+  const {
+    _id,
+    endTime,
+    difTime,
+    startTime,
+    createdAt,
+    pipelineId,
+    count
+  } = req.body;
+  PipelineState.findByIdAndUpdate({
+    _id: _id
+  }, {
+    $set: {
+      endTime: endTime,
+      difTime: difTime,
+      startTime: startTime,
+      createdAt: createdAt,
+      pipelineId: pipelineId,
+      count: count
     }
-    resolve(time);
+  }, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+    setOnInsert: true
+  }, function (err, doc) {
+    log.info(doc);
   });
-}
+});
 
-// 放弃
-router.post('/time', function(req, res) {
-
-  const start = localDate(req.body.start);
-  const end = localDate(req.body.end);
-
-
-  PipelineState.find({
-    'createdAt': {
-      '$gte': start,
-      '$lte': end
-    }
-  }).then((doc) => {
-    getTime(doc).then((data) => {
-      log.info('Search time');
-      res.status(200).json(data);
-    });
+router.post('/', function (req, res) {
+  const data = req.body;
+  // console.log(data)
+  PipelineState.create(data).then((doc) => {
+    log.info(doc);
   });
 });
 

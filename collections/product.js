@@ -15,11 +15,11 @@ const Product = new Schema({
   pipelineName: {
     type: String
   },
-  // 产品注册代码(记录在册)
+  // 产品型号(公司记录在册)
   model: {
     type: String
   },
-  // 产品型号代号(生产线上采集器设置的)(纯数字)
+  // 产品数字代号(生产线上采集器设置的)(纯数字)
   no: {
     type: String
   },
@@ -53,4 +53,3 @@ const Product = new Schema({
 });
 
 module.exports = mongoose.model('Product', Product);
-

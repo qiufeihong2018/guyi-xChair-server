@@ -4,17 +4,30 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-
+const fs = require('fs');
+const path = require('path');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-
+const Socket = require('./socket');
 const config = require('../config')();
 const mongo = require('./mongo');
 const log = require('./logger').createLogger('express');
 const app = express();
-// 触发统计方法
-const monitorStatistics = require('../models/statistics').monitorStatistics;
-monitorStatistics();
+var CronJob = require('cron').CronJob;
+
+// 每天0点执行分割方法
+const zeroUpdatePipeState = require('../services/pipelineState').zeroUpdatePipeState;
+
+new CronJob('00 00 00 * * *', function () {
+// new CronJob('10 50 10 * * *', function () {
+  const d = new Date();
+  console.log(d);
+  zeroUpdatePipeState();
+}, null, true);
+
+// // 触发统计方法
+// const monitorStatistics = require('../services/statistics').monitorStatistics;
+// monitorStatistics();
 
 exports.start = function () {
 
@@ -37,6 +50,13 @@ exports.start = function () {
       maxAge: 24 * 60 * 60 * 1000
     }
   };
+
+  // test
+  app.get('/socket', (req, res) => {
+    const html = fs.readFileSync(path.resolve(__dirname, '../tests/socket.html'), 'utf-8');
+    res.send(html);
+  });
+
 
   app.use(bodyParser.json()); // For parsing application/json
   // For parsing application/x-www-form-urlencoded
@@ -66,8 +86,11 @@ exports.start = function () {
 
   // start server
   app.set('port', config.expressHttpPort); // Set http port
-
-  app.listen(config.expressHttpPort, () => {
+  const server = require('http').Server(app);
+  const io = require('socket.io')(server);
+  const socket = new Socket(io);
+  socket.connect();
+  server.listen(config.expressHttpPort, () => {
     // 开启端口打印日志
     log.info(`express running on ${config.expressHttpPort} port`);
   });
