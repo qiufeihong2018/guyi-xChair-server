@@ -9,8 +9,6 @@ const PipelineModel = require('../models/pipeline');
 const ProductCol = require('../collections/product');
 const monitorService = require('../services/monitorService');
 const MonitorCol = require('../collections/monitor');
-const timeUtil = require('../utils/time');
-const mongoose = require('mongoose');
 const getTime = require('../utils/time').getTime;
 const localDate = require('../utils/time').localDate;
 const log = require('../services/logger').createLogger('userAuthentication');
@@ -294,15 +292,23 @@ router.get('/', function(req, res, next) {
   });
 });
 
-// 获取生产线详情
+// 获取生产线状态详情
 router.get('/:id', async (req, res, next) => {
   const {
     id
   } = req.params;
-  const doc = await PipelineCol.findById(id);
   const pipeline = new PipelineModel(id);
   const state = await pipeline.getCurrentState();
   res.status(200).json(state);
+});
+
+// 获取生产线详情
+router.get('/:id/detail', async (req, res, next) => {
+  const {
+    id
+  } = req.params;
+  const pipeline = await PipelineCol.findById(id);
+  res.status(200).json(pipeline);
 });
 
 // 某个pipeline的当前的(开机、关机、空转)状态
@@ -473,18 +479,6 @@ router.post('/state/time', async (req, res, next) => {
   const start = localDate(req.body.start);
   const end = localDate(req.body.end);
 
-  // PipelineStateCol.find({
-  //   'createdAt': {
-  //     '$gte': start,
-  //     '$lte': end
-  //   }
-  // }).then((doc) => {
-  //   timeUtil.getTime(doc).then((data) => {
-  //     log.info('Search time');
-  //     res.status(200).json(data);
-  //   });
-  // });
-  // console.log(start)
   const sqlResult = await PipelineStateCol.find({
     pipelineId: id,
     startTime: {
@@ -494,9 +488,8 @@ router.post('/state/time', async (req, res, next) => {
   }).sort({
     startTime: -1
   });
-  // console.log(sqlResult);
+
   const result = await getTime(sqlResult);
-  // console.log(result);
   res.status(200).json({
     data: result
   });
